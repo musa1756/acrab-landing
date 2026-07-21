@@ -33,9 +33,27 @@ maintenance this layout avoids.
 Verify locally before deploying:
 
 ```bash
-cd landing && python3 -m http.server 8899
-# then check /, /buy, /support, /styles.css all return 200
+python3 tools/check_site.py     # the same gate CI runs
+python3 -m http.server 8899     # or eyeball it
 ```
+
+## CI gate
+
+Timeweb Cloud auto-deploys `main` with no build step, so nothing else stands
+between a bad push and production. `.github/workflows/check.yml` runs
+`tools/check_site.py` on every push and pull request, which enforces:
+
+- all four Apple-registered routes (`/`, `/buy`, `/support`, `/privacy`) resolve
+  to a real file;
+- internal links are absolute and point at something that exists — the relative
+  path regression this layout is prone to;
+- no links back to the retired `musa1756.github.io/Acrab-privacy` address;
+- no `.DS_Store` committed.
+
+It then serves the site and asserts every route returns 200.
+
+The checks are verified to fail, not just to pass — breaking a link or deleting
+`privacy/` makes the gate exit non-zero.
 
 ## App Store Connect
 

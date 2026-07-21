@@ -1,0 +1,36 @@
+name: check
+
+# Timeweb Cloud auto-deploys main with no build step, so this is the only thing
+# standing between a bad push and production.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Проверить структуру и ссылки
+        run: python3 tools/check_site.py
+
+      - name: Проверить, что страницы реально отдаются
+        run: |
+          python3 -m http.server 8899 &
+          for i in $(seq 1 20); do
+            curl -sf -o /dev/null http://127.0.0.1:8899/ && break
+            sleep 0.5
+          done
+          fail=0
+          for path in / /buy /support /privacy /styles.css /assets/acrab-app-icon.png; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8899$path")
+            if [ "$code" != "200" ]; then
+              echo "::error::$path вернул $code вместо 200"
+              fail=1
+            else
+              echo "  ok $path"
+            fi
+          done
+          exit $fail
