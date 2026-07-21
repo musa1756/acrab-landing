@@ -7,6 +7,10 @@
   <meta name="description" content="Оплата Acrab Premium вне App Store: подтвердите почту и оплатите через Точку.">
   <meta name="theme-color" content="#fcf7ed">
   <meta name="robots" content="noindex">
+  <!-- Timeweb static hosting can't set response headers, so CSP ships as a meta
+       tag. frame-ancestors is ignored in meta form — the inline frame-buster
+       below is the clickjacking fallback. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self'; connect-src https://api.acrab.ru; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
   <link rel="stylesheet" href="/styles.css">
@@ -83,6 +87,12 @@
   </footer>
 
   <script>
+    // Clickjacking guard: a payment page must never render inside someone
+    // else's frame (meta-CSP cannot express frame-ancestors).
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+
     // Public anon key for the self-hosted Supabase project (api.acrab.ru), same as the one
     // baked into the compiled iOS app — not a service_role secret, safe to ship client-side.
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
@@ -238,8 +248,13 @@
         if (!result || !result.paymentLink) {
           throw new Error("Missing paymentLink");
         }
+        // Only ever redirect to Tochka's own HTTPS payment pages.
+        const link = new URL(result.paymentLink);
+        if (link.protocol !== "https:" || !(link.hostname === "tochka.com" || link.hostname.endsWith(".tochka.com"))) {
+          throw new Error("Unexpected payment link origin");
+        }
         showStep("redirect");
-        window.location.href = result.paymentLink;
+        window.location.href = link.href;
       } catch (error) {
         setError(document.getElementById("plan-error"), "Не получилось создать оплату. Попробуйте ещё раз через минуту или напишите в поддержку.");
         btn.disabled = false;
