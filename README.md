@@ -7,7 +7,11 @@ Static one-page landing for App Store Connect URLs.
 - `index.html` - one-page website.
 - `buy/index.html` - StoreKit External Purchase Link target page: email-OTP sign-in against the existing Supabase auth (`/auth/v1/otp` + `/verify`), then calls `tochka-payment` (`action=create`) with the resulting JWT and redirects to the returned Tochka `paymentLink`. No query params by design — the URL registered with Apple must stay static. Premium activation happens server-side via `tochka-payment-webhook`; this page never calls `confirm`.
 - `support/index.html` - dedicated support page (Apple's External Purchase entitlement requires a real support destination, not just a mailto link): payment FAQ, refunds, disputing unauthorized charges.
-- `styles.css` - responsive styling, shared by all three pages.
+- `privacy/index.html` - personal data policy (152-ФЗ). Ported verbatim from the
+  old `musa1756/Acrab-privacy` GitHub Pages repo; it is fully self-contained
+  (own inline styles, no shared assets) and deliberately does **not** use
+  `styles.css`. Treat the body text as legal copy — do not reword it casually.
+- `styles.css` - responsive styling, shared by the landing, buy and support pages.
 - `assets/acrab-app-icon.png` - copied from the app asset catalog and used for icons, previews, and social sharing.
 
 `buy/index.html` already has the production anon key (pulled from the Beget `.env`, same value as the iOS app ships) inlined — it's the public anon key, safe client-side, not a `service_role` secret.
@@ -39,23 +43,23 @@ Production URLs:
 
 - Support URL: `https://acrab.ru/`
 - Marketing URL: `https://acrab.ru/`
-- Privacy Policy URL: **unresolved** — see below.
+- Privacy Policy URL: `https://acrab.ru/privacy`
 
 External Purchase Link entitlement (payment processing website request):
 
 - Целевой URL-адрес / Target URL: `https://acrab.ru/buy` — must exactly match whatever gets configured in `Info.plist`/entitlements once Apple approves the request.
 - Веб-сайт службы поддержки / Support website: `https://acrab.ru/support`
 
-### Open item: privacy policy URL
+### Privacy policy hosting
 
-This README previously claimed `https://acrab.ru/privacy`, but no `privacy.html`
-exists in this directory and every in-page link points at
-`https://musa1756.github.io/Acrab-privacy/` (GitHub Pages). Those cannot both be
-right. Pick one before submitting to Apple:
+The policy used to live at `https://musa1756.github.io/Acrab-privacy/` while its
+own section 14 named `acrab.ru/privacy` as the canonical address — the document
+contradicted where it was published. It is now served from this repo at
+`/privacy`, and all in-page links point there.
 
-- keep GitHub Pages and register that URL in App Store Connect, or
-- add `privacy/index.html` here so `https://acrab.ru/privacy` becomes real, and
-  repoint the in-page links.
+The old `musa1756/Acrab-privacy` repo is now redundant. Leave it published until
+`acrab.ru/privacy` is confirmed live, then archive it — do not delete, since the
+GitHub Pages URL may already be referenced in submitted App Store metadata.
 
 ## Hosting
 
