@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Оплата Acrab Premium</title>
+  <meta name="description" content="Оплата Acrab Premium вне App Store: подтвердите почту и оплатите через Точку.">
+  <meta name="theme-color" content="#fcf7ed">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/acrab-app-icon.png">
+  <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <header class="site-header site-header-static" aria-label="Основная навигация">
+    <a class="brand" href="/" aria-label="Acrab, на главную">
+      <img src="/assets/acrab-app-icon.png" alt="" width="42" height="42">
+      <span>Acrab</span>
+    </a>
+    <a class="header-action" href="acrab://">Открыть приложение</a>
+  </header>
+
+  <main id="main" class="auth-main">
+    <section class="auth-card" aria-labelledby="buy-title">
+      <p class="manifest-label">Acrab Premium</p>
+      <h1 id="buy-title" class="auth-title">Оплата вне App Store</h1>
+      <p class="auth-lead">Подтвердите почту от аккаунта Acrab, выберите тариф и оплатите через защищённую страницу банка «Точка». Данные карты не хранятся у нас.</p>
+
+      <div id="step-email" class="auth-step" data-step="email">
+        <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
+        <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+        <button id="send-code-btn" class="button button-primary auth-submit" type="button">Получить код</button>
+        <p id="email-error" class="auth-error" role="alert" hidden></p>
+      </div>
+
+      <div id="step-code" class="auth-step" data-step="code" hidden>
+        <p class="auth-hint">Код отправлен на <strong id="code-email-echo"></strong>.</p>
+        <label class="auth-label" for="code-input">Код из письма</label>
+        <input id="code-input" class="auth-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+        <button id="verify-code-btn" class="button button-primary auth-submit" type="button">Подтвердить</button>
+        <button id="change-email-btn" class="auth-linklike" type="button">Изменить почту</button>
+        <p id="code-error" class="auth-error" role="alert" hidden></p>
+      </div>
+
+      <div id="step-plan" class="auth-step" data-step="plan" hidden>
+        <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
+        <div class="plan-picker" role="group" aria-label="Выбор тарифа">
+          <button class="plan-option" type="button" data-plan="annual">
+            <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
+            <span class="plan-option-price" id="price-annual">2 990 ₽</span>
+            <span class="plan-option-note">за год</span>
+          </button>
+          <button class="plan-option" type="button" data-plan="monthly">
+            <span class="plan-option-top"><span>Месяц</span></span>
+            <span class="plan-option-price" id="price-monthly">399 ₽</span>
+            <span class="plan-option-note">в месяц</span>
+          </button>
+        </div>
+        <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
+        <p id="plan-error" class="auth-error" role="alert" hidden></p>
+      </div>
+
+      <div id="step-redirect" class="auth-step" data-step="redirect" hidden>
+        <p class="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
+      </div>
+
+      <p class="auth-footnote">Обработку платежа выполняет банк «Точка» (эквайринг, соответствует PCI DSS Level&nbsp;1). Мы не получаем и не храним данные вашей карты. Вопросы по оплате — на <a href="/support">странице поддержки</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="support-link">
+    <a class="brand footer-brand" href="/">
+      <img src="/assets/acrab-app-icon.png" alt="" width="38" height="38">
+      <span>Acrab</span>
+    </a>
+    <p>Литературный арабский на русском</p>
+    <div class="footer-links">
+      <a href="/support">Поддержка</a>
+      <a href="https://musa1756.github.io/Acrab-privacy/" rel="noopener">Конфиденциальность</a>
+    </div>
+  </footer>
+
+  <script>
+    // Public anon key for the self-hosted Supabase project (api.acrab.ru), same as the one
+    // baked into the compiled iOS app — not a service_role secret, safe to ship client-side.
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
+    const SUPABASE_URL = "https://api.acrab.ru";
+
+    const FALLBACK_PRICES = { monthly: 399, annual: 2990 };
+
+    const state = { email: null, accessToken: null, plan: null };
+
+    const steps = {
+      email: document.getElementById("step-email"),
+      code: document.getElementById("step-code"),
+      plan: document.getElementById("step-plan"),
+      redirect: document.getElementById("step-redirect"),
+    };
+
+    function showStep(name) {
+      for (const key of Object.keys(steps)) {
+        steps[key].hidden = key !== name;
+      }
+    }
+
+    function setError(el, message) {
+      if (!message) {
+        el.hidden = true;
+        el.textContent = "";
+        return;
+      }
+      el.hidden = false;
+      el.textContent = message;
+    }
+
+    function formatRub(amount) {
+      return `${Math.round(amount).toLocaleString("ru-RU")} ₽`;
+    }
+
+    async function supabaseFetch(path, options = {}) {
+      const response = await fetch(`${SUPABASE_URL}${path}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON_KEY,
+          ...(options.headers || {}),
+        },
+      });
+      const text = await response.text();
+      let json = null;
+      try { json = text ? JSON.parse(text) : null; } catch { /* non-JSON body */ }
+      if (!response.ok) {
+        const message = (json && (json.error_description || json.error || json.msg)) || `Ошибка ${response.status}`;
+        throw new Error(message);
+      }
+      return json;
+    }
+
+    async function loadPrices() {
+      try {
+        const rows = await supabaseFetch("/rest/v1/premium_pricing?select=plan,amount,currency");
+        if (Array.isArray(rows)) {
+          for (const row of rows) {
+            if (row.currency === "RUB" && (row.plan === "monthly" || row.plan === "annual")) {
+              FALLBACK_PRICES[row.plan] = Number(row.amount);
+            }
+          }
+        }
+      } catch {
+        // keep hardcoded fallback prices shown on the buttons
+      }
+      document.getElementById("price-monthly").textContent = formatRub(FALLBACK_PRICES.monthly);
+      document.getElementById("price-annual").textContent = formatRub(FALLBACK_PRICES.annual);
+    }
+
+    document.getElementById("send-code-btn").addEventListener("click", async () => {
+      const emailInput = document.getElementById("email-input");
+      const email = emailInput.value.trim();
+      setError(document.getElementById("email-error"), "");
+      if (!email) {
+        setError(document.getElementById("email-error"), "Введите почту.");
+        return;
+      }
+      const btn = document.getElementById("send-code-btn");
+      btn.disabled = true;
+      try {
+        await supabaseFetch("/auth/v1/otp", {
+          method: "POST",
+          body: JSON.stringify({ email, create_user: false }),
+        });
+        state.email = email;
+        document.getElementById("code-email-echo").textContent = email;
+        showStep("code");
+      } catch (error) {
+        setError(document.getElementById("email-error"), "Не получилось отправить код. Убедитесь, что это почта существующего аккаунта Acrab, и попробуйте ещё раз.");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById("change-email-btn").addEventListener("click", () => {
+      showStep("email");
+      setError(document.getElementById("code-error"), "");
+    });
+
+    document.getElementById("verify-code-btn").addEventListener("click", async () => {
+      const code = document.getElementById("code-input").value.trim();
+      setError(document.getElementById("code-error"), "");
+      if (!code) {
+        setError(document.getElementById("code-error"), "Введите код из письма.");
+        return;
+      }
+      const btn = document.getElementById("verify-code-btn");
+      btn.disabled = true;
+      try {
+        const result = await supabaseFetch("/auth/v1/verify", {
+          method: "POST",
+          body: JSON.stringify({ email: state.email, token: code, type: "email" }),
+        });
+        if (!result || !result.access_token) {
+          throw new Error("Missing access_token");
+        }
+        state.accessToken = result.access_token;
+        document.getElementById("plan-email-echo").textContent = state.email;
+        showStep("plan");
+        loadPrices();
+      } catch (error) {
+        setError(document.getElementById("code-error"), "Код неверный или истёк. Проверьте письмо и попробуйте снова.");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    for (const optionBtn of document.querySelectorAll(".plan-option")) {
+      optionBtn.addEventListener("click", () => {
+        for (const btn of document.querySelectorAll(".plan-option")) {
+          btn.classList.remove("is-selected");
+        }
+        optionBtn.classList.add("is-selected");
+        state.plan = optionBtn.dataset.plan;
+        document.getElementById("pay-btn").disabled = false;
+      });
+    }
+
+    document.getElementById("pay-btn").addEventListener("click", async () => {
+      setError(document.getElementById("plan-error"), "");
+      if (!state.plan || !state.accessToken) return;
+      const btn = document.getElementById("pay-btn");
+      btn.disabled = true;
+      try {
+        const result = await supabaseFetch("/functions/v1/tochka-payment", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${state.accessToken}` },
+          body: JSON.stringify({ action: "create", plan: state.plan }),
+        });
+        if (!result || !result.paymentLink) {
+          throw new Error("Missing paymentLink");
+        }
+        showStep("redirect");
+        window.location.href = result.paymentLink;
+      } catch (error) {
+        setError(document.getElementById("plan-error"), "Не получилось создать оплату. Попробуйте ещё раз через минуту или напишите в поддержку.");
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
