@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Acrab — учите арабский осмысленно</title>
-  <meta name="description" content="Acrab — приложение для изучения литературного арабского на русском: программа фусхи, огласовки, спряжения, словари, AI-учитель и умное повторение.">
-  <meta name="theme-color" content="#fcf7ed">
+  <title>Обновления Acrab</title>
+  <meta name="description" content="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель.">
+  <meta name="theme-color" content="#ffffff">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
-  <meta property="og:title" content="Acrab — арабский на русском">
-  <meta property="og:description" content="От первых букв до уверенного чтения: короткие уроки, практика, аудио и AI-учитель.">
+  <link rel="canonical" href="https://acrab.ru/">
+  <meta property="og:title" content="Обновления Acrab">
+  <meta property="og:description" content="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/acrab-app-icon.png">
+  <meta property="og:url" content="https://acrab.ru/">
+  <meta property="og:image" content="https://acrab.ru/assets/acrab-app-icon.png">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
   <link rel="stylesheet" href="/styles.css">
@@ -18,162 +20,167 @@
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
 
-  <header class="site-header" aria-label="Основная навигация">
-    <a class="brand" href="#top" aria-label="Acrab, на главную">
-      <img src="/assets/acrab-app-icon.png" alt="" width="42" height="42">
-      <span>Acrab</span>
-    </a>
-    <nav class="nav-links" aria-label="Разделы страницы">
-      <a href="#about">О приложении</a>
-      <a href="#premium">Premium</a>
-    </nav>
-    <a class="header-action" href="acrab://">Открыть приложение</a>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/" aria-label="Acrab, на главную">
+        <img src="/assets/acrab-app-icon.png" alt="" width="30" height="30">
+        <span>Acrab</span>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <a href="/" aria-current="page">Главная</a>
+        <a href="/about">О приложении</a>
+        <a href="/buy">Оплата</a>
+        <a href="/support">Q/A</a>
+      </nav>
+    </div>
   </header>
 
   <main id="main">
-    <section class="hero" id="top" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <div class="brand-note">
-          <span class="brand-note-mark" aria-hidden="true">أ</span>
-          <span>Литературный арабский · объяснения на русском</span>
-        </div>
-        <h1 id="hero-title">Арабский, который складывается <em>в систему</em></h1>
-        <p class="hero-lead">Acrab ведёт от алфавита и первых слов к чтению, грамматике и живой практике. Короткие уроки, точные огласовки и AI-учитель — в одном спокойном маршруте.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="acrab://">
-            <span>Открыть Acrab</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a class="button button-secondary" href="#about">Как это работает</a>
-        </div>
-        <ul class="hero-facts" aria-label="Ключевые особенности">
-          <li>Русский интерфейс</li>
-          <li>Фусха с огласовками</li>
-          <li>Без рекламы</li>
-        </ul>
+    <div class="page-head">
+      <div class="page-head-inner">
+        <p class="eyebrow">Обновления</p>
+        <h1 class="page-title">Что нового в Acrab</h1>
+        <p class="page-lead">Каждая версия приложения — со своей датой, разбором главной новинки и списком того, что улучшилось и починилось.</p>
       </div>
+    </div>
 
-      <div class="hero-visual" aria-label="Пример учебного материала Acrab">
-        <div class="arabic-orbit" aria-hidden="true">اِقْرَأْ وَافْهَمْ</div>
-        <div class="language-demo">
-          <div class="demo-topline"><span>Цвета и описания</span><strong>1 / 12</strong></div>
-          <div class="demo-word" dir="rtl" lang="ar">أَحْمَرُ</div>
-          <p class="demo-translation">красный</p>
-          <div class="demo-example">
-            <span>Пример</span>
-            <p dir="rtl" lang="ar">أَنَا اشْتَرَيْتُ سَيَّارَةً حَمْرَاءَ.</p>
-            <small>Я купил красную машину.</small>
-          </div>
-          <div class="demo-progress" aria-hidden="true"><span></span></div>
-          <div class="demo-action">Продолжить <span aria-hidden="true">→</span></div>
+    <div class="changelog">
+
+      <!-- ═══ ШАБЛОН НОВОГО РЕЛИЗА ══════════════════════════════════════════
+           1. Скопируйте <article class="release"> целиком и вставьте первым.
+           2. Поменяйте id, номер версии (в чипе и в href) и дату — в двух
+              местах: атрибут datetime и видимый текст.
+           3. Заголовок = главная новинка релиза, эмодзи по смыслу. Ниже —
+              картинка, абзац-описание и, если нужно, строка «Как открыть».
+           4. Секции: ✨ Новое / 💎 Улучшения / 🐞 Исправления. Пустую секцию
+              просто удалите. Внутри — <ul class="dash-list"> с пунктами вида
+              <strong>Что:</strong> подробность.
+           5. Картинка: положите файл в /assets/changelog/ (например 1-4.png,
+              16:9) и замените <div class="media-placeholder">…</div> тегом img
+              с этим путём — готовая строка лежит в
+              /assets/changelog/README.md.
+              Заглушка намеренно не img: tools/check_site.py валит сборку на
+              картинке, которой ещё нет в репозитории.
+           ═══════════════════════════════════════════════════════════════════ -->
+
+      <article class="release" id="v1-3" aria-labelledby="v1-3-title">
+        <div class="release-rail">
+          <a class="version-chip" href="#v1-3">v1.3</a>
+          <time class="release-date" datetime="2026-08-07">7 августа 2026</time>
         </div>
-        <div class="hero-stamp" aria-hidden="true">
-          <strong>10</strong>
-          <span>минут<br>в день</span>
-        </div>
-      </div>
-    </section>
 
-    <section class="manifest" id="about" aria-labelledby="about-title">
-      <p class="manifest-label">Почему Acrab</p>
-      <div class="manifest-grid">
-        <h2 id="about-title">Не чат вместо курса.<br>Курс с умным помощником.</h2>
-        <div class="manifest-copy">
-          <p>Acrab даёт структуру: программа фусхи, упражнения, интервальные повторения и понятный следующий шаг.</p>
-          <p>AI подключается там, где нужен живой разбор — объяснить правило по-русски, перевести, добавить огласовки или показать слово в контексте.</p>
-        </div>
-      </div>
-      <ol class="learning-path" aria-label="Учебный цикл Acrab">
-        <li><span>01</span><strong>Понять</strong><small>правило и контекст</small></li>
-        <li><span>02</span><strong>Услышать</strong><small>правильное произношение</small></li>
-        <li><span>03</span><strong>Применить</strong><small>в упражнении</small></li>
-        <li><span>04</span><strong>Закрепить</strong><small>в нужный момент</small></li>
-      </ol>
-    </section>
+        <div class="release-main">
+          <h2 class="release-title" id="v1-3-title"><span class="emoji" aria-hidden="true">📖</span>Теория к грамматическим урокам</h2>
 
-    <section class="feature-story" aria-labelledby="features-title">
-      <div class="feature-title">
-        <span class="arabic-word" dir="rtl" lang="ar">أَقْرَبُ</span>
-        <h2 id="features-title">Всё нужное — ближе</h2>
-        <p>Acrab объединяет инструменты, которые обычно приходится искать по разным приложениям и учебникам.</p>
-      </div>
-      <div class="feature-list">
-        <article>
-          <span aria-hidden="true">ض</span>
-          <div><h3>Программа фусхи</h3><p>Уроки от алфавита до грамматики и чтения с ташкилем.</p></div>
-        </article>
-        <article>
-          <span aria-hidden="true">ف</span>
-          <div><h3>Формы и корни слов</h3><p>Словообразование, спряжения и удобный поиск глаголов.</p></div>
-        </article>
-        <article>
-          <span aria-hidden="true">ص</span>
-          <div><h3>Аудио и произношение</h3><p>Слушайте слова и фразы прямо во время занятия.</p></div>
-        </article>
-        <article>
-          <span aria-hidden="true">ع</span>
-          <div><h3>AI-учитель</h3><p>Перевод, огласовки, примеры и объяснения на русском.</p></div>
-        </article>
-      </div>
-    </section>
+          <figure class="release-media">
+            <img src="/assets/changelog/1-3.png" alt="Теория в уроках и честный прогресс в версии 1.3" width="1672" height="941">
+          </figure>
 
-    <section class="premium" id="premium" aria-labelledby="premium-title">
-      <div class="premium-intro">
-        <span class="premium-crown" aria-hidden="true">✦</span>
-        <p>Acrab Premium</p>
-        <h2 id="premium-title">Учитесь без пауз</h2>
-        <p>Полная программа и расширенные дневные лимиты. Без рекламы и скрытых доплат.</p>
-      </div>
+          <p>Грамматический урок больше не начинается сразу с упражнений. Перед ними Acrab разбирает правило по-русски: как строится форма, где она встречается и чем отличаются похожие случаи — с примерами, полной огласовкой и отдельным блоком про типичную ошибку.</p>
 
-      <div class="plans" aria-label="Тарифы Acrab Premium">
-        <article class="plan plan-annual">
-          <div class="plan-topline"><span>Год</span><strong>Скидка 38%</strong></div>
-          <div class="plan-price"><strong>2 990 ₽</strong><span>за год</span></div>
-          <p class="plan-equivalent">≈ 249 ₽ в месяц · меньше 9 ₽ в день</p>
-          <ul>
-            <li>Вся программа фусхи</li>
-            <li>AI-учитель — 30 запросов в день</li>
-            <li>Перевод текстов до 2 000 символов</li>
-            <li>Расширенные лимиты аудио и огласовок</li>
-            <li>Словари и примеры из общей базы без лимита</li>
+          <p><strong>Как открыть:</strong> любой грамматический урок во вкладке «Программа» — карточка <code>Теория</code> ждёт на стартовом экране урока, до первого упражнения. Она же открывается из карточки слова.</p>
+
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">✨</span>Новое</h3>
+          <ul class="dash-list">
+            <li><strong>«Собери предложение»:</strong> задание принимает больше вариантов русского перевода. Порядок слов в русском бывает разным, и правильный ответ больше не зависит от одной-единственной формулировки.</li>
           </ul>
-          <a class="button button-premium" href="acrab://">Выбрать год</a>
-        </article>
 
-        <article class="plan plan-monthly">
-          <div class="plan-topline"><span>Месяц</span></div>
-          <div class="plan-price"><strong>399 ₽</strong><span>в месяц</span></div>
-          <p class="plan-equivalent">Меньше 14 ₽ в день</p>
-          <p>Те же возможности Premium без долгого обязательства. Подойдёт, чтобы начать и оценить свой ритм занятий.</p>
-          <a class="button button-secondary-dark" href="acrab://">Выбрать месяц</a>
-        </article>
-      </div>
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">💎</span>Улучшения</h3>
+          <ul class="dash-list">
+            <li><strong>Программа:</strong> урок отрабатывает только свою лексику. Слова, предложения и грамматика из других уроков больше не подмешиваются — всё интервальное повторение живёт в «Быстрых тренировках».</li>
+            <li><strong>Программа:</strong> предложение или грамматический выбор появляются только после карточки своего слова и хотя бы одного упражнения по нему.</li>
+            <li><strong>Программа:</strong> урок играется целиком — и в первый раз, и на повторе, и после частичного прогресса.</li>
+            <li><strong>Программа:</strong> промахи в грамматике, «собери предложение» и «найди пару» влияют на точность сессии наравне с обычными упражнениями.</li>
+            <li><strong>Интерфейс:</strong> макеты перестраиваются под iPad, Split View и крупный системный шрифт; огласовки при этом не обрезаются.</li>
+          </ul>
 
-      <div class="payment-note">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5.1 3.4 9.8 8 11 4.6-1.2 8-5.9 8-11V5l-8-3Zm0 2.2 6 2.2V11c0 4-2.5 7.8-6 8.9C8.5 18.8 6 15 6 11V6.4l6-2.2Zm-1.1 10.5-2.5-2.5 1.4-1.4 1.1 1.1 3.6-3.6 1.4 1.4-5 5Z"/></svg>
-        <p><strong>Как проходит оплата</strong>Вы выбираете тариф в приложении, Acrab открывает защищённую платёжную страницу «Точки», а после подтверждения активирует Premium. Данные банковской карты не хранятся в Acrab. Отменить продление можно в любое время.</p>
-      </div>
-    </section>
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">🐞</span>Исправления</h3>
+          <ul class="dash-list">
+            <li><strong>Вход:</strong> разовый сбой сети больше не выкидывает из аккаунта — сессия сбрасывается только после нескольких независимых отказов подряд.</li>
+            <li><strong>Синхронизация:</strong> прогресс «Программы» и данные аккаунта надёжно доезжают между устройствами, в том числе там, где раньше молча не сохранялись.</li>
+            <li><strong>Библиотека:</strong> картинки снова загружаются и не пропадают.</li>
+            <li><strong>Арабский текст:</strong> многословные фразы больше не разворачиваются задом наперёд.</li>
+            <li><strong>Аудио:</strong> добавлены недостающие нарезки — молчащих слов в уроках нет.</li>
+          </ul>
+        </div>
+      </article>
 
-    <section class="closing" aria-labelledby="closing-title">
-      <div class="closing-arabic" dir="rtl" lang="ar" aria-hidden="true">خُطْوَةٌ بَعْدَ خُطْوَةٍ</div>
-      <div>
-        <h2 id="closing-title">Шаг за шагом — к пониманию</h2>
-        <p>Откройте Acrab и продолжите с того места, где остановились.</p>
-      </div>
-      <a class="button button-primary" href="acrab://">Открыть приложение <span aria-hidden="true">↗</span></a>
-    </section>
+      <article class="release" id="v1-2" aria-labelledby="v1-2-title">
+        <div class="release-rail">
+          <a class="version-chip" href="#v1-2">v1.2</a>
+          <time class="release-date" datetime="2026-07-28">28 июля 2026</time>
+        </div>
+
+        <div class="release-main">
+          <h2 class="release-title" id="v1-2-title"><span class="emoji" aria-hidden="true">🧭</span>Устойчивый прогресс и аккуратный арабский текст</h2>
+
+          <figure class="release-media">
+            <img src="/assets/changelog/1-2.png" alt="Стабильная синхронизация прогресса и аккуратный арабский текст в версии 1.2" width="1672" height="941">
+          </figure>
+
+          <p>Релиз про надёжность: прогресс уроков перестал теряться при обрыве связи, а арабские примеры — обрезаться по огласовкам.</p>
+
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">💎</span>Улучшения</h3>
+          <ul class="dash-list">
+            <li><strong>Программа:</strong> прогресс сессии и облачная синхронизация стали устойчивее к обрывам связи.</li>
+            <li><strong>Программа:</strong> главы, до которых вы ещё не дошли после теста уровня, выглядят неактивными — маршрут читается с первого взгляда.</li>
+          </ul>
+
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">🐞</span>Исправления</h3>
+          <ul class="dash-list">
+            <li><strong>Арабский текст:</strong> примеры не обрезаются, харакаты видны целиком.</li>
+            <li><strong>Огонёк:</strong> история восстанавливается корректно после синхронизации с облаком.</li>
+            <li><strong>Интерфейс:</strong> обновлены русские строки.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="release" id="v1-1" aria-labelledby="v1-1-title">
+        <div class="release-rail">
+          <a class="version-chip" href="#v1-1">v1.1</a>
+          <time class="release-date" datetime="2026-07-26">26 июля 2026</time>
+        </div>
+
+        <div class="release-main">
+          <h2 class="release-title" id="v1-1-title"><span class="emoji" aria-hidden="true">🚀</span>Acrab в магазинах приложений</h2>
+
+          <figure class="release-media">
+            <img src="/assets/changelog/1-1.png" alt="Первый выпуск Акраба с программой фусхи и учебными инструментами" width="1672" height="941">
+          </figure>
+
+          <p>Версия, с которой Acrab начал распространяться: полная программа фусхи, набор инструментов и синхронизация прогресса.</p>
+
+          <h3 class="section-head"><span class="emoji" aria-hidden="true">✨</span>Новое</h3>
+          <ul class="dash-list">
+            <li><strong>Программа фусхи:</strong> уроки от алфавита до грамматики и чтения с ташкилем, с упражнениями и интервальным повторением.</li>
+            <li><strong>Инструменты:</strong> перевод, огласовки, спряжения глаголов, семьи слов по корням, флешкарты и AI-учитель с объяснениями на русском.</li>
+            <li><strong>Аудио:</strong> озвучка слов и фраз прямо во время занятия.</li>
+            <li><strong>Аккаунт:</strong> синхронизация прогресса между устройствами.</li>
+          </ul>
+        </div>
+      </article>
+
+      <p class="changelog-note">Более ранние версии не публиковались — до 1.1 Acrab распространялся только в закрытом тестировании.</p>
+
+    </div>
   </main>
 
-  <footer class="site-footer" id="support">
-    <a class="brand footer-brand" href="#top">
-      <img src="/assets/acrab-app-icon.png" alt="" width="38" height="38">
-      <span>Acrab</span>
-    </a>
-    <p>Литературный арабский на русском</p>
-    <div class="footer-links">
-      <a href="mailto:musa1756@proton.me?subject=Acrab%20Support">Поддержка</a>
-      <a href="/privacy" rel="noopener">Конфиденциальность</a>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <a class="brand" href="/">
+        <img src="/assets/acrab-app-icon.png" alt="" width="26" height="26">
+        <span>Acrab</span>
+      </a>
+      <div class="footer-social">
+        <span class="footer-social-label">Мы в соцсетях</span>
+        <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z"/></svg>
+          <span>@musa1756_ai</span>
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="/privacy" rel="noopener">Конфиденциальность</a>
+      </div>
     </div>
   </footer>
 </body>

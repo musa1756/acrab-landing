@@ -12,9 +12,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Every URL Apple has been given, mapped to the file that must serve it.
+# Every URL Apple has been given plus the site's own nav targets, mapped to the
+# file that must serve it. `/about` is not an Apple URL, but it is one of the
+# three header buttons — a 404 there is just as visible.
 REQUIRED_ROUTES = {
     "/": "index.html",
+    "/about": "about/index.html",
     "/buy": "buy/index.html",
     "/support": "support/index.html",
     "/privacy": "privacy/index.html",
