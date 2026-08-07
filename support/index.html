@@ -3,10 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Поддержка Acrab</title>
+  <!-- Apple's External Purchase entitlement registered this URL as the support
+       website, so /support stays the address and the contact block stays
+       prominent — only the visible label is Q/A. -->
+  <title>Q/A и поддержка Acrab</title>
   <meta name="description" content="Поддержка Acrab: помощь с оплатой Premium, возвраты, оспаривание платежей, вопросы по приложению.">
-  <meta name="theme-color" content="#fcf7ed">
+  <meta name="theme-color" content="#ffffff">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <link rel="canonical" href="https://acrab.ru/support">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
   <link rel="stylesheet" href="/styles.css">
@@ -14,68 +18,88 @@
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
 
-  <header class="site-header site-header-static" aria-label="Основная навигация">
-    <a class="brand" href="/" aria-label="Acrab, на главную">
-      <img src="/assets/acrab-app-icon.png" alt="" width="42" height="42">
-      <span>Acrab</span>
-    </a>
-    <a class="header-action" href="acrab://">Открыть приложение</a>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/" aria-label="Acrab, на главную">
+        <img src="/assets/acrab-app-icon.png" alt="" width="30" height="30">
+        <span>Acrab</span>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <a href="/">Главная</a>
+        <a href="/about">О приложении</a>
+        <a href="/buy">Оплата</a>
+        <a href="/support" aria-current="page">Q/A</a>
+      </nav>
+    </div>
   </header>
 
-  <main id="main" class="support-main">
-    <section class="support-card" aria-labelledby="support-title">
-      <p class="manifest-label">Поддержка</p>
-      <h1 id="support-title" class="auth-title">Чем помочь?</h1>
-      <p class="auth-lead">Ниже — быстрые ответы по оплате Acrab Premium вне App Store. Если вопроса нет в списке, напишите нам напрямую.</p>
-
-      <div class="support-contact">
-        <a class="button button-primary" href="mailto:musa1756@proton.me?subject=Acrab%20Support">Написать в поддержку</a>
-        <span class="support-contact-email">musa1756@proton.me</span>
+  <main id="main">
+    <div class="page-head page-head-centered">
+      <div class="page-head-inner">
+        <p class="eyebrow">Q/A</p>
+        <h1 class="page-title">Вопросы и ответы</h1>
+        <p class="page-lead">Быстрые ответы по оплате Acrab Premium и работе приложения. Если вопроса нет в списке, напишите нам напрямую.</p>
       </div>
+    </div>
 
-      <div class="support-faq">
-        <article>
-          <h2>Как оплатить Premium вне App Store?</h2>
-          <p>На странице <a href="/buy">оплаты</a> подтвердите почту от аккаунта Acrab кодом из письма, выберите тариф и завершите оплату на защищённой странице банка «Точка» — эквайера, сертифицированного по PCI DSS Level&nbsp;1. Данные карты вводятся на стороне банка и не передаются нам.</p>
-        </article>
+    <div class="panel-main">
+      <section class="panel panel-wide" aria-label="Вопросы и ответы">
+        <div class="support-contact">
+          <a class="button button-primary" href="https://t.me/musa_1756" target="_blank" rel="noopener">Написать в поддержку</a>
+          <span class="support-contact-email">Telegram <strong>@musa_1756</strong> · почта <a href="mailto:lagutkin.maksim.03@mail.ru?subject=Acrab%20Support">lagutkin.maksim.03@mail.ru</a></span>
+        </div>
 
-        <article>
-          <h2>Когда активируется Premium?</h2>
-          <p>Обычно сразу после успешной оплаты — банк подтверждает платёж, и приложение включает Premium автоматически. Если через несколько минут после оплаты доступ не появился, откройте профиль в приложении ещё раз или напишите нам с адресом почты и примерным временем оплаты.</p>
-        </article>
+        <div class="support-faq">
+          <article>
+            <h2>Как оплатить Premium?</h2>
+            <p>На странице <a href="/buy">оплаты</a> подтвердите почту от аккаунта Acrab кодом из письма, выберите тариф и завершите оплату на защищённой странице банка «Точка» — эквайера, сертифицированного по PCI DSS Level&nbsp;1. Данные карты вводятся на стороне банка и не передаются нам.</p>
+          </article>
 
-        <article>
-          <h2>Продление и повторная оплата</h2>
-          <p>Каждая оплата — разовая, на выбранный период (месяц или год); автоматического списания нет. Чтобы продолжить пользоваться Premium после окончания периода, оформите новую оплату тем же способом.</p>
-        </article>
+          <article>
+            <h2>Когда активируется Premium?</h2>
+            <p>Обычно сразу после успешной оплаты — банк подтверждает платёж, и приложение включает Premium автоматически. Если через несколько минут после оплаты доступ не появился, откройте профиль в приложении ещё раз или напишите нам с адресом почты и примерным временем оплаты.</p>
+          </article>
 
-        <article>
-          <h2>Возврат средств</h2>
-          <p>Напишите нам на почту с адресом аккаунта, датой и суммой платежа — разберём ситуацию и, если возврат обоснован, оформим его через банк «Точка» на карту, с которой была оплата.</p>
-        </article>
+          <article>
+            <h2>Продление и повторная оплата</h2>
+            <p>Каждая оплата — разовая, на выбранный период (месяц или год); автоматического списания нет. Чтобы продолжить пользоваться Premium после окончания периода, оформите новую оплату тем же способом.</p>
+          </article>
 
-        <article>
-          <h2>Не узнаю платёж / списание без моего ведома</h2>
-          <p>Немедленно напишите нам с деталями операции. Мы проверим платёж по данным банка «Точка» и, если списание не связано с вашим действием, поможем оспорить его через стандартную процедуру банка-эквайера.</p>
-        </article>
+          <article>
+            <h2>Возврат средств</h2>
+            <p>Напишите нам на почту с адресом аккаунта, датой и суммой платежа — разберём ситуацию и, если возврат обоснован, оформим его через банк «Точка» на карту, с которой была оплата.</p>
+          </article>
 
-        <article>
-          <h2>Другие вопросы по приложению</h2>
-          <p>По ошибкам в программе, синхронизации прогресса или работе AI-ассистента тоже пишите на почту поддержки — ответим как можно быстрее.</p>
-        </article>
-      </div>
-    </section>
+          <article>
+            <h2>Не узнаю платёж / списание без моего ведома</h2>
+            <p>Немедленно напишите нам с деталями операции. Мы проверим платёж по данным банка «Точка» и, если списание не связано с вашим действием, поможем оспорить его через стандартную процедуру банка-эквайера.</p>
+          </article>
+
+          <article>
+            <h2>Другие вопросы по приложению</h2>
+            <p>По ошибкам в программе, синхронизации прогресса или работе AI-ассистента тоже пишите на почту поддержки — ответим как можно быстрее.</p>
+          </article>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <footer class="site-footer" id="support">
-    <a class="brand footer-brand" href="/">
-      <img src="/assets/acrab-app-icon.png" alt="" width="38" height="38">
-      <span>Acrab</span>
-    </a>
-    <p>Литературный арабский на русском</p>
-    <div class="footer-links">
-      <a href="mailto:musa1756@proton.me?subject=Acrab%20Support">Поддержка</a>
-      <a href="/privacy" rel="noopener">Конфиденциальность</a>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <a class="brand" href="/">
+        <img src="/assets/acrab-app-icon.png" alt="" width="26" height="26">
+        <span>Acrab</span>
+      </a>
+      <div class="footer-social">
+        <span class="footer-social-label">Мы в соцсетях</span>
+        <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z"/></svg>
+          <span>@musa1756_ai</span>
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="/privacy" rel="noopener">Конфиденциальность</a>
+      </div>
     </div>
   </footer>
 </body>
