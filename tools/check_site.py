@@ -9,6 +9,7 @@ that make the site work and that are easy to violate by accident.
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -68,9 +69,10 @@ def check_links():
             if not target.startswith("/"):
                 fail(f"{rel_page}: относительная ссылка \"{target}\" — нужен абсолютный путь")
                 continue
-            resolved = ROOT / target.lstrip("/")
-            if resolved.is_dir() or target in REQUIRED_ROUTES:
-                candidate = ROOT / REQUIRED_ROUTES.get(target, target.lstrip("/") + "/index.html")
+            target_path = urlsplit(target).path
+            resolved = ROOT / target_path.lstrip("/")
+            if resolved.is_dir() or target_path in REQUIRED_ROUTES:
+                candidate = ROOT / REQUIRED_ROUTES.get(target_path, target_path.lstrip("/") + "/index.html")
                 if not candidate.is_file():
                     fail(f"{rel_page}: ссылка \"{target}\" ведёт в директорию без index.html")
             elif not resolved.is_file():
