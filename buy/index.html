@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Оплата Acrab Premium</title>
-  <meta name="description" content="Оплата Acrab Premium вне App Store: подтвердите почту и оплатите через Точку.">
-  <meta name="theme-color" content="#fcf7ed">
+  <meta name="description" content="Оплата Acrab Premium: подтвердите почту аккаунта, выберите тариф и оплатите через банк «Точка».">
+  <meta name="theme-color" content="#ffffff">
   <meta name="robots" content="noindex">
   <!-- Timeweb static hosting can't set response headers, so CSP ships as a meta
        tag. frame-ancestors is ignored in meta form — the inline frame-buster
@@ -14,76 +14,202 @@
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
   <link rel="stylesheet" href="/styles.css?v=20260807-changelog">
-  <link rel="stylesheet" href="/buy.css?v=20260807-legacy-payment">
 </head>
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
 
-  <header class="site-header site-header-static" aria-label="Основная навигация">
-    <a class="brand" href="/" aria-label="Acrab, на главную">
-      <img src="/assets/acrab-app-icon.png" alt="" width="42" height="42">
-      <span>Acrab</span>
-    </a>
-    <a class="header-action" href="acrab://">Открыть приложение</a>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/" aria-label="Acrab, на главную">
+        <img src="/assets/acrab-app-icon.png" alt="" width="30" height="30">
+        <span>Acrab</span>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <a href="/">Главная</a>
+        <a href="/about">О приложении</a>
+        <a href="/buy" aria-current="page">Оплата</a>
+        <a href="/support">Q/A</a>
+      </nav>
+    </div>
   </header>
 
-  <main id="main" class="auth-main">
-    <section class="auth-card" aria-labelledby="buy-title">
-      <p class="manifest-label">Acrab Premium</p>
-      <h1 id="buy-title" class="auth-title">Оплата вне App Store</h1>
-      <p class="auth-lead">Подтвердите почту от аккаунта Acrab, выберите тариф и оплатите через защищённую страницу банка «Точка». Данные карты не хранятся у нас.</p>
-
-      <div id="step-email" class="auth-step" data-step="email">
-        <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
-        <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-        <button id="send-code-btn" class="button button-primary auth-submit" type="button">Получить код</button>
-        <p id="email-error" class="auth-error" role="alert" hidden></p>
+  <main id="main">
+    <div class="page-head page-head-centered">
+      <div class="page-head-inner">
+        <p class="eyebrow">Acrab Premium</p>
+        <h1 class="page-title">Оплата</h1>
+        <p class="page-lead">Подтвердите почту от аккаунта Acrab, выберите тариф и оплатите через защищённую страницу банка «Точка». Данные карты вводятся на стороне банка и не хранятся у нас.</p>
       </div>
+    </div>
 
-      <div id="step-code" class="auth-step" data-step="code" hidden>
-        <p class="auth-hint">Код отправлен на <strong id="code-email-echo"></strong>.</p>
-        <label class="auth-label" for="code-input">Код из письма</label>
-        <input id="code-input" class="auth-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
-        <button id="verify-code-btn" class="button button-primary auth-submit" type="button">Подтвердить</button>
-        <button id="change-email-btn" class="auth-linklike" type="button">Изменить почту</button>
-        <p id="code-error" class="auth-error" role="alert" hidden></p>
-      </div>
+    <div class="panel-main">
+      <section class="panel" aria-labelledby="buy-title">
+        <h2 id="buy-title" class="auth-title">Вход по почте</h2>
+        <p class="auth-lead">Premium привязывается к тому же аккаунту, с которым вы занимаетесь в приложении.</p>
 
-      <div id="step-plan" class="auth-step" data-step="plan" hidden>
-        <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
-        <div class="plan-picker" role="group" aria-label="Выбор тарифа">
-          <button class="plan-option" type="button" data-plan="annual">
-            <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
-            <span class="plan-option-price" id="price-annual">2 990 ₽</span>
-            <span class="plan-option-note">за год</span>
-          </button>
-          <button class="plan-option" type="button" data-plan="monthly">
-            <span class="plan-option-top"><span>Месяц</span></span>
-            <span class="plan-option-price" id="price-monthly">399 ₽</span>
-            <span class="plan-option-note">в месяц</span>
-          </button>
+        <div id="step-email" class="auth-step" data-step="email">
+          <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
+          <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+          <button id="send-code-btn" class="button button-primary auth-submit" type="button">Получить код</button>
+          <p id="email-error" class="auth-error" role="alert" hidden></p>
         </div>
-        <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
-        <p id="plan-error" class="auth-error" role="alert" hidden></p>
-      </div>
 
-      <div id="step-redirect" class="auth-step" data-step="redirect" hidden>
-        <p class="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
-      </div>
+        <div id="step-code" class="auth-step" data-step="code" hidden>
+          <p class="auth-hint">Код отправлен на <strong id="code-email-echo"></strong>.</p>
+          <label class="auth-label" for="code-input">Код из письма</label>
+          <input id="code-input" class="auth-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+          <button id="verify-code-btn" class="button button-primary auth-submit" type="button">Подтвердить</button>
+          <button id="change-email-btn" class="auth-linklike" type="button">Изменить почту</button>
+          <p id="code-error" class="auth-error" role="alert" hidden></p>
+        </div>
 
-      <p class="auth-footnote">Обработку платежа выполняет банк «Точка» (эквайринг, соответствует PCI DSS Level&nbsp;1). Мы не получаем и не храним данные вашей карты. Вопросы по оплате — на <a href="/support">странице поддержки</a>.</p>
-    </section>
+        <div id="step-plan" class="auth-step" data-step="plan" hidden>
+          <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
+          <div class="plan-picker" role="group" aria-label="Выбор тарифа">
+            <button class="plan-option" type="button" data-plan="annual">
+              <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
+              <span class="plan-option-price" id="price-annual">2 990 ₽</span>
+              <span class="plan-option-note">за год</span>
+            </button>
+            <button class="plan-option" type="button" data-plan="monthly">
+              <span class="plan-option-top"><span>Месяц</span></span>
+              <span class="plan-option-price" id="price-monthly">399 ₽</span>
+              <span class="plan-option-note">в месяц</span>
+            </button>
+          </div>
+          <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
+          <p id="plan-error" class="auth-error" role="alert" hidden></p>
+        </div>
+
+        <div id="step-redirect" class="auth-step" data-step="redirect" hidden>
+          <p class="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
+        </div>
+
+        <p class="auth-footnote">Обработку платежа выполняет банк «Точка» (эквайринг, соответствует PCI DSS Level&nbsp;1). Мы не получаем и не храним данные вашей карты. Каждая оплата разовая, на выбранный период — автосписания нет. Вопросы по оплате — на <a href="/support">странице Q/A</a>.</p>
+      </section>
+
+      <!-- Цифры сверены с AIQuotaScope (freeDailyLimit / premiumDailyLimit) и
+           FushaProgramAccessPolicy в приложении. Меняются лимиты — правится и
+           эта таблица, иначе сайт начнёт обещать не то, что выдаёт приложение. -->
+      <section class="compare" aria-labelledby="compare-title">
+        <h2 class="compare-title" id="compare-title">Что даёт Premium</h2>
+        <p class="compare-lead">Free остаётся бесплатным без ограничения по времени. Premium снимает границу программы и поднимает дневные лимиты инструментов.</p>
+
+        <div class="compare-scroll">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th scope="col">Возможность</th>
+                <th scope="col">Free</th>
+                <th scope="col" class="is-premium">Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Программа</th></tr>
+              <tr>
+                <th scope="row">Главы программы</th>
+                <td>Первые 6 глав</td>
+                <td class="is-premium">Все 44 главы</td>
+              </tr>
+              <tr>
+                <th scope="row">Уроки, упражнения, интервальное повторение</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Озвучка слов и фраз в уроках</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Инструменты — лимит на день</th></tr>
+              <tr>
+                <th scope="row">AI-учитель, сообщений</th>
+                <td>10</td>
+                <td class="is-premium">30</td>
+              </tr>
+              <tr>
+                <th scope="row">Перевод, символов</th>
+                <td>500</td>
+                <td class="is-premium">8 000</td>
+              </tr>
+              <tr>
+                <th scope="row">Огласовки текста, символов</th>
+                <td>500</td>
+                <td class="is-premium">8 000</td>
+              </tr>
+              <tr>
+                <th scope="row">Огласовки по фото</th>
+                <td>1</td>
+                <td class="is-premium">5</td>
+              </tr>
+              <tr>
+                <th scope="row">Словарь по теме, запросов</th>
+                <td>3</td>
+                <td class="is-premium">10</td>
+              </tr>
+              <tr>
+                <th scope="row">Примеры со словом, запросов</th>
+                <td>3</td>
+                <td class="is-premium">10</td>
+              </tr>
+              <tr>
+                <th scope="row">Картинки для флешкарт</th>
+                <td>5</td>
+                <td class="is-premium">Без лимита</td>
+              </tr>
+              <tr>
+                <th scope="row">Озвучка текста, символов</th>
+                <td>400</td>
+                <td class="is-premium">1 500</td>
+              </tr>
+              <tr>
+                <th scope="row">Спряжения глаголов и семьи слов</th>
+                <td>Без лимита</td>
+                <td class="is-premium">Без лимита</td>
+              </tr>
+
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Огонёк и прогресс</th></tr>
+              <tr>
+                <th scope="row">Заморозки огонька</th>
+                <td>2</td>
+                <td class="is-premium">2</td>
+              </tr>
+              <tr>
+                <th scope="row">Автовосстановление сгоревшего огонька</th>
+                <td><span class="mark mark-no" aria-hidden="true">—</span><span class="visually-hidden">нет</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Синхронизация прогресса между устройствами</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="compare-note">Бесплатный маршрут программы заканчивается на главе «Семья и люди». Лимиты инструментов обнуляются каждый день; когда дневной лимит исчерпан, уроки продолжают работать как обычно.</p>
+      </section>
+    </div>
   </main>
 
-  <footer class="site-footer" id="support-link">
-    <a class="brand footer-brand" href="/">
-      <img src="/assets/acrab-app-icon.png" alt="" width="38" height="38">
-      <span>Acrab</span>
-    </a>
-    <p>Литературный арабский на русском</p>
-    <div class="footer-links">
-      <a href="/support">Поддержка</a>
-      <a href="/privacy" rel="noopener">Конфиденциальность</a>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <a class="brand" href="/">
+        <img src="/assets/acrab-app-icon.png" alt="" width="26" height="26">
+        <span>Acrab</span>
+      </a>
+      <div class="footer-social">
+        <span class="footer-social-label">Мы в соцсетях</span>
+        <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z"/></svg>
+          <span>@musa1756_ai</span>
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="/privacy" rel="noopener">Конфиденциальность</a>
+      </div>
     </div>
   </footer>
 
