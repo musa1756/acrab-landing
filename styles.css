@@ -642,6 +642,7 @@ code {
   font-size: 12px;
   font-weight: 700;
 }
+.about-num-standalone { display: block; width: max-content; }
 .about-h {
   margin-bottom: 14px;
   font-size: clamp(1.7rem, 3.4vw, 2.3rem);
@@ -668,6 +669,15 @@ code {
    those two proof screens a taller presence without changing the rest of the
    product tour or the one-column phone layout. */
 .about-showcase-tall { grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 356px); }
+.about-showcase-integrated {
+  grid-template-areas:
+    "head figure"
+    "copy figure";
+  row-gap: 0;
+}
+.about-showcase-integrated .about-section-head { grid-area: head; }
+.about-showcase-integrated .about-showcase-copy { grid-area: copy; }
+.about-showcase-integrated .about-showcase-figure { grid-area: figure; }
 .about-showcase-flip { grid-template-columns: 292px minmax(0, 1fr); }
 .about-showcase-flip .about-showcase-figure { order: -1; }
 /* The streak calendar is a square crop, not a phone — it needs more width to
@@ -1059,9 +1069,14 @@ code {
   .about-showcase-figure { width: min(288px, 100%); margin-inline: auto; }
   .about-showcase-wide .about-showcase-figure { width: min(400px, 100%); }
   .about-showcase-flip .about-showcase-figure { order: 0; }
-  /* On narrow screens, show the assistant proof before its supporting points
-     so the screen is not pushed far below the introduction. */
-  #assistant .about-showcase-figure { order: -1; }
+  .about-showcase-integrated {
+    grid-template-areas:
+      "head"
+      "figure"
+      "copy";
+    row-gap: 34px;
+  }
+  .about-showcase-integrated .about-section-head { margin-bottom: 0; }
   .guide-hero-with-media { grid-template-columns: minmax(0, 1fr); }
   .guide-hero-shot, .product-guide-hero .guide-hero-shot { width: min(260px, 100%); justify-self: start; }
   .guide-layout { grid-template-columns: minmax(0, 1fr); }
