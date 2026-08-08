@@ -552,6 +552,29 @@ code {
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 
 .site-footer { margin-top: auto; border-top: 1px solid var(--line-soft); }
+
+/* Store badges — they share the credits row, so they stay compact. */
+.store-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.store-link {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 14px 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.store-link:hover { border-color: var(--gold-wash-strong); background: var(--surface-soft); }
+.store-link svg { width: 21px; height: 21px; flex: 0 0 auto; fill: currentColor; }
+.store-link img { width: 21px; height: 21px; flex: 0 0 auto; }
+.store-link-text { display: flex; flex-direction: column; line-height: 1.2; }
+.store-link-kicker { color: var(--ink-faint); font-size: 10px; }
+.store-link-name { font-size: 14px; font-weight: 650; letter-spacing: -0.012em; }
+
 .site-footer-inner {
   width: var(--page);
   margin: 0 auto;
@@ -625,6 +648,8 @@ code {
   .plan-picker { grid-template-columns: 1fr; }
   .support-contact { flex-direction: column; align-items: stretch; }
   .site-footer-inner { flex-direction: column; align-items: flex-start; }
+  /* Two even columns beat ragged wrapping when three badges meet a 358 pt row. */
+  .store-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
