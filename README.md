@@ -1,22 +1,31 @@
 # Acrab Landing
 
 Static site for App Store Connect URLs and the external payment flow. The home
-page is a **changelog**, not a marketing one-pager: four header tabs
-(Главная / О приложении / Оплата / Q/A), each a real page. The footer is
+page is the **product pitch** («О приложении»), not the changelog — four header
+tabs (О приложении / Обновления / Оплата / Q/A), each a real page. The footer is
 deliberately bare — one link to the privacy policy, nothing else.
 
 ## Files
 
-- `index.html` - the changelog, laid out after `raycast.com/changelog`: one
-  `<article class="release">` per version, newest first, each with a sticky left
-  rail (version chip + date) beside a wide content column — emoji headline,
-  screenshot, description, then `✨ Новое` / `💎 Улучшения` / `🐞 Исправления`
-  sections as em-dash lists. A copy-paste template sits in an HTML comment at
-  the top of `.changelog`. Release images live in `assets/changelog/` — until a
-  file exists there, keep the `.media-placeholder` block instead of an `<img>`,
-  because `tools/check_site.py` fails on a `src` that does not resolve.
-- `about/index.html` - «О приложении». Intentionally an empty state for now;
-  Musa fills the copy in later.
+- `index.html` - «О приложении» at `/`, the marketing home page: a guided tour
+  of the app (program, drills, streak, tools, assistant, library, profile,
+  Free/Premium) built from real screenshots cropped to WebP in
+  `assets/about/`. This is what a visitor to `acrab.ru` sees first.
+- `about/index.html` - the changelog, served at `/about` and laid out after
+  `raycast.com/changelog`: one `<article class="release">` per version, newest
+  first, each with a sticky left rail (version chip + date) beside a wide
+  content column — emoji headline, screenshot, description, then `✨ Новое` /
+  `💎 Улучшения` / `🐞 Исправления` sections as em-dash lists. A copy-paste
+  template sits in an HTML comment at the top of `.changelog`. Release images
+  live in `assets/changelog/` — until a file exists there, keep the
+  `.media-placeholder` block instead of an `<img>`, because
+  `tools/check_site.py` fails on a `src` that does not resolve.
+
+  Yes, the changelog living at `/about` instead of `/` reads oddly from the
+  URL alone — it's a holdover from `/` being the changelog before the home
+  page got a real pitch. `tools/check_site.py`'s `REQUIRED_ROUTES` still maps
+  `"/about": "about/index.html"`, so the file path didn't move, only its
+  content and its header nav label (now «Обновления»).
 - `buy/index.html` - StoreKit External Purchase Link target page: email-OTP sign-in against the existing Supabase auth (`/auth/v1/otp` + `/verify`), then calls `tochka-payment` (`action=create`) with the resulting JWT and redirects to the returned Tochka `paymentLink`. No query params by design — the URL registered with Apple must stay static. Premium activation happens server-side via `tochka-payment-webhook`; this page never calls `confirm`.
 - `support/index.html` - «Q/A», the fourth header tab. Still the Apple-registered
   support destination (their External Purchase entitlement requires a real one,
@@ -86,9 +95,9 @@ Production URLs:
 - Marketing URL: `https://acrab.ru/`
 - Privacy Policy URL: `https://acrab.ru/privacy`
 
-`/` now serves the changelog. If a reviewer expects a product pitch at the
-Marketing URL, either point it at `/about` once that page has copy, or move the
-pitch onto `/`. The Support URL is better served by `/support` in any case.
+`/` now serves the product pitch («О приложении»), which doubles as a
+reasonable Marketing URL landing. The Support URL is still better served by
+`/support` in practice.
 
 External Purchase Link entitlement (payment processing website request):
 

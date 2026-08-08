@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Обновления Acrab</title>
-  <meta name="description" content="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель.">
+  <title>О приложении Acrab</title>
+  <meta name="description" content="Как устроен Acrab: программа фусхи из 44 глав, уроки с теорией по-русски, интервальное повторение, огонёк, восемь инструментов, AI-учитель и библиотека карточек.">
   <meta name="theme-color" content="#ffffff">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://acrab.ru/">
-  <meta property="og:title" content="Обновления Acrab">
-  <meta property="og:description" content="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель.">
+  <meta property="og:title" content="О приложении Acrab">
+  <meta property="og:description" content="Программа фусхи из 44 глав, уроки с теорией по-русски, повторение, огонёк, восемь инструментов и AI-учитель — в одном приложении.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://acrab.ru/">
   <meta property="og:image" content="https://acrab.ru/assets/acrab-app-icon.png">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
-  <link rel="stylesheet" href="/styles.css?v=20260808-stores-2">
+  <link rel="stylesheet" href="/styles.css?v=20260808-about-1">
 </head>
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
@@ -27,8 +27,8 @@
         <span>Acrab</span>
       </a>
       <nav class="site-nav" aria-label="Разделы сайта">
-        <a href="/" aria-current="page">Главная</a>
-        <a href="/about">О приложении</a>
+        <a href="/" aria-current="page">О приложении</a>
+        <a href="/about">Обновления</a>
         <a href="/buy">Оплата</a>
         <a href="/support">Q/A</a>
       </nav>
@@ -36,131 +36,424 @@
   </header>
 
   <main id="main">
-    <div class="page-head">
-      <div class="page-head-inner">
-        <p class="eyebrow">Обновления</p>
-        <h1 class="page-title">Что нового в Acrab</h1>
-        <p class="page-lead">Каждая версия приложения — со своей датой, разбором главной новинки и списком того, что улучшилось и починилось.</p>
-      </div>
-    </div>
+    <div class="about">
 
-    <div class="changelog">
+      <!-- ═══ Герой ═══════════════════════════════════════════════════════ -->
+      <section class="about-hero">
+        <div class="about-hero-copy">
+          <p class="eyebrow">О приложении</p>
+          <h1 class="page-title">Литературный арабский, разложенный по шагам</h1>
+          <p class="about-hero-lead">Acrab ведёт по программе фусхи от двадцати восьми букв до чтения текста с полной огласовкой, объясняет каждое правило по-русски и заменяет стопку словарей, спрягалок и переводчиков одним приложением.</p>
+          <dl class="about-stats">
+            <div class="about-stat"><dd>44</dd><dt>главы в программе</dt></div>
+            <div class="about-stat"><dd>6</dd><dt>глав бесплатно, без срока</dt></div>
+            <div class="about-stat"><dd>8</dd><dt>инструментов рядом с уроком</dt></div>
+            <div class="about-stat"><dd>3</dd><dt>платформы: iPhone, iPad, Android</dt></div>
+          </dl>
+        </div>
+        <div class="shot about-hero-figure">
+          <img src="/assets/about/program-path.webp" alt="Экран «Программа»: модули с названиями, описанием и процентом прохождения" width="620" height="1250" fetchpriority="high">
+        </div>
+      </section>
 
-      <!-- ═══ ШАБЛОН НОВОГО РЕЛИЗА ══════════════════════════════════════════
-           1. Скопируйте <article class="release"> целиком и вставьте первым.
-           2. Поменяйте id, номер версии (в чипе и в href) и дату — в двух
-              местах: атрибут datetime и видимый текст.
-           3. Заголовок = главная новинка релиза, эмодзи по смыслу. Ниже —
-              картинка, абзац-описание и, если нужно, строка «Как открыть».
-           4. Секции: ✨ Новое / 💎 Улучшения / 🐞 Исправления. Пустую секцию
-              просто удалите. Внутри — <ul class="dash-list"> с пунктами вида
-              <strong>Что:</strong> подробность.
-           5. Картинка: положите файл в /assets/changelog/ (например 1-4.png,
-              16:9) и замените <div class="media-placeholder">…</div> тегом img
-              с этим путём — готовая строка лежит в
-              /assets/changelog/README.md.
-              Заглушка намеренно не img: tools/check_site.py валит сборку на
-              картинке, которой ещё нет в репозитории.
-           ═══════════════════════════════════════════════════════════════════ -->
+      <!-- ═══ Карта разделов ══════════════════════════════════════════════ -->
+      <nav class="about-map" aria-label="Разделы приложения">
+        <a href="#program">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4L2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/></svg>
+          <span class="about-map-name">Программа</span>
+          <span class="about-map-sub">Маршрут из 44 глав</span>
+        </a>
+        <a href="#tools">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 3l1.6 4.4L16 9l-4.4 1.6L10 15l-1.6-4.4L4 9l4.4-1.6z"/><path d="M17.5 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>
+          <span class="about-map-name">Инструменты</span>
+          <span class="about-map-sub">Восемь помощников</span>
+        </a>
+        <a href="#assistant">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 016.5 3h11A2.5 2.5 0 0120 5.5v7a2.5 2.5 0 01-2.5 2.5H9.5L4.5 19z"/><path d="M8.5 7.5h7M8.5 11h4"/></svg>
+          <span class="about-map-name">Ассистент</span>
+          <span class="about-map-sub">AI-учитель на русском</span>
+        </a>
+        <a href="#library">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="6" width="4.2" height="14" rx="1.2"/><rect x="9.9" y="3.5" width="4.2" height="16.5" rx="1.2"/><rect x="16.3" y="8" width="4.2" height="12" rx="1.2"/></svg>
+          <span class="about-map-name">Библиотека</span>
+          <span class="about-map-sub">Карточки с картинками</span>
+        </a>
+        <a href="#profile">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.8 20a7.4 7.4 0 0114.4 0"/></svg>
+          <span class="about-map-name">Профиль</span>
+          <span class="about-map-sub">Прогресс и синхронизация</span>
+        </a>
+      </nav>
 
-      <article class="release" id="v1-3" aria-labelledby="v1-3-title">
-        <div class="release-rail">
-          <a class="version-chip" href="#v1-3">v1.3</a>
-          <time class="release-date" datetime="2026-08-07">7 августа 2026</time>
+      <!-- ═══ 01 Программа ════════════════════════════════════════════════ -->
+      <section class="about-section" id="program" aria-labelledby="program-title">
+        <div class="about-section-head">
+          <span class="about-num">01</span>
+          <h2 class="about-h" id="program-title">Не набор уроков, а маршрут</h2>
+          <p class="about-p">Сорок четыре главы выстроены так, что каждая опирается на предыдущую: сначала двадцать восемь букв и их соединение, потом приветствия, рассказ о себе, артикль <span lang="ar">ال</span> с солнечными и лунными буквами, именное предложение — и дальше вглубь грамматики.</p>
         </div>
 
-        <div class="release-main">
-          <h2 class="release-title" id="v1-3-title"><span class="emoji" aria-hidden="true">📖</span>Теория к грамматическим урокам</h2>
+        <div class="about-showcase">
+          <div class="about-showcase-copy">
+            <ul class="about-points">
+              <li><strong>Глава видна целиком:</strong> название, что вы научитесь делать на практике, и процент прохождения на кольце.</li>
+              <li><strong>Тест уровня в начале.</strong> Если алфавит уже знаком, маршрут открывается с нужного места, а не с первой буквы.</li>
+              <li><strong>Главы, до которых вы ещё не дошли,</strong> показаны неактивными — путь читается с первого взгляда.</li>
+              <li><strong>Урок отрабатывает только свою лексику.</strong> Слова и грамматика из других глав не подмешиваются: повторение живёт отдельно.</li>
+              <li><strong>Полная огласовка везде</strong> — в словах, примерах и упражнениях, а не только в первых уроках.</li>
+            </ul>
+          </div>
+          <div class="shot about-showcase-figure">
+            <img src="/assets/about/program-home.webp" alt="Главный экран «Программы»: огонёк «10 дней подряд» и блок «Быстрые тренировки»" width="620" height="892" loading="lazy">
+          </div>
+        </div>
 
-          <figure class="release-media">
-            <img src="/assets/changelog/1-3.png" alt="Теория в уроках и честный прогресс в версии 1.3" width="1672" height="941">
+        <h3 class="about-subhead">Как устроен урок</h3>
+        <div class="about-cards">
+          <article class="about-card">
+            <figure class="about-card-shot"><img src="/assets/about/lesson-theory.webp" alt="Карточка «Теория» в уроке: правило про настоящее время с примерами" width="620" height="1212" loading="lazy"></figure>
+            <div class="about-card-body">
+              <h3>Сначала теория</h3>
+              <p>Правило по-русски до первого упражнения: как строится форма, где встречается, чем отличается от похожих случаев — и разбор типичной ошибки.</p>
+            </div>
+          </article>
+          <article class="about-card">
+            <figure class="about-card-shot"><img src="/assets/about/lesson-choice.webp" alt="Упражнение «Выберите перевод»: арабское слово и четыре варианта ответа" width="620" height="896" loading="lazy"></figure>
+            <div class="about-card-body">
+              <h3>Выбор перевода</h3>
+              <p>Слово с огласовкой и озвучкой, четыре варианта, мгновенная проверка. Верный ответ приносит XP и двигает прогресс сессии.</p>
+            </div>
+          </article>
+          <article class="about-card">
+            <figure class="about-card-shot"><img src="/assets/about/lesson-build.webp" alt="Упражнение «Соберите предложение»: арабские слова собираются в строку" width="576" height="1168" loading="lazy"></figure>
+            <div class="about-card-body">
+              <h3>Соберите предложение</h3>
+              <p>Русская фраза — и рассыпанные арабские слова, которые нужно поставить в правильном порядке. Задание принимает разные варианты перевода.</p>
+            </div>
+          </article>
+          <article class="about-card">
+            <figure class="about-card-shot"><img src="/assets/about/lesson-listening.webp" alt="Упражнение «Аудирование»: волна звука и четыре варианта перевода" width="576" height="1128" loading="lazy"></figure>
+            <div class="about-card-body">
+              <h3>Аудирование</h3>
+              <p>Фраза звучит целиком, без текста. Можно замедлить, повторить или показать написание — и только потом выбрать перевод.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ═══ 02 Быстрые тренировки ═══════════════════════════════════════ -->
+      <section class="about-section" id="drills" aria-labelledby="drills-title">
+        <div class="about-section-head">
+          <span class="about-num">02</span>
+          <h2 class="about-h" id="drills-title">Слово возвращается, пока не станет своим</h2>
+          <p class="about-p">Интервальное повторение вынесено из уроков на главный экран «Программы» — в блок «Быстрые тренировки». Четыре очереди, у каждой своё правило выхода, и счётчик показывает, сколько слов ждёт сегодня.</p>
+        </div>
+
+        <div class="drill-grid">
+          <div class="drill">
+            <span class="drill-icon drill-repeat" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 5v6h-6"/></svg></span>
+            <div>
+              <p class="drill-name">Повторить</p>
+              <p class="drill-note">Приоритет программы на сегодня — то, что вот-вот забудется.</p>
+            </div>
+            <span class="drill-count">33</span>
+          </div>
+          <div class="drill">
+            <span class="drill-icon drill-speed" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></span>
+            <div>
+              <p class="drill-name">Скорость</p>
+              <p class="drill-note">Один верный ответ закрывает слово. Разминка на узнавание.</p>
+            </div>
+            <span class="drill-count">17</span>
+          </div>
+          <div class="drill">
+            <span class="drill-icon drill-hard" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5l9 15.5H3z"/><path d="M12 9.5v4.2M12 16.6v.1"/></svg></span>
+            <div>
+              <p class="drill-name">Сложные</p>
+              <p class="drill-note">Слова, на которых вы спотыкались. Уходят только после двух верных ответов.</p>
+            </div>
+            <span class="drill-count">2</span>
+          </div>
+          <div class="drill">
+            <span class="drill-icon drill-listen" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h3l5 4V5L7 9H4z"/><path d="M16.2 9.4a3.6 3.6 0 010 5.2"/><path d="M18.8 6.8a7.2 7.2 0 010 10.4"/></svg></span>
+            <div>
+              <p class="drill-name">Аудирование</p>
+              <p class="drill-note">Слова, которые давно не звучали, — только на слух.</p>
+            </div>
+            <span class="drill-count">11</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ 03 Огонёк и ритм ════════════════════════════════════════════ -->
+      <section class="about-section" id="streak" aria-labelledby="streak-title">
+        <div class="about-section-head">
+          <span class="about-num">03</span>
+          <h2 class="about-h" id="streak-title">Огонёк, который прощает пропуск</h2>
+          <p class="about-p">Позанимались — день загорается. Пропустили — сгорает не всё: в запасе лежат две заморозки, и они закрывают пропущенный день сами. Календарь «Ритм занятий» показывает месяц целиком: где был огонь, где заморозка, а где пусто.</p>
+        </div>
+
+        <div class="about-showcase about-showcase-flip about-showcase-wide">
+          <div class="about-showcase-copy">
+            <ul class="about-points">
+              <li><strong>Неделя всегда перед глазами</strong> — на главном экране, над быстрыми тренировками.</li>
+              <li><strong>Две заморозки</strong> — и в бесплатной версии, и в Premium.</li>
+              <li><strong>Автовосстановление сгоревшего огонька</strong> — в Premium: серия не обнуляется из-за одного тяжёлого дня.</li>
+              <li><strong>История переживает переустановку:</strong> огонёк восстанавливается после синхронизации с облаком.</li>
+            </ul>
+          </div>
+          <div class="shot shot-wide about-showcase-figure">
+            <img src="/assets/about/streak-calendar.webp" alt="Календарь «Ритм занятий» за июль: дни с огоньком и дни с заморозкой" width="880" height="874" loading="lazy">
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ 04 Инструменты ══════════════════════════════════════════════ -->
+      <section class="about-section" id="tools" aria-labelledby="tools-title">
+        <div class="about-section-head">
+          <span class="about-num">04</span>
+          <h2 class="about-h" id="tools-title">Восемь инструментов вместо пяти вкладок в браузере</h2>
+          <p class="about-p">Отдельный раздел, где живёт всё, ради чего обычно бросают урок и уходят искать: перевести, огласовать, спрячь глагол, найти родственные слова, услышать фразу, собрать словарь по теме.</p>
+        </div>
+
+        <div class="tool-grid">
+          <div class="tool tool-translate">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 8.5h13M13 5l3.5 3.5L13 12"/><path d="M20.5 15.5h-13M11 12l-3.5 3.5L11 19"/></svg>
+              <span class="tool-ar" lang="ar">تَرْجَمَةٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Перевод</p>
+              <p class="tool-sub">Арабский ⇄ Русский</p>
+            </div>
+          </div>
+          <div class="tool tool-voice">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5v5h3l4.5 3.5v-12L7 9.5H4z"/><path d="M15.8 9.6a3.4 3.4 0 010 4.8"/><path d="M18.4 7a7 7 0 010 10"/></svg>
+              <span class="tool-ar" lang="ar">صَوْتٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Озвучка</p>
+              <p class="tool-sub">Фраза → аудио и перевод</p>
+            </div>
+          </div>
+          <div class="tool tool-vocab">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 5.5A2.5 2.5 0 017 3h12.5v15H7a2.5 2.5 0 00-2.5 2.5z"/><path d="M11 3v6l2.4-1.7L15.8 9V3"/></svg>
+              <span class="tool-ar" lang="ar">مُفْرَدَاتٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Словарь</p>
+              <p class="tool-sub">Слова по любой теме</p>
+            </div>
+          </div>
+          <div class="tool tool-conj">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 10h17M12 10v9"/></svg>
+              <span class="tool-ar" lang="ar">تَصْرِيفٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Спряжение</p>
+              <p class="tool-sub">Таблица глагольных форм</p>
+            </div>
+          </div>
+          <div class="tool tool-root">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.8" cy="12" r="2.3"/><circle cx="17.6" cy="6.4" r="2.3"/><circle cx="17.6" cy="17.6" r="2.3"/><path d="M7.9 11L15.5 7.4M7.9 13l7.6 3.6"/></svg>
+              <span class="tool-ar" lang="ar">عَائِلَة</span>
+            </div>
+            <div>
+              <p class="tool-name">Семья слов</p>
+              <p class="tool-sub">Корень и родственные слова</p>
+            </div>
+          </div>
+          <div class="tool tool-examples">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 11h16M4 16h10"/></svg>
+              <span class="tool-ar" lang="ar">أَمْثِلَةٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Примеры</p>
+              <p class="tool-sub">Слово в контексте</p>
+            </div>
+          </div>
+          <div class="tool tool-harakat">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16l4.2-9 4.2 9"/><path d="M8.8 12.6h5.4"/><path d="M17 5.4h4M19 3.4v4"/></svg>
+              <span class="tool-ar" lang="ar">تَشْكِيلٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Огласовки</p>
+              <p class="tool-sub">Текст или фото страницы</p>
+            </div>
+          </div>
+          <div class="tool tool-image">
+            <div class="tool-top">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="8.8" cy="10" r="1.5"/><path d="M20.5 16l-5-5-8.5 8"/></svg>
+              <span class="tool-ar" lang="ar">صُورَةٌ</span>
+            </div>
+            <div>
+              <p class="tool-name">Картинка</p>
+              <p class="tool-sub">AI-образ и подпись</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shot-row" tabindex="0" role="group" aria-label="Экраны инструментов, прокручиваются по горизонтали">
+          <figure>
+            <div class="shot shot-crop"><img src="/assets/about/tool-translate.webp" alt="Переводчик: русская фраза и её арабский перевод с огласовками" width="620" height="988" loading="lazy"></div>
+            <figcaption><strong>Переводчик</strong>Определяет язык сам. Перевод приходит с огласовками и разбит по словам: тапните любое — увидите, что оно значит.</figcaption>
           </figure>
-
-          <p>Грамматический урок больше не начинается сразу с упражнений. Перед ними Acrab разбирает правило по-русски: как строится форма, где она встречается и чем отличаются похожие случаи — с примерами, полной огласовкой и отдельным блоком про типичную ошибку.</p>
-
-          <p><strong>Как открыть:</strong> любой грамматический урок во вкладке «Программа» — карточка <code>Теория</code> ждёт на стартовом экране урока, до первого упражнения. Она же открывается из карточки слова.</p>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">✨</span>Новое</h3>
-          <ul class="dash-list">
-            <li><strong>«Собери предложение»:</strong> задание принимает больше вариантов русского перевода. Порядок слов в русском бывает разным, и правильный ответ больше не зависит от одной-единственной формулировки.</li>
-          </ul>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">💎</span>Улучшения</h3>
-          <ul class="dash-list">
-            <li><strong>Программа:</strong> урок отрабатывает только свою лексику. Слова, предложения и грамматика из других уроков больше не подмешиваются — всё интервальное повторение живёт в «Быстрых тренировках».</li>
-            <li><strong>Программа:</strong> предложение или грамматический выбор появляются только после карточки своего слова и хотя бы одного упражнения по нему.</li>
-            <li><strong>Программа:</strong> урок играется целиком — и в первый раз, и на повторе, и после частичного прогресса.</li>
-            <li><strong>Программа:</strong> промахи в грамматике, «собери предложение» и «найди пару» влияют на точность сессии наравне с обычными упражнениями.</li>
-            <li><strong>Интерфейс:</strong> макеты перестраиваются под iPad, Split View и крупный системный шрифт; огласовки при этом не обрезаются.</li>
-          </ul>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">🐞</span>Исправления</h3>
-          <ul class="dash-list">
-            <li><strong>Вход:</strong> разовый сбой сети больше не выкидывает из аккаунта — сессия сбрасывается только после нескольких независимых отказов подряд.</li>
-            <li><strong>Синхронизация:</strong> прогресс «Программы» и данные аккаунта надёжно доезжают между устройствами, в том числе там, где раньше молча не сохранялись.</li>
-            <li><strong>Библиотека:</strong> картинки снова загружаются и не пропадают.</li>
-            <li><strong>Арабский текст:</strong> многословные фразы больше не разворачиваются задом наперёд.</li>
-            <li><strong>Аудио:</strong> добавлены недостающие нарезки — молчащих слов в уроках нет.</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="release" id="v1-2" aria-labelledby="v1-2-title">
-        <div class="release-rail">
-          <a class="version-chip" href="#v1-2">v1.2</a>
-          <time class="release-date" datetime="2026-07-28">28 июля 2026</time>
-        </div>
-
-        <div class="release-main">
-          <h2 class="release-title" id="v1-2-title"><span class="emoji" aria-hidden="true">🧭</span>Устойчивый прогресс и аккуратный арабский текст</h2>
-
-          <figure class="release-media">
-            <img src="/assets/changelog/1-2.png" alt="Стабильная синхронизация прогресса и аккуратный арабский текст в версии 1.2" width="1672" height="941">
+          <figure>
+            <div class="shot shot-crop"><img src="/assets/about/tool-conjugation.webp" alt="Спряжение глагола قرأ в настоящем времени, 14 форм" width="620" height="1196" loading="lazy"></div>
+            <figcaption><strong>Спряжение</strong>Прошедшее, настоящее, повелительное и запрет. По четырнадцать форм на время — со всеми местоимениями, включая двойственное число.</figcaption>
           </figure>
-
-          <p>Релиз про надёжность: прогресс уроков перестал теряться при обрыве связи, а арабские примеры — обрезаться по огласовкам.</p>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">💎</span>Улучшения</h3>
-          <ul class="dash-list">
-            <li><strong>Программа:</strong> прогресс сессии и облачная синхронизация стали устойчивее к обрывам связи.</li>
-            <li><strong>Программа:</strong> главы, до которых вы ещё не дошли после теста уровня, выглядят неактивными — маршрут читается с первого взгляда.</li>
-          </ul>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">🐞</span>Исправления</h3>
-          <ul class="dash-list">
-            <li><strong>Арабский текст:</strong> примеры не обрезаются, харакаты видны целиком.</li>
-            <li><strong>Огонёк:</strong> история восстанавливается корректно после синхронизации с облаком.</li>
-            <li><strong>Интерфейс:</strong> обновлены русские строки.</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="release" id="v1-1" aria-labelledby="v1-1-title">
-        <div class="release-rail">
-          <a class="version-chip" href="#v1-1">v1.1</a>
-          <time class="release-date" datetime="2026-07-26">26 июля 2026</time>
-        </div>
-
-        <div class="release-main">
-          <h2 class="release-title" id="v1-1-title"><span class="emoji" aria-hidden="true">🚀</span>Acrab в магазинах приложений</h2>
-
-          <figure class="release-media">
-            <img src="/assets/changelog/1-1.png" alt="Первый выпуск Акраба с программой фусхи и учебными инструментами" width="1672" height="941">
+          <figure>
+            <div class="shot shot-crop"><img src="/assets/about/tool-root.webp" alt="Семья слов: корень ك-ت-ب и производные — глагол, масдар, деятель, объект" width="620" height="1196" loading="lazy"></div>
+            <figcaption><strong>Семья слов</strong>Корень <span lang="ar">ك‑ت‑ب</span> и всё, что из него растёт: породы I–X, глаголы, масдар, деятель, объект — с пометками частей речи.</figcaption>
           </figure>
-
-          <p>Версия, с которой Acrab начал распространяться: полная программа фусхи, набор инструментов и синхронизация прогресса.</p>
-
-          <h3 class="section-head"><span class="emoji" aria-hidden="true">✨</span>Новое</h3>
-          <ul class="dash-list">
-            <li><strong>Программа фусхи:</strong> уроки от алфавита до грамматики и чтения с ташкилем, с упражнениями и интервальным повторением.</li>
-            <li><strong>Инструменты:</strong> перевод, огласовки, спряжения глаголов, семьи слов по корням, флешкарты и AI-учитель с объяснениями на русском.</li>
-            <li><strong>Аудио:</strong> озвучка слов и фраз прямо во время занятия.</li>
-            <li><strong>Аккаунт:</strong> синхронизация прогресса между устройствами.</li>
-          </ul>
+          <figure>
+            <div class="shot shot-crop"><img src="/assets/about/tool-tts.webp" alt="Озвучка: фраза, волна звука и пословная подсветка" width="620" height="1212" loading="lazy"></div>
+            <figcaption><strong>Озвучка</strong>Фраза превращается в аудио: волна, замедление, повтор — и подсветка слова, которое звучит прямо сейчас.</figcaption>
+          </figure>
+          <figure>
+            <div class="shot shot-crop"><img src="/assets/about/tool-examples.webp" alt="Примеры: слово «пчела» в десяти ситуациях с переводом и озвучкой" width="620" height="1212" loading="lazy"></div>
+            <figcaption><strong>Примеры</strong>Одно слово в десяти живых ситуациях — «в саду», «урок биологии», «прогулка». У каждой фразы перевод и озвучка.</figcaption>
+          </figure>
         </div>
-      </article>
+      </section>
 
-      <p class="changelog-note">Более ранние версии не публиковались — до 1.1 Acrab распространялся только в закрытом тестировании.</p>
+      <!-- ═══ 05 Ассистент ════════════════════════════════════════════════ -->
+      <section class="about-section" id="assistant" aria-labelledby="assistant-title">
+        <div class="about-section-head">
+          <span class="about-num">05</span>
+          <h2 class="about-h" id="assistant-title">Спросите так, как спросили бы преподавателя</h2>
+          <p class="about-p">«Что такое лунные буквы?» — и AI-учитель отвечает по-русски: правило, механика, примеры в полной огласовке, исключения. Без перевода вопроса на английский и без выхода из приложения.</p>
+        </div>
+
+        <div class="about-showcase">
+          <div class="about-showcase-copy">
+            <ul class="about-points">
+              <li><strong>Вопрос своими словами.</strong> Можно спрашивать про правило, про конкретное слово или про то, чем две похожие формы отличаются.</li>
+              <li><strong>Арабский в ответах — всегда с огласовками,</strong> поэтому пример можно сразу прочитать вслух.</li>
+              <li><strong>Разговор продолжается:</strong> уточняющий вопрос идёт в тот же диалог, объяснение не начинается заново.</li>
+              <li><strong>Лимит на день</strong> — 10 сообщений в бесплатной версии, 30 в Premium.</li>
+            </ul>
+          </div>
+          <div class="shot about-showcase-figure">
+            <img src="/assets/about/assistant.webp" alt="Ассистент отвечает на вопрос про лунные и солнечные буквы" width="620" height="1244" loading="lazy">
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ 06 Библиотека ═══════════════════════════════════════════════ -->
+      <section class="about-section" id="library" aria-labelledby="library-title">
+        <div class="about-section-head">
+          <span class="about-num">06</span>
+          <h2 class="about-h" id="library-title">Каждое слово — карточка, которую хочется рассмотреть</h2>
+          <p class="about-p">Библиотека хранит слова из программы и те, что вы собрали инструментами. У карточки — написание с огласовками, единственное и множественное число, перевод и картинка, нарисованная под смысл слова.</p>
+        </div>
+
+        <div class="about-showcase about-showcase-flip">
+          <div class="about-showcase-copy">
+            <ul class="about-points">
+              <li><strong>Поиск по-русски и по-арабски</strong> — можно искать <span lang="ar">رُمَّانَة</span>, можно «гранат».</li>
+              <li><strong>Единственное и множественное рядом:</strong> формы, которые в словаре пришлось бы искать отдельно.</li>
+              <li><strong>«Ещё картинку»</strong> — если образ не попал в смысл, рисуется другой.</li>
+              <li><strong>Карточка копируется целиком</strong> — вставить в конспект или отправить в чат.</li>
+            </ul>
+          </div>
+          <div class="shot about-showcase-figure">
+            <img src="/assets/about/library-card.webp" alt="Карточка слова «гранат»: арабское написание с огласовками и рисунок" width="620" height="1122" loading="lazy">
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ 07 Профиль ══════════════════════════════════════════════════ -->
+      <section class="about-section" id="profile" aria-labelledby="profile-title">
+        <div class="about-section-head">
+          <span class="about-num">07</span>
+          <h2 class="about-h" id="profile-title">Прогресс, который не теряется</h2>
+          <p class="about-p">Один аккаунт связывает устройства: начали главу на телефоне в дороге — продолжили на планшете дома, с тем же огоньком и той же библиотекой.</p>
+        </div>
+
+        <div class="about-facts">
+          <div class="about-fact">
+            <h3>Синхронизация между устройствами</h3>
+            <p>Прогресс программы, огонёк и карточки доезжают между iPhone, iPad и Android — в бесплатной версии тоже.</p>
+          </div>
+          <div class="about-fact">
+            <h3>Сеть может отвалиться</h3>
+            <p>Разовый сбой связи не выкидывает из аккаунта и не откатывает сессию: прогресс досылается, когда сеть вернётся.</p>
+          </div>
+          <div class="about-fact">
+            <h3>Крупный шрифт и iPad</h3>
+            <p>Макеты перестраиваются под iPad, Split View и увеличенный системный шрифт — огласовки при этом не обрезаются.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ 08 Free и Premium ═══════════════════════════════════════════ -->
+      <section class="about-section" id="plans" aria-labelledby="plans-title">
+        <div class="about-section-head">
+          <span class="about-num">08</span>
+          <h2 class="about-h" id="plans-title">Что доступно бесплатно</h2>
+          <p class="about-p">Free — не пробный период: он не заканчивается по времени. Premium снимает границу маршрута и поднимает дневные лимиты инструментов.</p>
+        </div>
+
+        <div class="about-plans">
+          <div class="plan-card">
+            <p class="plan-card-kicker">Free</p>
+            <h3>Первые 6 глав целиком</h3>
+            <ul class="about-points">
+              <li>Все типы упражнений, теория и озвучка внутри уроков.</li>
+              <li>Быстрые тренировки и интервальное повторение без ограничений.</li>
+              <li>Огонёк с двумя заморозками и синхронизация между устройствами.</li>
+              <li>Все восемь инструментов и ассистент — с дневными лимитами.</li>
+            </ul>
+          </div>
+          <div class="plan-card plan-card-premium">
+            <p class="plan-card-kicker">Premium</p>
+            <h3>Все 44 главы и высокие лимиты</h3>
+            <ul class="about-points">
+              <li>Маршрут открыт до конца — от алфавита до сложной грамматики.</li>
+              <li>Ассистент: 30 сообщений в день вместо 10.</li>
+              <li>Перевод и огласовки: 8 000 символов в день вместо 500.</li>
+              <li>Автовосстановление сгоревшего огонька.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="about-plans-link"><a href="/buy">Полное сравнение Free и Premium и оплата →</a></p>
+      </section>
+
+      <!-- ═══ CTA ═════════════════════════════════════════════════════════ -->
+      <section class="about-cta" aria-labelledby="cta-title">
+        <h2 id="cta-title">Начните с первых шести глав</h2>
+        <p>Бесплатно и без срока. Прогресс синхронизируется между всеми вашими устройствами.</p>
+        <div class="store-links">
+          <a class="store-link" href="https://apps.apple.com/ru/app/acrab-%D0%B0%D1%80%D0%B0%D0%B1%D1%81%D0%BA%D0%B8%D0%B9-%D1%8F%D0%B7%D1%8B%D0%BA/id6763663680" target="_blank" rel="noopener" aria-label="Acrab в App Store, iPhone и iPad">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.05 12.53c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.71-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.21 1.1-.05 1.52-.72 2.85-.72 1.33 0 1.71.72 2.88.69 1.19-.02 1.94-1.08 2.67-2.14.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.87 6.09c.61-.74 1.02-1.77.91-2.79-.88.04-1.94.59-2.57 1.32-.56.65-1.06 1.7-.92 2.7.98.08 1.98-.5 2.58-1.23z"/></svg>
+            <span class="store-link-text">
+              <span class="store-link-kicker">Загрузите в</span>
+              <span class="store-link-name">App Store</span>
+            </span>
+          </a>
+          <a class="store-link" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener" aria-label="Acrab в RuStore, Android">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.14-.52.38.38 0 0 0-.52.14l-1.87 3.23a11.43 11.43 0 0 0-9.82 0L5.22 5.92a.38.38 0 0 0-.52-.14.38.38 0 0 0-.14.52L6.4 9.48A10.81 10.81 0 0 0 1 18h22a10.81 10.81 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>
+            <span class="store-link-text">
+              <span class="store-link-kicker">Доступно в</span>
+              <span class="store-link-name">RuStore</span>
+            </span>
+          </a>
+          <a class="store-link" href="https://testflight.apple.com/join/szma6DJM" target="_blank" rel="noopener" aria-label="Бета-версия Acrab в TestFlight">
+            <img src="/assets/store-testflight.png" alt="" width="22" height="22">
+            <span class="store-link-text">
+              <span class="store-link-kicker">Бета-версия</span>
+              <span class="store-link-name">TestFlight</span>
+            </span>
+          </a>
+        </div>
+      </section>
 
     </div>
   </main>
