@@ -36,6 +36,18 @@ deliberately bare — one link to the privacy policy, nothing else.
   old `musa1756/Acrab-privacy` GitHub Pages repo; it is fully self-contained
   (own inline styles, no shared assets) and deliberately does **not** use
   `styles.css`. Treat the body text as legal copy — do not reword it casually.
+- `learn-arabic/index.html` - the main search guide: a realistic route for
+  learning Arabic from zero. It links the supporting guides and brings the
+  reader back to the free chapters in the app.
+- `arabic-alphabet/index.html` - beginner guide to the 28 Arabic letters,
+  contextual forms, joining and short-vowel marks.
+- `fusha/index.html` - explains literary Arabic (fusha), how it differs from
+  spoken dialects and when a beginner should choose either route.
+- `arabic-app/index.html` - high-intent landing page for people comparing
+  Arabic-learning apps. Every product claim must remain backed by the current
+  app; never add invented ratings, reviews or learner counts.
+- `robots.txt`, `sitemap.xml`, `404.html` - search crawling controls. The
+  payment page stays out of the sitemap because it is `noindex`.
 - `styles.css` - responsive styling, shared by the changelog, about, buy and
   support pages. Flat white page with gold everywhere Raycast uses red: gold
   version chips, gold inline `code`, gold links, gold active-nav underline. The
@@ -74,11 +86,12 @@ Timeweb Cloud auto-deploys `main` with no build step, so nothing else stands
 between a bad push and production. `.github/workflows/check.yml` runs
 `tools/check_site.py` on every push and pull request, which enforces:
 
-- all five routes (`/`, `/about`, `/buy`, `/support`, `/privacy`) resolve to a
-  real file — the four Apple-registered ones plus `/about`, which is a header
-  button and 404s just as visibly;
+- all public product, guide, payment, support and legal routes resolve to a
+  real file;
 - internal links are absolute and point at something that exists — the relative
   path regression this layout is prone to;
+- every indexable page has a unique title, description and final canonical URL;
+- `robots.txt`, `sitemap.xml`, the homepage app markup and `404.html` stay valid;
 - no links back to the retired `musa1756.github.io/Acrab-privacy` address;
 - no `.DS_Store` committed.
 
@@ -95,9 +108,34 @@ Production URLs:
 - Marketing URL: `https://acrab.ru/`
 - Privacy Policy URL: `https://acrab.ru/privacy`
 
-`/` now serves the product pitch («О приложении»), which doubles as a
-reasonable Marketing URL landing. The Support URL is still better served by
-`/support` in practice.
+`/` now serves the product pitch for learning literary Arabic from zero, which
+doubles as a reasonable Marketing URL landing. The Support URL is still better
+served by `/support` in practice.
+
+## Search visibility
+
+The homepage targets the product-level query cluster («арабский язык с нуля»,
+«приложение для изучения арабского»). The four guides each own a separate
+reader intent; do not create near-duplicate pages that compete for the same
+query. Add useful examples, exercises or audio before adding another page.
+
+After deployment:
+
+1. Verify `/robots.txt` returns plain text and `/sitemap.xml` returns XML, not
+   the homepage HTML.
+2. Verify a random missing path returns HTTP 404 and the custom `404.html`.
+   The host must not use an SPA fallback to `index.html`; that fallback was the
+   reason the old robots, sitemap and missing URLs all returned the homepage.
+3. Add `https://acrab.ru/` to Google Search Console and Yandex Webmaster,
+   submit `https://acrab.ru/sitemap.xml`, then request indexing for the home
+   page and four guides.
+4. Track impressions and clicks by query/page, plus outbound clicks to App
+   Store and RuStore. Search position without installs is not the end metric.
+
+Whenever an indexable route is added, update `REQUIRED_ROUTES`,
+`INDEXABLE_ROUTES` and `sitemap.xml` in the same change. The CI gate checks
+unique titles/descriptions, canonical URLs, sitemap coverage, `noindex` rules
+and structured data on the homepage.
 
 External Purchase Link entitlement (payment processing website request):
 

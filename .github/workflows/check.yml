@@ -24,7 +24,7 @@ jobs:
             sleep 0.5
           done
           fail=0
-          for path in / /about /buy /support /privacy /styles.css /assets/acrab-app-icon.png; do
+          for path in / /about /learn-arabic /arabic-alphabet /fusha /arabic-app /buy /support /privacy /robots.txt /sitemap.xml /404.html /styles.css /assets/acrab-app-icon.png; do
             code=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8899$path")
             if [ "$code" != "200" ]; then
               echo "::error::$path вернул $code вместо 200"

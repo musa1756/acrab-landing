@@ -8,6 +8,7 @@ that make the site work and that are easy to violate by accident.
 
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -19,12 +20,24 @@ ROOT = Path(__file__).resolve().parent.parent
 REQUIRED_ROUTES = {
     "/": "index.html",
     "/about": "about/index.html",
+    "/learn-arabic": "learn-arabic/index.html",
+    "/arabic-alphabet": "arabic-alphabet/index.html",
+    "/fusha": "fusha/index.html",
+    "/arabic-app": "arabic-app/index.html",
     "/buy": "buy/index.html",
     "/support": "support/index.html",
     "/privacy": "privacy/index.html",
 }
 
-REQUIRED_ASSETS = ["styles.css", "assets/acrab-app-icon.png"]
+INDEXABLE_ROUTES = {route: rel for route, rel in REQUIRED_ROUTES.items() if route != "/buy"}
+
+REQUIRED_ASSETS = [
+    "styles.css",
+    "assets/acrab-app-icon.png",
+    "robots.txt",
+    "sitemap.xml",
+    "404.html",
+]
 
 # Link targets that are legitimately not local files.
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "tel:", "#", "acrab://", "data:")
@@ -34,6 +47,9 @@ EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "tel:", "#", "acrab://", 
 RETIRED_URLS = ["musa1756.github.io/Acrab-privacy"]
 
 LINK_RE = re.compile(r'(?:href|src)="([^"]+)"')
+TITLE_RE = re.compile(r"<title>([^<]+)</title>", re.IGNORECASE)
+DESCRIPTION_RE = re.compile(r'<meta\s+name="description"\s+content="([^"]+)"', re.IGNORECASE)
+CANONICAL_RE = re.compile(r'<link\s+rel="canonical"\s+href="([^"]+)"', re.IGNORECASE)
 
 failures = []
 
@@ -87,6 +103,83 @@ def check_retired_urls():
                 fail(f"{path.relative_to(ROOT)}: ссылка на выведенный из обращения адрес {url}")
 
 
+def canonical_url(route):
+    if route == "/":
+        return "https://acrab.ru/"
+    return f"https://acrab.ru{route}/"
+
+
+def check_search_metadata():
+    """Every indexable route needs a unique search snippet and final canonical URL."""
+    seen_titles = {}
+    seen_descriptions = {}
+
+    for route, rel in INDEXABLE_ROUTES.items():
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        title = TITLE_RE.search(text)
+        description = DESCRIPTION_RE.search(text)
+        canonical = CANONICAL_RE.search(text)
+
+        if not title:
+            fail(f"{rel}: нет title")
+        elif title.group(1) in seen_titles:
+            fail(f"{rel}: title совпадает с {seen_titles[title.group(1)]}")
+        else:
+            seen_titles[title.group(1)] = rel
+
+        if not description:
+            fail(f"{rel}: нет meta description")
+        elif description.group(1) in seen_descriptions:
+            fail(f"{rel}: description совпадает с {seen_descriptions[description.group(1)]}")
+        else:
+            seen_descriptions[description.group(1)] = rel
+
+        expected = canonical_url(route)
+        if not canonical:
+            fail(f"{rel}: нет canonical")
+        elif canonical.group(1) != expected:
+            fail(f"{rel}: canonical должен быть {expected}")
+
+        if re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', text, re.IGNORECASE):
+            fail(f"{rel}: индексируемая страница содержит noindex")
+
+    buy_text = (ROOT / REQUIRED_ROUTES["/buy"]).read_text(encoding="utf-8")
+    if not re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', buy_text, re.IGNORECASE):
+        fail("buy/index.html: платёжная страница должна оставаться noindex")
+
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    if "Арабский язык" not in (TITLE_RE.search(home).group(1) if TITLE_RE.search(home) else ""):
+        fail("index.html: основной запрос отсутствует в title")
+    if 'type="application/ld+json"' not in home or '"@type":"MobileApplication"' not in home:
+        fail("index.html: нет структурированных данных MobileApplication")
+
+
+def check_crawling_files():
+    robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
+    if "User-agent: *" not in robots or "Sitemap: https://acrab.ru/sitemap.xml" not in robots:
+        fail("robots.txt: должны быть общий User-agent и ссылка на Sitemap")
+
+    try:
+        tree = ET.parse(ROOT / "sitemap.xml")
+    except ET.ParseError as error:
+        fail(f"sitemap.xml: невалидный XML ({error})")
+        return
+
+    namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    sitemap_urls = {node.text for node in tree.findall("sm:url/sm:loc", namespace)}
+    expected_urls = {canonical_url(route) for route in INDEXABLE_ROUTES}
+    missing = expected_urls - sitemap_urls
+    extra = sitemap_urls - expected_urls
+    for url in sorted(missing):
+        fail(f"sitemap.xml: отсутствует {url}")
+    for url in sorted(extra):
+        fail(f"sitemap.xml: лишний или noindex URL {url}")
+
+    not_found = (ROOT / "404.html").read_text(encoding="utf-8")
+    if not re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', not_found, re.IGNORECASE):
+        fail("404.html: страница ошибки должна содержать noindex")
+
+
 def check_junk():
     for path in ROOT.rglob(".DS_Store"):
         if ".git" not in path.parts:
@@ -97,6 +190,8 @@ def main():
     check_required_files()
     check_links()
     check_retired_urls()
+    check_search_metadata()
+    check_crawling_files()
     check_junk()
 
     if failures:
