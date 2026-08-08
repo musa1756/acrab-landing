@@ -664,6 +664,10 @@ code {
      column with a dead gap under the section heading. */
   align-items: start;
 }
+/* The programme and assistant captures contain dense, readable detail. Give
+   those two proof screens a taller presence without changing the rest of the
+   product tour or the one-column phone layout. */
+.about-showcase-tall { grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 356px); }
 .about-showcase-flip { grid-template-columns: 292px minmax(0, 1fr); }
 .about-showcase-flip .about-showcase-figure { order: -1; }
 /* The streak calendar is a square crop, not a phone — it needs more width to
