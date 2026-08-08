@@ -834,48 +834,6 @@ code {
 .about-plans-link a { color: var(--gold-text); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--gold-wash-strong); }
 .about-plans-link a:hover { border-bottom-color: var(--gold-strong); }
 
-/* Search guides — an editorial doorway inside the product tour. The featured
-   route carries the explanation; supporting routes read as a compact index. */
-.guide-index {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  gap: clamp(18px, 3vw, 34px);
-  align-items: stretch;
-}
-.guide-feature {
-  display: flex;
-  min-height: 300px;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(24px, 4vw, 42px);
-  border-radius: var(--radius-lg);
-  background: var(--ink);
-  color: #fff;
-  text-decoration: none;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-.guide-feature:hover { transform: translateY(-2px); box-shadow: 0 24px 48px -34px rgba(21, 18, 12, 0.72); }
-.guide-feature-kicker { margin-bottom: 12px; color: #e9c879; font-size: 13px; font-weight: 700; }
-.guide-feature h3 { max-width: 15ch; margin-bottom: 10px; font-size: clamp(1.55rem, 3vw, 2.15rem); line-height: 1.08; }
-.guide-feature p { max-width: 46ch; margin-bottom: 26px; color: #d5d1ca; }
-.guide-link-label { font-size: 14px; font-weight: 700; }
-.guide-index-list { border-top: 1px solid var(--line); }
-.guide-index-list a {
-  display: flex;
-  min-height: 100px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 18px 4px;
-  border-bottom: 1px solid var(--line);
-  text-decoration: none;
-}
-.guide-index-list a > span:first-child { display: grid; gap: 3px; }
-.guide-index-list strong { font-size: 17px; font-weight: 650; }
-.guide-index-list small { color: var(--ink-muted); font-size: 14px; }
-.guide-index-list a > span:last-child { color: var(--gold-strong); font-size: 22px; transition: transform 150ms ease; }
-.guide-index-list a:hover > span:last-child { transform: translateX(4px); }
-
 .about-cta {
   margin-top: clamp(52px, 6.5vw, 92px);
   padding: clamp(32px, 5vw, 56px) clamp(22px, 4vw, 48px);
@@ -1101,8 +1059,6 @@ code {
   .about-showcase-figure { width: min(288px, 100%); margin-inline: auto; }
   .about-showcase-wide .about-showcase-figure { width: min(400px, 100%); }
   .about-showcase-flip .about-showcase-figure { order: 0; }
-  .guide-index { grid-template-columns: minmax(0, 1fr); }
-  .guide-feature { min-height: 260px; }
   .guide-hero-with-media { grid-template-columns: minmax(0, 1fr); }
   .guide-hero-shot, .product-guide-hero .guide-hero-shot { width: min(260px, 100%); justify-self: start; }
   .guide-layout { grid-template-columns: minmax(0, 1fr); }
@@ -1123,7 +1079,6 @@ code {
   .shot-row { grid-auto-columns: 196px; }
   .about-cta .store-links { grid-template-columns: 1fr 1fr; }
   .about-hero-actions.store-links { display: grid; grid-template-columns: 1fr 1fr; }
-  .guide-feature { min-height: 240px; }
   .mistake-list > div { grid-template-columns: minmax(0, 1fr); gap: 5px; }
   .guide-cta { grid-template-columns: minmax(0, 1fr); }
   .guide-cta-actions { width: 100%; }
