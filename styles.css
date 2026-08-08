@@ -1059,6 +1059,9 @@ code {
   .about-showcase-figure { width: min(288px, 100%); margin-inline: auto; }
   .about-showcase-wide .about-showcase-figure { width: min(400px, 100%); }
   .about-showcase-flip .about-showcase-figure { order: 0; }
+  /* On narrow screens, show the assistant proof before its supporting points
+     so the screen is not pushed far below the introduction. */
+  #assistant .about-showcase-figure { order: -1; }
   .guide-hero-with-media { grid-template-columns: minmax(0, 1fr); }
   .guide-hero-shot, .product-guide-hero .guide-hero-shot { width: min(260px, 100%); justify-self: start; }
   .guide-layout { grid-template-columns: minmax(0, 1fr); }
