@@ -293,9 +293,49 @@
       try { json = text ? JSON.parse(text) : null; } catch { /* non-JSON body */ }
       if (!response.ok) {
         const message = (json && (json.error_description || json.error || json.msg)) || `Ошибка ${response.status}`;
-        throw new Error(message);
+        const error = new Error(message);
+        // Статус и error_code нужны вызывающему, чтобы отличить «нет такого
+        // аккаунта» от сбоя на нашей стороне. GoTrue кладёт в `code` число
+        // (дубль статуса), а строковый идентификатор — в `error_code`.
+        error.status = response.status;
+        error.code = json && typeof json.error_code === "string" ? json.error_code : null;
+        throw error;
       }
       return json;
+    }
+
+    // Один и тот же отказ «код не ушёл» бывает трёх разных природ, и вина у них
+    // разная: 422 — почты нет в базе, 429 — частим сами, 5xx — лежит SMTP на
+    // нашей стороне. Пока все три показывали «проверьте почту», серверный сбой
+    // выглядел как ошибка ученика, и человек бесконечно перебирал верный адрес.
+    function sendCodeErrorMessage(error) {
+      if (error.code === "otp_disabled" || error.status === 422) {
+        return "Аккаунта Acrab с такой почтой нет. Проверьте адрес или сначала заведите аккаунт в приложении.";
+      }
+      if (error.status === 429) {
+        return "Слишком много запросов подряд. Подождите минуту и попробуйте ещё раз.";
+      }
+      if (error.status >= 500) {
+        return "Отправка писем сейчас недоступна на нашей стороне — почта тут ни при чём. Попробуйте позже или напишите в поддержку на странице Q/A.";
+      }
+      if (error.status === 400) {
+        return "Проверьте, что адрес введён без опечаток и лишних пробелов.";
+      }
+      return "Не получилось отправить код. Проверьте связь и попробуйте ещё раз.";
+    }
+
+    function verifyCodeErrorMessage(error) {
+      // Ни одного HTTP-ответа не было (оборвалась сеть) — код тут ни при чём.
+      if (!error.status) {
+        return "Не удалось связаться с сервером. Проверьте связь и попробуйте ещё раз.";
+      }
+      if (error.status === 429) {
+        return "Слишком много попыток. Подождите минуту и попробуйте ещё раз.";
+      }
+      if (error.status >= 500) {
+        return "Проверка кода сейчас недоступна на нашей стороне. Попробуйте позже или напишите в поддержку на странице Q/A.";
+      }
+      return "Код неверный или истёк. Проверьте письмо и попробуйте снова.";
     }
 
     async function loadPrices() {
@@ -323,6 +363,15 @@
         setError(document.getElementById("email-error"), "Введите почту.");
         return;
       }
+      // При `create_user: false` GoTrue отвечает `otp_disabled` ещё до проверки
+      // формата, поэтому «вася@» с сервера вернётся как «аккаунта нет». Ловим
+      // опечатку здесь, иначе сообщение уводит не туда. Кнопка вне <form>, так
+      // что нативная валидация type="email" сама не срабатывает.
+      emailInput.value = email;
+      if (!emailInput.checkValidity()) {
+        setError(document.getElementById("email-error"), "Проверьте, что адрес введён без опечаток и лишних пробелов.");
+        return;
+      }
       const btn = document.getElementById("send-code-btn");
       btn.disabled = true;
       try {
@@ -334,7 +383,7 @@
         document.getElementById("code-email-echo").textContent = email;
         showStep("code");
       } catch (error) {
-        setError(document.getElementById("email-error"), "Не получилось отправить код. Убедитесь, что это почта существующего аккаунта Acrab, и попробуйте ещё раз.");
+        setError(document.getElementById("email-error"), sendCodeErrorMessage(error));
       } finally {
         btn.disabled = false;
       }
@@ -360,14 +409,15 @@
           body: JSON.stringify({ email: state.email, token: code, type: "email" }),
         });
         if (!result || !result.access_token) {
-          throw new Error("Missing access_token");
+          // 200 без токена — сломан контракт сервера, а не введённый код.
+          throw Object.assign(new Error("Missing access_token"), { status: 500 });
         }
         state.accessToken = result.access_token;
         document.getElementById("plan-email-echo").textContent = state.email;
         showStep("plan");
         loadPrices();
       } catch (error) {
-        setError(document.getElementById("code-error"), "Код неверный или истёк. Проверьте письмо и попробуйте снова.");
+        setError(document.getElementById("code-error"), verifyCodeErrorMessage(error));
       } finally {
         btn.disabled = false;
       }
