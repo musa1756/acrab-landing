@@ -336,6 +336,14 @@ code {
   box-shadow: 0 1px 2px rgba(21, 18, 12, 0.04), 0 18px 40px -30px rgba(90, 62, 16, 0.4);
 }
 .panel-wide { width: min(760px, 100%); }
+.legal-page { padding-bottom: clamp(72px, 10vw, 130px); }
+.legal-copy { width: min(760px, calc(100% - 32px)); margin-inline: auto; }
+.legal-copy h2 { margin: 32px 0 10px; font-size: 19px; line-height: 1.25; }
+.legal-copy h2:first-child { margin-top: 0; }
+.legal-copy p { margin: 0 0 12px; color: var(--ink-body); }
+.legal-copy ul { margin: 0 0 12px; padding-left: 22px; color: var(--ink-body); }
+.legal-copy li + li { margin-top: 5px; }
+.legal-copy a { color: var(--gold-text); font-weight: 600; }
 
 .empty-state {
   display: grid;
@@ -512,6 +520,9 @@ code {
   font-size: 13px;
 }
 .auth-footnote a { color: var(--gold-text); font-weight: 600; text-decoration: none; }
+.legal-consent { display: flex; align-items: flex-start; gap: 9px; margin: 4px 0; color: var(--ink-muted); font-size: 13px; line-height: 1.5; }
+.legal-consent input { flex: 0 0 auto; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--gold-text); }
+.legal-consent a { color: var(--gold-text); font-weight: 600; }
 
 .plan-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .plan-option {

@@ -50,6 +50,7 @@
         <div id="step-email" class="auth-step" data-step="email">
           <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
           <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+          <label class="legal-consent"><input id="personal-data-consent" type="checkbox"><span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span></label>
           <button id="send-code-btn" class="button button-primary auth-submit" type="button">Получить код</button>
           <p id="email-error" class="auth-error" role="alert" hidden></p>
         </div>
@@ -77,6 +78,7 @@
               <span class="plan-option-note">в месяц</span>
             </button>
           </div>
+          <label class="legal-consent"><input id="offer-consent" type="checkbox"><span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span></label>
           <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
           <p id="plan-error" class="auth-error" role="alert" hidden></p>
         </div>
@@ -249,6 +251,7 @@
     const SUPABASE_URL = "https://api.acrab.ru";
 
     const FALLBACK_PRICES = { monthly: 399, annual: 2990 };
+    const LEGAL_DOCUMENT_VERSION = "2026-08-09";
 
     const state = { email: null, accessToken: null, plan: null };
 
@@ -363,6 +366,10 @@
         setError(document.getElementById("email-error"), "Введите почту.");
         return;
       }
+      if (!document.getElementById("personal-data-consent").checked) {
+        setError(document.getElementById("email-error"), "Для отправки кода нужно дать отдельное согласие на обработку персональных данных.");
+        return;
+      }
       // При `create_user: false` GoTrue отвечает `otp_disabled` ещё до проверки
       // формата, поэтому «вася@» с сервера вернётся как «аккаунта нет». Ловим
       // опечатку здесь, иначе сообщение уводит не туда. Кнопка вне <form>, так
@@ -437,13 +444,25 @@
     document.getElementById("pay-btn").addEventListener("click", async () => {
       setError(document.getElementById("plan-error"), "");
       if (!state.plan || !state.accessToken) return;
+      if (!document.getElementById("offer-consent").checked) {
+        setError(document.getElementById("plan-error"), "Перед оплатой ознакомьтесь и примите условия публичной оферты.");
+        return;
+      }
       const btn = document.getElementById("pay-btn");
       btn.disabled = true;
       try {
         const result = await supabaseFetch("/functions/v1/tochka-payment", {
           method: "POST",
           headers: { "Authorization": `Bearer ${state.accessToken}` },
-          body: JSON.stringify({ action: "create", plan: state.plan }),
+          body: JSON.stringify({
+            action: "create",
+            plan: state.plan,
+            legalAcceptance: {
+              offerVersion: LEGAL_DOCUMENT_VERSION,
+              personalDataConsentVersion: LEGAL_DOCUMENT_VERSION,
+              source: "web-checkout",
+            },
+          }),
         });
         if (!result || !result.paymentLink) {
           throw new Error("Missing paymentLink");

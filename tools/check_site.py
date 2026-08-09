@@ -27,9 +27,12 @@ REQUIRED_ROUTES = {
     "/buy": "buy/index.html",
     "/support": "support/index.html",
     "/privacy": "privacy/index.html",
+    "/offer": "offer/index.html",
+    "/consent": "consent/index.html",
 }
 
-INDEXABLE_ROUTES = {route: rel for route, rel in REQUIRED_ROUTES.items() if route != "/buy"}
+NOINDEX_ROUTES = {"/buy", "/offer", "/consent"}
+INDEXABLE_ROUTES = {route: rel for route, rel in REQUIRED_ROUTES.items() if route not in NOINDEX_ROUTES}
 
 REQUIRED_ASSETS = [
     "styles.css",
@@ -143,9 +146,10 @@ def check_search_metadata():
         if re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', text, re.IGNORECASE):
             fail(f"{rel}: индексируемая страница содержит noindex")
 
-    buy_text = (ROOT / REQUIRED_ROUTES["/buy"]).read_text(encoding="utf-8")
-    if not re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', buy_text, re.IGNORECASE):
-        fail("buy/index.html: платёжная страница должна оставаться noindex")
+    for route in NOINDEX_ROUTES:
+        text = (ROOT / REQUIRED_ROUTES[route]).read_text(encoding="utf-8")
+        if not re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', text, re.IGNORECASE):
+            fail(f"{REQUIRED_ROUTES[route]}: служебная страница должна оставаться noindex")
 
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     if "Арабский язык" not in (TITLE_RE.search(home).group(1) if TITLE_RE.search(home) else ""):
