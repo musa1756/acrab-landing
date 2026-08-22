@@ -1236,3 +1236,5 @@ code {
     animation-duration: 0.01ms !important;
   }
 }
+
+.store-links-centered { justify-content: center; }

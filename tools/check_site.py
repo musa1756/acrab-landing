@@ -29,9 +29,10 @@ REQUIRED_ROUTES = {
     "/privacy": "privacy/index.html",
     "/offer": "offer/index.html",
     "/consent": "consent/index.html",
+    "/get": "get/index.html",
 }
 
-NOINDEX_ROUTES = {"/buy", "/offer", "/consent"}
+NOINDEX_ROUTES = {"/buy", "/offer", "/consent", "/get"}
 INDEXABLE_ROUTES = {route: rel for route, rel in REQUIRED_ROUTES.items() if route not in NOINDEX_ROUTES}
 
 REQUIRED_ASSETS = [
