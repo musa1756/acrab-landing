@@ -167,7 +167,9 @@ the `A` record — `MX`/mail records are unaffected.
 
 ## Analytics Note
 
-The landing page is static and does not include PostHog tracking. Product analytics live inside the iOS app; see `../docs/analytics/posthog-events.md`.
+The landing page is static and does not collect product analytics. Optional
+product analytics live inside the apps and are documented in the main product
+repository at `docs/analytics/events.md`.
 
 ## Contact
 
