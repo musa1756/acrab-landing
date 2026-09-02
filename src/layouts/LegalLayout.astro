@@ -1,0 +1,23 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  variant: "offer" | "consent" | "get";
+  title: string;
+  description?: string;
+  robots?: string;
+  viewport?: string;
+  themeColor?: string | null;
+  includeIcons?: boolean;
+}
+const { variant, ...props } = Astro.props;
+---
+
+<BaseLayout {...props}>
+  <a class="skip-link" href="#main">К содержанию</a>
+  <Header variant={variant} />
+  <main id="main" class="legal-page"><slot /></main>
+  <Footer variant={variant} />
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+interface Props {
+  active?: "home" | "updates" | "buy" | "support";
+  variant?: "primary" | "offer" | "consent" | "get";
+}
+
+const { active, variant = "primary" } = Astro.props;
+const linkSets = {
+  primary: [
+    { id: "home", href: "/", label: "О приложении" },
+    { id: "updates", href: "/about", label: "Обновления" },
+    { id: "buy", href: "/buy", label: "Оплата" },
+    { id: "support", href: "/support", label: "Q/A" },
+  ],
+  offer: [
+      { id: "buy", href: "/buy", label: "Оплата" },
+      { id: "support", href: "/support", label: "Поддержка" },
+      { id: "privacy", href: "/privacy", label: "Конфиденциальность" },
+  ],
+  consent: [
+      { id: "buy", href: "/buy", label: "Оплата" },
+      { id: "privacy", href: "/privacy", label: "Конфиденциальность" },
+  ],
+  get: [
+      { id: "home", href: "/", label: "О приложении" },
+      { id: "support", href: "/support", label: "Поддержка" },
+  ],
+} as const;
+const links = linkSets[variant];
+---
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/" aria-label="Acrab, на главную">
+      <img src="/assets/acrab-app-icon.png" alt="" width="30" height="30" />
+      <span>Acrab</span>
+    </a>
+    <nav class="site-nav" aria-label="Разделы сайта">
+      {links.map((link) => (
+        <a href={link.href} aria-current={active === link.id ? "page" : undefined}>{link.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>

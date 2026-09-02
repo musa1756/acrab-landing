@@ -1,194 +1,170 @@
 # Acrab Landing
 
-Static site for App Store Connect URLs and the external payment flow. The home
-page is the **product pitch** («О приложении»), not the changelog — four header
-tabs (О приложении / Обновления / Оплата / Q/A), each a real page. The footer is
-deliberately bare — one link to the privacy policy, nothing else.
+Статический сайт Acrab на Astro 7. Все страницы генерируются во время сборки в
+`dist/`; Node.js или Bun на production не требуются.
 
-## Files
+## Стек
 
-- `index.html` - «О приложении» at `/`, the marketing home page: a guided tour
-  of the app (program, drills, streak, tools, assistant, library, profile,
-  Free/Premium) built from real screenshots cropped to WebP in
-  `assets/about/`. This is what a visitor to `acrab.ru` sees first.
-- `about/index.html` - the changelog, served at `/about` and laid out after
-  `raycast.com/changelog`: one `<article class="release">` per version, newest
-  first, each with a sticky left rail (version chip + date) beside a wide
-  content column — emoji headline, screenshot, description, then `✨ Новое` /
-  `💎 Улучшения` / `🐞 Исправления` sections as em-dash lists. A copy-paste
-  template sits in an HTML comment at the top of `.changelog`. Release images
-  live in `assets/changelog/` — until a file exists there, keep the
-  `.media-placeholder` block instead of an `<img>`, because
-  `tools/check_site.py` fails on a `src` that does not resolve.
+- Bun 1.4
+- Astro 7 в режиме SSG
+- TypeScript со строгой проверкой
+- Vite
+- Tailwind CSS 4 без Preflight; существующая визуальная система сохранена в
+  глобальном CSS
+- React 19 только для интерактивного payment island `/buy`
+- небольшой клиентский TypeScript-модуль для platform redirect `/get`
 
-  Yes, the changelog living at `/about` instead of `/` reads oddly from the
-  URL alone — it's a holdover from `/` being the changelog before the home
-  page got a real pitch. `tools/check_site.py`'s `REQUIRED_ROUTES` still maps
-  `"/about": "about/index.html"`, so the file path didn't move, only its
-  content and its header nav label (now «Обновления»).
-- `buy/index.html` - StoreKit External Purchase Link target page: email-OTP sign-in against the existing Supabase auth (`/auth/v1/otp` + `/verify`), then calls `tochka-payment` (`action=create`) with the resulting JWT and redirects to the returned Tochka `paymentLink`. No query params by design — the URL registered with Apple must stay static. Premium activation happens server-side via `tochka-payment-webhook`; this page never calls `confirm`.
-- `support/index.html` - «Q/A», the fourth header tab. Still the Apple-registered
-  support destination (their External Purchase entitlement requires a real one,
-  not just a mailto link), so the URL stays `/support` and the contact button +
-  address stay above the fold — only the visible label is Q/A. Content: payment
-  FAQ, refunds, disputing unauthorized charges.
-- `privacy/index.html` - personal data policy (152-ФЗ). Ported verbatim from the
-  old `musa1756/Acrab-privacy` GitHub Pages repo; it is fully self-contained
-  (own inline styles, no shared assets) and deliberately does **not** use
-  `styles.css`. Treat the body text as legal copy — do not reword it casually.
-- `learn-arabic/index.html` - the main search guide: a realistic route for
-  learning Arabic from zero. It links the supporting guides and brings the
-  reader back to the free chapters in the app.
-- `arabic-alphabet/index.html` - beginner guide to the 28 Arabic letters,
-  contextual forms, joining and short-vowel marks.
-- `fusha/index.html` - explains literary Arabic (fusha), how it differs from
-  spoken dialects and when a beginner should choose either route.
-- `arabic-app/index.html` - high-intent landing page for people comparing
-  Arabic-learning apps. Every product claim must remain backed by the current
-  app; never add invented ratings, reviews or learner counts.
-- `robots.txt`, `sitemap.xml`, `404.html` - search crawling controls. The
-  payment page stays out of the sitemap because it is `noindex`.
-- `styles.css` - responsive styling, shared by the changelog, about, buy and
-  support pages. Flat white page with gold everywhere Raycast uses red: gold
-  version chips, gold inline `code`, gold links, gold active-nav underline. The
-  gold is the app's `acrabGold` from `Theme/AppTheme.swift`, darkened to
-  `--gold-text` where it has to carry text on white. Light-only, like the app,
-  and deliberately not the rounded/blurred iOS look the first draft had.
-- `assets/acrab-app-icon.png` - copied from the app asset catalog and used for icons, previews, and social sharing.
-- `assets/changelog/` - screenshots shown in release cards; see the README there.
+Статические страницы не гидратируются. API, auth и webhook платежей остаются
+внешними сервисами; секреты backend не попадают в `dist`.
 
-`buy/index.html` already has the production anon key (pulled from the Beget `.env`, same value as the iOS app ships) inlined — it's the public anon key, safe client-side, not a `service_role` secret.
-
-### Why the directory layout
-
-Apple's registered URLs are `https://acrab.ru/buy` and `https://acrab.ru/support`
-— extensionless. Serving those as `buy/index.html` and `support/index.html` gets
-that for free from directory-index behaviour on any static host, with no
-host-specific rewrite rules to write or maintain. The trade-off: every internal
-link and asset reference must be **absolute** (`/styles.css`, `/assets/…`), or it
-breaks one level deep. Keep it that way when editing.
-
-Note that `/buy` serves via a 301 to `/buy/` — normal directory-index behaviour,
-transparent to browsers. Serving `/buy` with no redirect at all would require a
-per-host rewrite (`try_files $uri $uri.html $uri/`), which is exactly the
-maintenance this layout avoids.
-
-Verify locally before deploying:
+## Команды
 
 ```bash
-python3 tools/check_site.py     # the same gate CI runs
-python3 -m http.server 8899     # or eyeball it
+bun install --frozen-lockfile
+bun run dev
+bun run build
+bun run preview
+bun run typecheck
+bun run test
+bun run test:browser
+bun run check
 ```
 
-## CI gate
+`bun run check` выполняет typecheck, unit-тесты, сборку и проверку итогового
+каталога. Проверку можно запустить отдельно после сборки:
 
-Timeweb Cloud auto-deploys `main` with no build step, so nothing else stands
-between a bad push and production. `.github/workflows/check.yml` runs
-`tools/check_site.py` on every push and pull request, which enforces:
+```bash
+python3 tools/check_site.py dist
+```
 
-- all public product, guide, payment, support and legal routes resolve to a
-  real file;
-- internal links are absolute and point at something that exists — the relative
-  path regression this layout is prone to;
-- every indexable page has a unique title, description and final canonical URL;
-- `robots.txt`, `sitemap.xml`, the homepage app markup and `404.html` stay valid;
-- no links back to the retired `musa1756.github.io/Acrab-privacy` address;
-- no `.DS_Store` committed.
+Browser smoke требует установленный Chromium для Playwright:
 
-It then serves the site and asserts every route returns 200.
+```bash
+bunx playwright install chromium
+bun run test:browser
+```
 
-The checks are verified to fail, not just to pass — breaking a link or deleting
-`privacy/` makes the gate exit non-zero.
+## Структура
 
-## App Store Connect
+- `src/pages/` — статически генерируемые маршруты сайта.
+- `src/components/` — SEO, шапка, подвал, магазинные ссылки и релизы.
+- `src/layouts/` — общий, учебный и юридический layouts.
+- `src/content/changelog/` — структурированные JSON-записи changelog.
+- `src/features/payment/` — чистые модели, сообщения и API платежей.
+- `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
+- `src/scripts/store-redirect.ts` — платформенный redirect `/get`.
+- `src/styles/global.css` — сохранённая визуальная система и Tailwind utilities.
+- `public/assets/`, `public/robots.txt` и `public/sitemap.xml` — файлы с неизменными публичными URL.
+- `tests/` и `tools/check_site.py` — проверки исходников и готового `dist/`.
 
-Production URLs:
+## Маршруты и SEO
 
-- Support URL: `https://acrab.ru/`
+Сохраняются маршруты `/`, `/about`, `/learn-arabic`, `/arabic-alphabet`,
+`/fusha`, `/arabic-app`, `/buy`, `/support`, `/privacy`, `/offer`, `/consent`,
+`/get` и `/404.html`. Сборка использует directory-style output, поэтому
+`/buy` остаётся совместим с directory redirect на `/buy/`.
+
+`/buy`, `/offer`, `/consent` и `/get` обязаны оставаться `noindex` и не входят
+в sitemap. Canonical индексируемых страниц заканчиваются `/`, кроме корня.
+Внутренние ссылки и пути к публичным ресурсам остаются абсолютными.
+
+При добавлении индексируемого маршрута одновременно обновляются:
+
+1. страница в `src/pages/` и её SEO-поля;
+2. список URL в `public/sitemap.xml`;
+3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`.
+
+## Changelog
+
+Каждый релиз хранится отдельным JSON-файлом в `src/content/changelog/`. Схема
+описана в `src/content.config.ts`. Обязательны версия, дата, заголовок,
+описание и массивы `new`, `improvements`, `fixes`. Поле `image` допускает
+`null`; отсутствие изображения не ломает сборку. Страница сортирует релизы по
+дате от новых к старым.
+
+Изображения релизов размещаются в `public/assets/changelog/`. Изменение
+`assets/changelog/1-4.png`, существовавшее до миграции, не перезаписывается.
+
+## Оплата
+
+`/buy` остаётся статическим Astro shell с React island. Сценарий не изменён:
+email OTP существующего аккаунта, проверка кода, загрузка цен, выбор тарифа,
+создание платежа и переход только на HTTPS-домен `tochka.com`.
+
+`SUPABASE_ANON_KEY` — публичный клиентский anon key, тот же, который уже
+распространяется в приложении. Это не серверный секрет. Privileged keys нельзя
+добавлять в исходники или статическую сборку. Клиент не подтверждает и не
+активирует Premium: это делает существующий серверный webhook.
+
+## Юридические документы
+
+Тексты `/privacy`, `/offer` и `/consent` нельзя редактировать как обычный
+маркетинговый контент. Любая правка выполняется как отдельное юридическое
+изменение. Версии документов в платёжном payload меняются только вместе с
+утверждённой редакцией и серверной обработкой.
+
+## CI
+
+`.github/workflows/check.yml` запускается для каждого pull request и push в
+`main` в одном фиксированном порядке:
+
+```text
+bun install --frozen-lockfile
+        ↓
+bun run typecheck
+        ↓
+bun run test
+        ↓
+bun run build
+        ↓
+python3 tools/check_site.py dist
+```
+
+Затем workflow выполняет HTTP smoke для всех маршрутов, включая `/buy`, и
+проверяет настоящий HTTP 404 для неизвестного адреса. Единственный CI-артефакт
+— готовый каталог `dist`.
+
+## Timeweb
+
+Настройки статического приложения:
+
+```text
+Build command:
+bun install --frozen-lockfile && bun run build
+
+Output directory:
+dist
+```
+
+Среда сборки должна использовать Node.js 22.12 или новее и Bun из
+`.bun-version`. SPA fallback запрещён: отсутствующий URL должен возвращать
+реальный HTTP 404. После смены deployment-настроек проверяются `/buy`,
+`/support`, `/robots.txt`, `/sitemap.xml` и случайный отсутствующий URL.
+
+Платёжную страницу следует дополнительно защищать HTTP-заголовками хостинга:
+`Content-Security-Policy` с `frame-ancestors 'none'`, `X-Frame-Options: DENY`,
+`Strict-Transport-Security`, `X-Content-Type-Options: nosniff` и строгим
+`Referrer-Policy`. Meta CSP не может задать `frame-ancestors`.
+
+## Зарегистрированные URL и контакты
+
+- External Purchase Link: `https://acrab.ru/buy`
+- Support website: `https://acrab.ru/support`
 - Marketing URL: `https://acrab.ru/`
 - Privacy Policy URL: `https://acrab.ru/privacy`
 
-`/` now serves the product pitch for learning literary Arabic from zero, which
-doubles as a reasonable Marketing URL landing. The Support URL is still better
-served by `/support` in practice.
+`/buy` и `/support` нельзя переименовывать или заменять SPA-маршрутами: эти
+адреса используются Apple. Кнопка поддержки ведёт на `@musa_1756`, публичный
+канал в подвале — на `@musa1756_ai`; это разные адреса. Email поддержки
+`lagutkin.maksim.03@mail.ru` сохраняется на `/support`.
 
-## Search visibility
+Старая GitHub Pages-копия политики может оставаться доступной до проверки
+production-страницы `/privacy`; удалять её до этого нельзя. Контакты внутри
+юридического текста меняются только отдельной утверждённой правкой.
 
-The homepage targets the product-level query cluster («арабский язык с нуля»,
-«приложение для изучения арабского»). The four guides each own a separate
-reader intent; do not create near-duplicate pages that compete for the same
-query. Add useful examples, exercises or audio before adding another page.
+## Проверка после публикации
 
-After deployment:
-
-1. Verify `/robots.txt` returns plain text and `/sitemap.xml` returns XML, not
-   the homepage HTML.
-2. Verify a random missing path returns HTTP 404 and the custom `404.html`.
-   The host must not use an SPA fallback to `index.html`; that fallback was the
-   reason the old robots, sitemap and missing URLs all returned the homepage.
-3. Add `https://acrab.ru/` to Google Search Console and Yandex Webmaster,
-   submit `https://acrab.ru/sitemap.xml`, then request indexing for the home
-   page and four guides.
-4. Track impressions and clicks by query/page, plus outbound clicks to App
-   Store and RuStore. Search position without installs is not the end metric.
-
-Whenever an indexable route is added, update `REQUIRED_ROUTES`,
-`INDEXABLE_ROUTES` and `sitemap.xml` in the same change. The CI gate checks
-unique titles/descriptions, canonical URLs, sitemap coverage, `noindex` rules
-and structured data on the homepage.
-
-External Purchase Link entitlement (payment processing website request):
-
-- Целевой URL-адрес / Target URL: `https://acrab.ru/buy` — must exactly match whatever gets configured in `Info.plist`/entitlements once Apple approves the request.
-- Веб-сайт службы поддержки / Support website: `https://acrab.ru/support`
-
-### Privacy policy hosting
-
-The policy used to live at `https://musa1756.github.io/Acrab-privacy/` while its
-own section 14 named `acrab.ru/privacy` as the canonical address — the document
-contradicted where it was published. It is now served from this repo at
-`/privacy`, and all in-page links point there.
-
-The old `musa1756/Acrab-privacy` repo is now redundant. Leave it published until
-`acrab.ru/privacy` is confirmed live, then archive it — do not delete, since the
-GitHub Pages URL may already be referenced in submitted App Store metadata.
-
-## Hosting
-
-Timeweb Cloud project `2603091` currently holds **only the domain** — no server,
-no app, nothing serving the site yet. Recommended target is Timeweb Cloud
-**Приложения → статический сайт** built from the GitHub repo
-(`musa1756/Acrab-Swift`) with root directory `landing/`, which makes deploy a
-plain `git push` and provisions TLS automatically.
-
-This is separate from the API: `api.acrab.ru` points directly at the self-hosted
-Supabase production host on Beget. Pointing `acrab.ru` at a new host only touches
-the `A` record — `MX`/mail records are unaffected.
-
-## Analytics Note
-
-The landing page is static and does not collect product analytics. Optional
-product analytics live inside the apps and are documented in the main product
-repository at `docs/analytics/events.md`.
-
-## Contact
-
-Two Telegram handles, and they are **not** interchangeable:
-
-- `@musa_1756` — personal account, target of the «Написать в поддержку» button
-  on `/support`.
-- `@musa1756_ai` — the public channel, linked from the «Мы в соцсетях» block in
-  every page footer.
-
-Email `lagutkin.maksim.03@mail.ru` stays on `/support` next to the Telegram
-handle: it is the written contact Apple's support-website requirement expects,
-and it is what the refund/chargeback FAQ answers point at. Do not drop it in
-favour of Telegram alone.
-
-`privacy/index.html` still names the older `musa1756@proton.me` as the
-personal-data contact, in three places. That is legal copy under 152-ФЗ, so it
-was left alone deliberately — change it only together with Musa, and change all
-three at once.
-
-The footer's Telegram glyph is an inline SVG on purpose — the pages ship
-`img-src 'self'`, so a remote icon from a CDN would be blocked.
+После preview и production deployment проверяются HTTP-ответы `/buy`,
+`/support`, `/robots.txt`, `/sitemap.xml`, случайного отсутствующего URL и все
+ссылки на магазины. Затем `https://acrab.ru/sitemap.xml` повторно отправляется
+в Google Search Console и Яндекс Вебмастер.

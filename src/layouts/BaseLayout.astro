@@ -1,0 +1,34 @@
+---
+import SeoHead from "../components/SeoHead.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  robots?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  ogImageAlt?: string;
+  twitterCard?: "summary" | "summary_large_image";
+  viewport?: string;
+  themeColor?: string | null;
+  includeIcons?: boolean;
+  bodyClass?: string;
+}
+
+const { bodyClass, ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <SeoHead {...seo} />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

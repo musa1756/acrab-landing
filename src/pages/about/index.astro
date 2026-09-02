@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Release from "../../components/Release.astro";
+
+const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Обновления Acrab" description="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель." ogType="website" ogImage="https://acrab.ru/assets/acrab-app-icon.png">
+  <a class="skip-link" href="#main">К содержанию</a>
+  <Header active="updates" />
+  <main id="main">
+    <div class="page-head">
+      <div class="page-head-inner">
+        <p class="eyebrow">Обновления</p>
+        <h1 class="page-title">Что нового в Acrab</h1>
+        <p class="page-lead">Каждая версия приложения — со своей датой, разбором главной новинки и списком того, что улучшилось и починилось.</p>
+      </div>
+    </div>
+    <div class="changelog">
+      {releases.map((release) => <Release release={release} />)}
+      <p class="changelog-note">Более ранние версии не публиковались — до 1.1 Acrab распространялся только в закрытом тестировании.</p>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
