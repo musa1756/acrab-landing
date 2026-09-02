@@ -1,11 +1,12 @@
 name: check
 
-# Timeweb Cloud auto-deploys main with no build step, so this is the only thing
-# standing between a bad push and production.
 on:
   push:
     branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   check:
@@ -13,24 +14,63 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Проверить структуру и ссылки
-        run: python3 tools/check_site.py
+      - name: Установить Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
 
-      - name: Проверить, что страницы реально отдаются
+      - name: Установить зависимости
+        run: bun install --frozen-lockfile
+
+      - name: Проверить типы
+        run: bun run typecheck
+
+      - name: Запустить тесты
+        run: bun run test
+
+      - name: Собрать статический сайт
+        run: bun run build
+
+      - name: Установить Chromium для browser smoke
+        run: bunx playwright install --with-deps chromium
+
+      - name: Проверить React payment island в браузере
+        run: bun run test:browser
+
+      - name: Проверить содержимое dist
+        run: python3 tools/check_site.py dist
+
+      - name: Проверить HTTP-маршруты
+        working-directory: dist
         run: |
           python3 -m http.server 8899 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
           for i in $(seq 1 20); do
             curl -sf -o /dev/null http://127.0.0.1:8899/ && break
             sleep 0.5
           done
-          fail=0
-          for path in / /about /learn-arabic /arabic-alphabet /fusha /arabic-app /buy /support /privacy /robots.txt /sitemap.xml /404.html /styles.css /assets/acrab-app-icon.png; do
+
+          for path in / /about /learn-arabic /arabic-alphabet /fusha /arabic-app /buy /support /privacy /offer /consent /get /robots.txt /sitemap.xml /404.html /assets/acrab-app-icon.png; do
             code=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8899$path")
-            if [ "$code" != "200" ]; then
-              echo "::error::$path вернул $code вместо 200"
-              fail=1
-            else
-              echo "  ok $path"
-            fi
+            test "$code" = "200" || { echo "$path вернул $code вместо 200"; exit 1; }
           done
-          exit $fail
+
+          buy_code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8899/buy)
+          buy_location=$(curl -sI http://127.0.0.1:8899/buy | tr -d '\r' | awk 'tolower($1) == "location:" {print $2}')
+          test "$buy_code" = "301"
+          test "$buy_location" = "/buy/"
+
+          missing_code=$(curl -s -o /tmp/acrab-missing.html -w '%{http_code}' http://127.0.0.1:8899/definitely-missing)
+          test "$missing_code" = "404"
+          if grep -q '<h1 class="page-title">Учите литературный арабский' /tmp/acrab-missing.html; then
+            echo "Обнаружен SPA fallback на главную"
+            exit 1
+          fi
+
+      - name: Сохранить dist как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error

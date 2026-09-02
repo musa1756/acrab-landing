@@ -1,0 +1,27 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  robots?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  ogImageAlt?: string;
+  twitterCard?: "summary" | "summary_large_image";
+  csp?: string;
+}
+const props = Astro.props;
+---
+
+<BaseLayout {...props}>
+  <a class="skip-link" href="#main">К содержанию</a>
+  <Header />
+  <main id="main" class="guide-page"><slot /></main>
+  <Footer variant="guide" />
+</BaseLayout>

@@ -1,0 +1,66 @@
+---
+import StoreLinks from "./StoreLinks.astro";
+
+interface Props {
+  variant?: "full" | "guide" | "offer" | "consent" | "get";
+}
+
+const { variant = "full" } = Astro.props;
+const isFull = variant === "full";
+const legalLinks = {
+  offer: [
+    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/privacy", label: "Конфиденциальность" },
+    { href: "/consent", label: "Согласие на данные" },
+  ],
+  consent: [
+    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/offer", label: "Публичная оферта" },
+    { href: "/privacy", label: "Конфиденциальность" },
+  ],
+  get: [
+    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/offer", label: "Публичная оферта" },
+    { href: "/privacy", label: "Конфиденциальность" },
+  ],
+} as const;
+---
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    {!(isFull || variant === "guide") ? <span>© 2026 Acrab</span> : (
+      <a class="brand" href="/">
+        <img src="/assets/acrab-app-icon.png" alt="" width="26" height="26" />
+        <span>Acrab</span>
+      </a>
+    )}
+    {isFull && <StoreLinks includeTestFlight />}
+    {isFull && (
+      <div class="footer-social">
+        <span class="footer-social-label">Мы в соцсетях</span>
+        <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z" /></svg>
+          <span>@musa1756_ai</span>
+        </a>
+      </div>
+    )}
+    {variant === "guide" ? (
+      <div class="footer-links">
+        <a href="/learn-arabic/">Как учить арабский</a>
+        <a href="/support">Поддержка</a>
+        <a href="/offer">Публичная оферта</a>
+        <a href="/privacy">Конфиденциальность</a>
+      </div>
+    ) : isFull ? (
+      <div class="footer-links">
+        <a href="/offer" rel="noopener">Публичная оферта</a>
+        <a href="/privacy" rel="noopener">Конфиденциальность</a>
+        <a href="/support" rel="noopener">Поддержка и контакты</a>
+      </div>
+    ) : (
+      <div class="footer-links">
+        {legalLinks[variant].map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    )}
+  </div>
+</footer>
