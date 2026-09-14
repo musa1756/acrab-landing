@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-08T09:55:34Z",
+  "title": "Design System: Acrab",
+  "extensions": {
+    "colorMeta": {
+      "gold": {
+        "role": "primary",
+        "displayName": "Learning Gold",
+        "canonical": "#d4a854",
+        "tonalRamp": ["#2d220d", "#543f18", "#7b5d23", "#a37c35", "#d4a854", "#e2c17d", "#efdbac", "#fbf3df"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Primary Ink",
+        "canonical": "#15120c",
+        "tonalRamp": ["#15120c", "#2a261f", "#48433b", "#6f695f", "#918b81", "#b5afa6", "#d8d4ce", "#f5f3ef"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Clear Canvas",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#26231e", "#4a4640", "#706b64", "#96918a", "#bbb7b1", "#d8d5d0", "#efede9", "#ffffff"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "One decisive page promise." },
+      "body": { "displayName": "Body", "purpose": "Long-form explanation and product detail." },
+      "label": { "displayName": "Learning Label", "purpose": "Rare stage and section markers." },
+      "arabic": { "displayName": "Arabic", "purpose": "Fully vocalized examples and learning content." }
+    },
+    "shadows": [
+      { "name": "screenshot-lift", "value": "0 1px 2px rgba(21,18,12,0.05), 0 26px 50px -34px rgba(90,62,16,0.55)", "purpose": "Real application screenshots." },
+      { "name": "panel-lift", "value": "0 1px 2px rgba(21,18,12,0.04), 0 18px 40px -30px rgba(90,62,16,0.4)", "purpose": "Focused task panels." }
+    ],
+    "motion": [
+      { "name": "state-fast", "value": "150ms ease", "purpose": "Hover and focus state transitions." },
+      { "name": "lift", "value": "180ms ease", "purpose": "Featured guide hover response." }
+    ],
+    "breakpoints": [
+      { "name": "wide", "value": "1000px" },
+      { "name": "stack", "value": "860px" },
+      { "name": "phone", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High-confidence action used for starting or downloading.",
+      "html": "<a class=\"ds-button-primary\" href=\"#\">Начать бесплатно</a>",
+      "css": ".ds-button-primary{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:10px 17px;border-radius:12px;background:#15120c;color:#fff;font:650 15px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;text-decoration:none;transition:transform 150ms ease,background 150ms ease}.ds-button-primary:hover{transform:translateY(-1px);background:#2a251c}.ds-button-primary:focus-visible{outline:2px solid #a06f16;outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral companion action for an alternate store or route.",
+      "html": "<a class=\"ds-button-secondary\" href=\"#\">Другой вариант</a>",
+      "css": ".ds-button-secondary{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:10px 17px;border:1px solid rgba(21,18,12,.1);border-radius:12px;background:#fff;color:#15120c;font:650 15px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;text-decoration:none;transition:transform 150ms ease,background 150ms ease,border-color 150ms ease}.ds-button-secondary:hover{transform:translateY(-1px);background:#faf6ee;border-color:rgba(212,168,84,.3)}.ds-button-secondary:focus-visible{outline:2px solid #a06f16;outline-offset:3px}"
+    },
+    {
+      "name": "Learning Label",
+      "kind": "chip",
+      "description": "Compact marker for a numbered stage or guide context.",
+      "html": "<span class=\"ds-learning-label\">ГИД</span>",
+      "css": ".ds-learning-label{display:inline-block;padding:4px 10px;border-radius:8px;background:rgba(212,168,84,.16);color:#8a5a0e;font:800 12px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;letter-spacing:.1em}.ds-learning-label:focus-visible{outline:2px solid #a06f16;outline-offset:3px}"
+    },
+    {
+      "name": "Store Link",
+      "kind": "custom",
+      "description": "Compact two-line download destination.",
+      "html": "<a class=\"ds-store-link\" href=\"#\"><span aria-hidden=\"true\">●</span><span><small>Загрузите в</small><strong>App Store</strong></span></a>",
+      "css": ".ds-store-link{display:inline-flex;min-height:46px;align-items:center;gap:9px;padding:6px 14px 6px 11px;border:1px solid rgba(21,18,12,.1);border-radius:12px;background:#fff;color:#15120c;text-decoration:none;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}.ds-store-link span:last-child{display:flex;flex-direction:column;line-height:1.2}.ds-store-link small{color:#7a746a;font-size:10px}.ds-store-link strong{font-size:14px}.ds-store-link:hover{background:#faf6ee;border-color:rgba(212,168,84,.3)}.ds-store-link:focus-visible{outline:2px solid #a06f16;outline-offset:3px}"
+    },
+    {
+      "name": "Guide Answer",
+      "kind": "card",
+      "description": "Immediate answer near the start of a long educational guide.",
+      "html": "<div class=\"ds-guide-answer\"><strong>Короткий ответ:</strong> начните с понятного следующего шага.</div>",
+      "css": ".ds-guide-answer{max-width:66ch;padding:18px 20px;border:1px solid rgba(212,168,84,.3);border-radius:12px;background:#faf6ee;color:#55504a;font:400 17px/1.6 -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}.ds-guide-answer strong{color:#15120c;font-weight:650}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Guided Margin",
+    "overview": "Acrab feels like a carefully annotated study path: quiet white space, precise dark type, sparse gold markers and real lesson screens. Identity comes from sequencing, legible Arabic text and evidence from the product.",
+    "keyCharacteristics": ["White canvas with one warm gold voice.", "Large sans-serif headlines and measured body copy.", "Real app screens used as proof.", "Thin dividers and tonal surfaces before shadows.", "One-column mobile reading without horizontal scroll."],
+    "rules": [
+      { "name": "The One Gold Voice Rule", "body": "Gold identifies learning progress or an actionable state; it does not become a large decorative field.", "section": "colors" },
+      { "name": "The Arabic Is Content Rule", "body": "Arabic examples use the dedicated script stack, correct language and direction attributes, and enough line height for marks.", "section": "typography" },
+      { "name": "The Evidence Floats Rule", "body": "Product screenshots may lift from the page because they are proof; ordinary text containers remain flat.", "section": "elevation" }
+    ],
+    "dos": ["Do use real app screens and specific lesson examples as primary proof.", "Do keep one clear action near the product promise.", "Do preserve correct Arabic direction and generous vertical metrics.", "Do keep secondary copy at 4.5:1 contrast or better on white."],
+    "donts": ["Don't invent ratings, testimonials, student counts or learning-speed claims.", "Don't replace useful educational copy with keyword repetition.", "Don't introduce ornamental Arabic patterns, glass effects or gradient text.", "Don't put ordinary article paragraphs into nested cards."]
+  }
+}

@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  release: CollectionEntry<"changelog">;
+}
+
+const { release } = Astro.props;
+const { data } = release;
+const titleId = `${release.id}-title`;
+const sections = [
+  { label: "Новое", emoji: "✨", items: data.new },
+  { label: "Улучшения", emoji: "💎", items: data.improvements },
+  { label: "Исправления", emoji: "🐞", items: data.fixes },
+];
+---
+
+<article class="release" id={release.id} aria-labelledby={titleId}>
+  <div class="release-rail">
+    <a class="version-chip" href={`#${release.id}`}>{data.version}</a>
+    <time class="release-date" datetime={data.date.toISOString().slice(0, 10)}>{data.dateLabel}</time>
+  </div>
+  <div class="release-main">
+    <h2 class="release-title" id={titleId}><span class="emoji" aria-hidden="true">{data.emoji}</span>{data.title}</h2>
+    {data.image ? (
+      <figure class="release-media">
+        <img src={data.image.src} alt={data.image.alt} width={data.image.width} height={data.image.height} />
+      </figure>
+    ) : (
+      <div class="media-placeholder" aria-label="Изображение обновления пока не добавлено"></div>
+    )}
+    {data.description.map((paragraph) => <p set:html={paragraph} />)}
+    {sections.map((section) => section.items.length > 0 && (
+      <>
+        <h3 class="section-head"><span class="emoji" aria-hidden="true">{section.emoji}</span>{section.label}</h3>
+        <ul class="dash-list">{section.items.map((item) => <li set:html={item} />)}</ul>
+      </>
+    ))}
+  </div>
+</article>

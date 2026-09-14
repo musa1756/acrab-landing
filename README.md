@@ -1,119 +1,170 @@
-> Акраб: поверхность отложена. Сейчас разрабатывается приложение в `mobile/`; исходники шаблона сохранены. Настройка и развёртывание этой поверхности в текущую задачу не входят.
+# Acrab Landing
 
-# Website
+Статический сайт Acrab на Astro 7. Все страницы генерируются во время сборки в
+`dist/`; Node.js или Bun на production не требуются.
 
-The website workspace is a separate Astro project for public, SEO-facing surfaces: landing pages, marketing/content sites, and the public catalog of product sites such as a marketplace. It is the SSG-first counterpart to the CSR `webapp` (which lives behind auth and needs no SEO). Read the mandatory cross-surface contract in [../docs/WEB_SURFACES.md](../docs/WEB_SURFACES.md) before adding backend-built product data, a cart, checkout, orders, subscriptions, entitlements, or payments.
+## Стек
 
-## Stack
+- Bun 1.4
+- Astro 7 в режиме SSG
+- TypeScript со строгой проверкой
+- Vite
+- Tailwind CSS 4 без Preflight; существующая визуальная система сохранена в
+  глобальном CSS
+- React 19 только для интерактивного payment island `/buy`
+- небольшой клиентский TypeScript-модуль для platform redirect `/get`
 
-- Astro (static SSG by default; SSR-ready per route)
-- Tailwind CSS 4 through the official Vite plugin
-- shadcn/ui registry rendered through React on the server by default
-- React Three Fiber for the isolated, decorative hero visual
-- TypeScript
-- Vite through Astro
+Статические страницы не гидратируются. API, auth и webhook платежей остаются
+внешними сервисами; секреты backend не попадают в `dist`.
 
-The landing page is composed from small Astro-owned sections under `src/components/landing`.
-The complete generated shadcn registry lives under `src/components/ui`; landing sections use only
-the primitives they need and keep product content in static HTML. The hero always renders its CSS
-fallback into the static SSG document and hydrates its lightweight shell with `client:idle`. That
-shell imports the R3F/Three Canvas only on viewports at least 1024 px wide when reduced motion is
-not requested, so mobile and reduced-motion visitors never download the 3D bundle. The scene stays
-decorative and must not own SEO-critical copy. Keep product copy and composition in the landing
-components, global tokens in `src/styles/global.css`, and page metadata in the layout/page.
-
-## Rendering model
-
-Astro prerenders every page to static HTML by default, so the standard build is a cheap static site in `website/dist`, deployable to a Static Site host or object storage + CDN. No server adapter is installed by default, on purpose: the common case (landing and content pages, plus stable public marketplace pages) is pure static.
-
-Database-backed public product information may be fetched from the backend during `astro build`,
-validated with a shared contract, and emitted as static HTML. Only public-safe data belongs in the
-artifact, and required snapshot failures fail the build instead of publishing an empty catalog.
-When a database change must update this output automatically, the owning write flow enqueues the
-documented `website:rebuild` task; the commented handler is not a working rebuild feature by itself.
-
-A route can opt into server rendering (SSR) with `export const prerender = false`. SSR is a deliberate upgrade, not the marketplace default, because it requires installing a Node adapter and deploying as a runtime service instead of a Static Site. Keep marketing/content pages and durable public catalog pages static. Render only request-specific routes on demand: live search, personalized public views, or inventory/price pages where stale HTML is unacceptable.
-
-Use this freshness ladder before making an entire page uncached or personalized SSR:
-
-1. SSG plus rebuild/redeploy for durable marketplace changes such as edited listings, category copy, and landing content.
-2. Cached on-demand/SSR routes with CDN headers such as `stale-while-revalidate` when freshness matters more than a full redeploy cycle.
-3. Astro server islands for non-SEO-critical dynamic or personalized fragments, such as a signed-in header state or saved/listing action.
-4. Uncached or personalized Astro SSR only for request-specific pages where initial HTML must reflect current request data.
-
-On-demand/SSR routes and server islands both require an Astro adapter and a runtime-capable deployment. They do not work from a pure Static Site host or object-storage static website. Server islands keep the main page prerendered while rendering only a fragment on demand; they are a smaller runtime step than making the whole route SSR, not a feature of static hosting. When server islands appear on cached pages or during rolling deploys, generate a stable key with `astro create-key` and configure `ASTRO_KEY` as a secret in both build and runtime environments so old cached HTML and the current server bundle can decrypt island props consistently. Never commit it, print it, expose it as `PUBLIC_*`, or bake it into static output.
-
-Only anonymous, public-equivalent HTML may use shared CDN caching such as `public`, `s-maxage`, or `stale-while-revalidate`. Auth-dependent or personalized routes and server islands must use `private` or `no-store`, or a deliberately supported `Vary: Cookie`/`Authorization` strategy. `ASTRO_KEY` protects island prop encryption and deploy consistency; it is not a cache privacy boundary.
-
-SEO-critical content must be present in the initial HTML: title, description, canonical URL, Open Graph/Twitter tags, product or category names, indexable descriptions, and public prices when they matter for search snippets. Client islands and server islands may enhance the page, but they must not be the only source of SEO-critical content.
-
-## Commands
-
-From the repository root:
+## Команды
 
 ```bash
-bun run dev:website
-bun run typecheck:website
-bun run build:website
-bun run test:website
-```
-
-From `website`:
-
-```bash
+bun install --frozen-lockfile
 bun run dev
-bun run typecheck
 bun run build
-bun run test
 bun run preview
-bun run storybook
-bun run storybook:build
+bun run typecheck
+bun run test
+bun run test:browser
+bun run check
 ```
 
-Astro publishes pages from `src/pages`. Static assets live in `public`.
+`bun run check` выполняет typecheck, unit-тесты, сборку и проверку итогового
+каталога. Проверку можно запустить отдельно после сборки:
 
-Storybook runs locally on port `6007` in the website's dark monochrome theme. It catalogs every
-React module in `src/components/ui` and non-production CTA, card-grid, FAQ/form, and content-block
-compositions. The current Astro landing sections and pages stay outside the catalog: Storybook uses
-the official React/Vite renderer only, adds no Astro adapter or hydration to the site, and its
-static output is not part of `website/dist`.
+```bash
+python3 tools/check_site.py dist
+```
 
-## Deployment
+Browser smoke требует установленный Chromium для Playwright:
 
-When the website has only fully prerendered output and no server islands or runtime-rendered routes, `website/dist` is fully static. Terraform creates a DigitalOcean App Platform Static Site or a Yandex Object Storage website bucket according to `CHECKLIST.md`. The unified release supplies `PUBLIC_WEBSITE_URL` and `PUBLIC_WEBAPP_URL`, rebuilds after either changes, and publishes/deploys the exact release. Without a canonical URL, pages omit canonical and `og:url` metadata. Follow [../docs/DEPLOYMENT.md](../docs/DEPLOYMENT.md) and run `bun run release -- <digitalocean|yandex>`.
+```bash
+bunx playwright install chromium
+bun run test:browser
+```
 
-On the default DigitalOcean/Yandex path, "regeneration" means redeploying static output or letting CDN/runtime cache refresh. It is not the same product feature as built-in Next/Vercel on-demand ISR.
+## Структура
 
-If that redeploy ever needs to happen automatically, it is a background task rather than a new service - see "Rebuilding a static site" in [../docs/BACKGROUND_JOBS.md](../docs/BACKGROUND_JOBS.md), which also explains why the template documents it instead of shipping it.
+- `src/pages/` — статически генерируемые маршруты сайта.
+- `src/components/` — SEO, шапка, подвал, магазинные ссылки и релизы.
+- `src/layouts/` — общий, учебный и юридический layouts.
+- `src/content/changelog/` — структурированные JSON-записи changelog.
+- `src/features/payment/` — чистые модели, сообщения и API платежей.
+- `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
+- `src/scripts/store-redirect.ts` — платформенный redirect `/get`.
+- `src/styles/global.css` — сохранённая визуальная система и Tailwind utilities.
+- `public/assets/`, `public/robots.txt` и `public/sitemap.xml` — файлы с неизменными публичными URL.
+- `tests/` и `tools/check_site.py` — проверки исходников и готового `dist/`.
 
-### SSR upgrade path
+## Маршруты и SEO
 
-Do this only when a route actually needs server rendering. Do not use SSR just because the product is a marketplace. Steps (also summarized in `astro.config.mjs`):
+Сохраняются маршруты `/`, `/about`, `/learn-arabic`, `/arabic-alphabet`,
+`/fusha`, `/arabic-app`, `/buy`, `/support`, `/privacy`, `/offer`, `/consent`,
+`/get` и `/404.html`. Сборка использует directory-style output, поэтому
+`/buy` остаётся совместим с directory redirect на `/buy/`.
 
-1. Install a Node adapter that matches the installed Astro version: `bun add @astrojs/node --cwd website`. Verify the resolved version's `astro` peer range covers the installed Astro; a major mismatch fails the build.
-2. Register it in `astro.config.mjs` as `adapter: node({ mode: 'standalone' })` and keep `output: 'static'`. With an adapter, `astro build` emits `dist/client` (static assets/HTML) plus `dist/server` (runtime entry), so the static output dir becomes `website/dist/client`.
-3. Mark the dynamic route with `export const prerender = false`.
-4. Extend the selected Terraform stack to deploy this surface as a runtime **service/container** instead of static hosting, since SSR routes need the Node server at runtime.
+`/buy`, `/offer`, `/consent` и `/get` обязаны оставаться `noindex` и не входят
+в sitemap. Canonical индексируемых страниц заканчиваются `/`, кроме корня.
+Внутренние ссылки и пути к публичным ресурсам остаются абсолютными.
 
-Keep dynamic pages fresh with HTTP cache headers (`Cache-Control`, `stale-while-revalidate`) in front of a CDN once the website is deployed as a runtime service. Per-page incremental static regeneration (ISR) is a platform feature of Vercel/Netlify-style deployments and is **not** available on DigitalOcean App Platform Static Sites or Yandex Object Storage, so do not design the default path around it.
+При добавлении индексируемого маршрута одновременно обновляются:
 
-## Practice
+1. страница в `src/pages/` и её SEO-поля;
+2. список URL в `public/sitemap.xml`;
+3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`.
 
-Keep website-specific UI and content in this workspace. Do not duplicate authenticated browser-app flows from `webapp`. Auth inside `website` is acceptable only for small public-site needs, such as a logged-in header state or lightweight listing actions. Full buyer account, seller/admin, checkout/account, and dashboard workflows stay in `webapp` unless they have a concrete SEO requirement. An anonymous local cart or selected offer may start here, but it contains only untrusted identifiers and quantities and hands off to the single authenticated `webapp` checkout. Never add payment creation, card entry, authoritative totals, order state, or provider webhooks to `website`.
+## Changelog
 
-If the website starts reading API data or shared DTOs, add `@web-app-demo/contracts` intentionally and validate the producer/consumer path. Add `@astrojs/react` only when a page needs interactive React islands.
+Каждый релиз хранится отдельным JSON-файлом в `src/content/changelog/`. Схема
+описана в `src/content.config.ts`. Обязательны версия, дата, заголовок,
+описание и массивы `new`, `improvements`, `fixes`. Поле `image` допускает
+`null`; отсутствие изображения не ломает сборку. Страница сортирует релизы по
+дате от новых к старым.
 
-Astro remains the default here because it is content-first, static-first, low-JS by default, and easy for agents to reason about as the SEO surface. Choose Next.js only when the project intentionally wants a Vercel-optimized ISR/cache platform. Treat TanStack Start as an optional future React full-stack path for teams that want one React app with selective SSR, not as this template's default website stack.
+Изображения релизов размещаются в `public/assets/changelog/`. Изменение
+`assets/changelog/1-4.png`, существовавшее до миграции, не перезаписывается.
 
-## Current Upstream Documentation
+## Оплата
 
-For Astro, routing, content, on-demand rendering, adapters, build, or deployment questions, consult the current upstream documentation linked here first. This README describes this workspace's conventions; upstream docs are authoritative for Astro behavior.
+`/buy` остаётся статическим Astro shell с React island. Сценарий не изменён:
+email OTP существующего аккаунта, проверка кода, загрузка цен, выбор тарифа,
+создание платежа и переход только на HTTPS-домен `tochka.com`.
 
-- [Astro docs](https://docs.astro.build/en/getting-started/)
-- [Astro project structure](https://docs.astro.build/en/basics/project-structure/)
-- [Astro pages and routing](https://docs.astro.build/en/basics/astro-pages/)
-- [Astro on-demand rendering](https://docs.astro.build/en/guides/on-demand-rendering/)
-- [Astro Node adapter](https://docs.astro.build/en/guides/integrations-guide/node/)
-- [Astro deployment guides](https://docs.astro.build/en/guides/deploy/)
-- [TypeScript docs](https://www.typescriptlang.org/docs/)
-- [Vite guide](https://vite.dev/guide/)
+`SUPABASE_ANON_KEY` — публичный клиентский anon key, тот же, который уже
+распространяется в приложении. Это не серверный секрет. Privileged keys нельзя
+добавлять в исходники или статическую сборку. Клиент не подтверждает и не
+активирует Premium: это делает существующий серверный webhook.
+
+## Юридические документы
+
+Тексты `/privacy`, `/offer` и `/consent` нельзя редактировать как обычный
+маркетинговый контент. Любая правка выполняется как отдельное юридическое
+изменение. Версии документов в платёжном payload меняются только вместе с
+утверждённой редакцией и серверной обработкой.
+
+## CI
+
+`.github/workflows/check.yml` запускается для каждого pull request и push в
+`main` в одном фиксированном порядке:
+
+```text
+bun install --frozen-lockfile
+        ↓
+bun run typecheck
+        ↓
+bun run test
+        ↓
+bun run build
+        ↓
+python3 tools/check_site.py dist
+```
+
+Затем workflow выполняет HTTP smoke для всех маршрутов, включая `/buy`, и
+проверяет настоящий HTTP 404 для неизвестного адреса. Единственный CI-артефакт
+— готовый каталог `dist`.
+
+## Timeweb
+
+Настройки статического приложения:
+
+```text
+Build command:
+bun install --frozen-lockfile && bun run build
+
+Output directory:
+dist
+```
+
+Среда сборки должна использовать Node.js 22.12 или новее и Bun из
+`.bun-version`. SPA fallback запрещён: отсутствующий URL должен возвращать
+реальный HTTP 404. После смены deployment-настроек проверяются `/buy`,
+`/support`, `/robots.txt`, `/sitemap.xml` и случайный отсутствующий URL.
+
+Платёжную страницу следует дополнительно защищать HTTP-заголовками хостинга:
+`Content-Security-Policy` с `frame-ancestors 'none'`, `X-Frame-Options: DENY`,
+`Strict-Transport-Security`, `X-Content-Type-Options: nosniff` и строгим
+`Referrer-Policy`. Meta CSP не может задать `frame-ancestors`.
+
+## Зарегистрированные URL и контакты
+
+- External Purchase Link: `https://acrab.ru/buy`
+- Support website: `https://acrab.ru/support`
+- Marketing URL: `https://acrab.ru/`
+- Privacy Policy URL: `https://acrab.ru/privacy`
+
+`/buy` и `/support` нельзя переименовывать или заменять SPA-маршрутами: эти
+адреса используются Apple. Кнопка поддержки ведёт на `@musa_1756`, публичный
+канал в подвале — на `@musa1756_ai`; это разные адреса. Email поддержки
+`lagutkin.maksim.03@mail.ru` сохраняется на `/support`.
+
+Старая GitHub Pages-копия политики может оставаться доступной до проверки
+production-страницы `/privacy`; удалять её до этого нельзя. Контакты внутри
+юридического текста меняются только отдельной утверждённой правкой.
+
+## Проверка после публикации
+
+После preview и production deployment проверяются HTTP-ответы `/buy`,
+`/support`, `/robots.txt`, `/sitemap.xml`, случайного отсутствующего URL и все
+ссылки на магазины. Затем `https://acrab.ru/sitemap.xml` повторно отправляется
+в Google Search Console и Яндекс Вебмастер.

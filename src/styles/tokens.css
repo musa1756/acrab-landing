@@ -1,0 +1,35 @@
+:root {
+  --canvas: #ffffff;
+  --canvas-warm: #fdfaf4;
+  --surface: #ffffff;
+  --surface-soft: #faf6ee;
+
+  --ink: #15120c;
+  --ink-body: #55504a;
+  --ink-muted: #6f695f;
+  --ink-faint: #7a746a;
+
+  --gold: #d4a854;
+  --gold-text: #8a5a0e;
+  --gold-strong: #a06f16;
+  --gold-wash: rgba(212, 168, 84, 0.16);
+  --gold-wash-strong: rgba(212, 168, 84, 0.3);
+
+  --danger: #b3261e;
+
+  --line: rgba(21, 18, 12, 0.1);
+  --line-soft: rgba(21, 18, 12, 0.06);
+
+  --page: min(1060px, calc(100% - 48px));
+  --rail: 176px;
+  --gap: clamp(32px, 6vw, 72px);
+  --header-h: 62px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --arabic: "Geeza Pro", "Noto Naskh Arabic", "Al Bayan", serif;
+}

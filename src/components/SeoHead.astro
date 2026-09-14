@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  robots?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  ogImageAlt?: string;
+  twitterCard?: "summary" | "summary_large_image";
+  viewport?: string;
+  themeColor?: string | null;
+  includeIcons?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  robots,
+  ogTitle,
+  ogDescription,
+  ogType,
+  ogImage,
+  ogImageAlt,
+  twitterCard,
+  viewport = "width=device-width, initial-scale=1",
+  themeColor = "#ffffff",
+  includeIcons = true,
+} = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content={viewport} />
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+{robots && <meta name="robots" content={robots} />}
+{themeColor && <meta name="theme-color" content={themeColor} />}
+{canonical && <link rel="canonical" href={canonical} />}
+{ogTitle && <meta property="og:title" content={ogTitle} />}
+{ogDescription && <meta property="og:description" content={ogDescription} />}
+{ogType && <meta property="og:type" content={ogType} />}
+{canonical && ogTitle && <meta property="og:url" content={canonical} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+{twitterCard && <meta name="twitter:card" content={twitterCard} />}
+{includeIcons && <link rel="icon" href="/assets/acrab-app-icon.png" />}
+{includeIcons && <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png" />}

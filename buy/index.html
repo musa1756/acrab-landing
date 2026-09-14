@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Оплата Acrab Premium</title>
+  <meta name="description" content="Оплата Acrab Premium: подтвердите почту аккаунта, выберите тариф и оплатите через банк «Точка».">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="robots" content="noindex">
+  <!-- Timeweb static hosting can't set response headers, so CSP ships as a meta
+       tag. frame-ancestors is ignored in meta form — the inline frame-buster
+       below is the clickjacking fallback. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self'; connect-src https://api.acrab.ru; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <link rel="icon" href="/assets/acrab-app-icon.png">
+  <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
+  <link rel="stylesheet" href="/styles.css?v=20260808-seo-1">
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержанию</a>
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/" aria-label="Acrab, на главную">
+        <img src="/assets/acrab-app-icon.png" alt="" width="30" height="30">
+        <span>Acrab</span>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <a href="/">О приложении</a>
+        <a href="/about">Обновления</a>
+        <a href="/buy" aria-current="page">Оплата</a>
+        <a href="/support">Q/A</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-head page-head-centered">
+      <div class="page-head-inner">
+        <p class="eyebrow">Acrab Premium</p>
+        <h1 class="page-title">Оплата</h1>
+        <p class="page-lead">Подтвердите почту от аккаунта Acrab, выберите тариф и оплатите через защищённую страницу банка «Точка». Данные карты вводятся на стороне банка и не хранятся у нас.</p>
+      </div>
+    </div>
+
+    <div class="panel-main">
+      <section class="panel" aria-labelledby="buy-title">
+        <h2 id="buy-title" class="auth-title">Вход по почте</h2>
+        <p class="auth-lead">Premium привязывается к тому же аккаунту, с которым вы занимаетесь в приложении.</p>
+
+        <div id="step-email" class="auth-step" data-step="email">
+          <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
+          <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+          <label class="legal-consent"><input id="personal-data-consent" type="checkbox"><span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span></label>
+          <button id="send-code-btn" class="button button-primary auth-submit" type="button">Получить код</button>
+          <p id="email-error" class="auth-error" role="alert" hidden></p>
+        </div>
+
+        <div id="step-code" class="auth-step" data-step="code" hidden>
+          <p class="auth-hint">Код отправлен на <strong id="code-email-echo"></strong>.</p>
+          <label class="auth-label" for="code-input">Код из письма</label>
+          <input id="code-input" class="auth-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" required>
+          <button id="verify-code-btn" class="button button-primary auth-submit" type="button">Подтвердить</button>
+          <button id="change-email-btn" class="auth-linklike" type="button">Изменить почту</button>
+          <p id="code-error" class="auth-error" role="alert" hidden></p>
+        </div>
+
+        <div id="step-plan" class="auth-step" data-step="plan" hidden>
+          <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
+          <div class="plan-picker" role="group" aria-label="Выбор тарифа">
+            <button class="plan-option" type="button" data-plan="annual">
+              <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
+              <span class="plan-option-price" id="price-annual">2 990 ₽</span>
+              <span class="plan-option-note">за год</span>
+            </button>
+            <button class="plan-option" type="button" data-plan="monthly">
+              <span class="plan-option-top"><span>Месяц</span></span>
+              <span class="plan-option-price" id="price-monthly">399 ₽</span>
+              <span class="plan-option-note">в месяц</span>
+            </button>
+          </div>
+          <label class="legal-consent"><input id="offer-consent" type="checkbox"><span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span></label>
+          <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
+          <p class="checkout-legal-note">Переходя к оплате, вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a> и подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>.</p>
+          <p id="plan-error" class="auth-error" role="alert" hidden></p>
+        </div>
+
+        <div id="step-redirect" class="auth-step" data-step="redirect" hidden>
+          <p class="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
+        </div>
+
+        <p class="auth-footnote">Обработку платежа выполняет банк «Точка» (эквайринг, соответствует PCI DSS Level&nbsp;1). Мы не получаем и не храним данные вашей карты. Каждая оплата разовая, на выбранный период — автосписания нет. Услуга цифровая: доставка не требуется, Premium активируется в приложении автоматически после подтверждения оплаты банком, обычно в течение нескольких минут. Вопросы по оплате — на <a href="/support">странице Q/A</a>.</p>
+      </section>
+
+      <!-- Цифры сверены с AIQuotaScope (freeDailyLimit / premiumDailyLimit) и
+           FushaProgramAccessPolicy в приложении. Меняются лимиты — правится и
+           эта таблица, иначе сайт начнёт обещать не то, что выдаёт приложение. -->
+      <section class="compare" aria-labelledby="compare-title">
+        <h2 class="compare-title" id="compare-title">Что даёт Premium</h2>
+        <p class="compare-lead">Free остаётся бесплатным без ограничения по времени. Premium снимает границу программы и поднимает дневные лимиты инструментов.</p>
+
+        <div class="compare-scroll">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th scope="col">Возможность</th>
+                <th scope="col">Free</th>
+                <th scope="col" class="is-premium">Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Программа</th></tr>
+              <tr>
+                <th scope="row">Главы программы</th>
+                <td>Первые 6 глав</td>
+                <td class="is-premium">Все 44 главы</td>
+              </tr>
+              <tr>
+                <th scope="row">Уроки, упражнения, интервальное повторение</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Озвучка слов и фраз в уроках</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Инструменты — лимит на день</th></tr>
+              <tr>
+                <th scope="row">AI-учитель, сообщений</th>
+                <td>10</td>
+                <td class="is-premium">100</td>
+              </tr>
+              <tr>
+                <th scope="row">Перевод, символов</th>
+                <td>1 000</td>
+                <td class="is-premium">30 000</td>
+              </tr>
+              <tr>
+                <th scope="row">Огласовки текста, символов</th>
+                <td>1 000</td>
+                <td class="is-premium">30 000</td>
+              </tr>
+              <tr>
+                <th scope="row">Огласовки по фото</th>
+                <td>Без лимита</td>
+                <td class="is-premium">Без лимита</td>
+              </tr>
+              <tr>
+                <th scope="row">Словарь по теме, запросов</th>
+                <td>3</td>
+                <td class="is-premium">100</td>
+              </tr>
+              <tr>
+                <th scope="row">Примеры со словом, запросов</th>
+                <td>3</td>
+                <td class="is-premium">50</td>
+              </tr>
+              <tr>
+                <th scope="row">Картинки для флешкарт</th>
+                <td>5</td>
+                <td class="is-premium">Без лимита</td>
+              </tr>
+              <tr>
+                <th scope="row">Озвучка текста, символов</th>
+                <td>400</td>
+                <td class="is-premium">10 000</td>
+              </tr>
+              <tr>
+                <th scope="row">Спряжения глаголов и семьи слов</th>
+                <td>Без лимита</td>
+                <td class="is-premium">Без лимита</td>
+              </tr>
+
+              <tr class="compare-group"><th scope="colgroup" colspan="3">Огонёк и прогресс</th></tr>
+              <tr>
+                <th scope="row">Заморозки огонька</th>
+                <td>2</td>
+                <td class="is-premium">2</td>
+              </tr>
+              <tr>
+                <th scope="row">Автовосстановление сгоревшего огонька</th>
+                <td><span class="mark mark-no" aria-hidden="true">—</span><span class="visually-hidden">нет</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Синхронизация прогресса между устройствами</th>
+                <td><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+                <td class="is-premium"><span class="mark mark-yes" aria-hidden="true">✓</span><span class="visually-hidden">есть</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="compare-note">Бесплатный маршрут программы заканчивается на главе «Семья и люди». Лимиты инструментов обнуляются каждый день; когда дневной лимит исчерпан, уроки продолжают работать как обычно.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <a class="brand" href="/">
+        <img src="/assets/acrab-app-icon.png" alt="" width="26" height="26">
+        <span>Acrab</span>
+      </a>
+      <div class="store-links">
+        <a class="store-link" href="https://apps.apple.com/ru/app/acrab-%D0%B0%D1%80%D0%B0%D0%B1%D1%81%D0%BA%D0%B8%D0%B9-%D1%8F%D0%B7%D1%8B%D0%BA/id6763663680" target="_blank" rel="noopener" aria-label="Acrab в App Store, iPhone и iPad">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.05 12.53c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.71-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.21 1.1-.05 1.52-.72 2.85-.72 1.33 0 1.71.72 2.88.69 1.19-.02 1.94-1.08 2.67-2.14.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.87 6.09c.61-.74 1.02-1.77.91-2.79-.88.04-1.94.59-2.57 1.32-.56.65-1.06 1.7-.92 2.7.98.08 1.98-.5 2.58-1.23z"/></svg>
+          <span class="store-link-text">
+            <span class="store-link-kicker">Загрузите в</span>
+            <span class="store-link-name">App Store</span>
+          </span>
+        </a>
+        <a class="store-link" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener" aria-label="Acrab в RuStore, Android">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.14-.52.38.38 0 0 0-.52.14l-1.87 3.23a11.43 11.43 0 0 0-9.82 0L5.22 5.92a.38.38 0 0 0-.52-.14.38.38 0 0 0-.14.52L6.4 9.48A10.81 10.81 0 0 0 1 18h22a10.81 10.81 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>
+          <span class="store-link-text">
+            <span class="store-link-kicker">Доступно в</span>
+            <span class="store-link-name">RuStore</span>
+          </span>
+        </a>
+        <a class="store-link" href="https://testflight.apple.com/join/szma6DJM" target="_blank" rel="noopener" aria-label="Бета-версия Acrab в TestFlight">
+          <img src="/assets/store-testflight.png" alt="" width="22" height="22">
+          <span class="store-link-text">
+            <span class="store-link-kicker">Бета-версия</span>
+            <span class="store-link-name">TestFlight</span>
+          </span>
+        </a>
+      </div>
+      <div class="footer-social">
+        <span class="footer-social-label">Мы в соцсетях</span>
+        <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z"/></svg>
+          <span>@musa1756_ai</span>
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="/offer" rel="noopener">Публичная оферта</a>
+        <a href="/privacy" rel="noopener">Конфиденциальность</a>
+        <a href="/support" rel="noopener">Поддержка и контакты</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Clickjacking guard: a payment page must never render inside someone
+    // else's frame (meta-CSP cannot express frame-ancestors).
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+
+    // Public anon key for the self-hosted Supabase project (api.acrab.ru), same as the one
+    // baked into the compiled iOS app — not a service_role secret, safe to ship client-side.
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
+    const SUPABASE_URL = "https://api.acrab.ru";
+
+    const FALLBACK_PRICES = { monthly: 399, annual: 2990 };
+    const LEGAL_DOCUMENT_VERSION = "2026-08-09";
+
+    const state = { email: null, accessToken: null, plan: null };
+
+    const steps = {
+      email: document.getElementById("step-email"),
+      code: document.getElementById("step-code"),
+      plan: document.getElementById("step-plan"),
+      redirect: document.getElementById("step-redirect"),
+    };
+
+    function showStep(name) {
+      for (const key of Object.keys(steps)) {
+        steps[key].hidden = key !== name;
+      }
+    }
+
+    function setError(el, message) {
+      if (!message) {
+        el.hidden = true;
+        el.textContent = "";
+        return;
+      }
+      el.hidden = false;
+      el.textContent = message;
+    }
+
+    function formatRub(amount) {
+      return `${Math.round(amount).toLocaleString("ru-RU")} ₽`;
+    }
+
+    async function supabaseFetch(path, options = {}) {
+      const response = await fetch(`${SUPABASE_URL}${path}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON_KEY,
+          ...(options.headers || {}),
+        },
+      });
+      const text = await response.text();
+      let json = null;
+      try { json = text ? JSON.parse(text) : null; } catch { /* non-JSON body */ }
+      if (!response.ok) {
+        const message = (json && (json.error_description || json.error || json.msg)) || `Ошибка ${response.status}`;
+        const error = new Error(message);
+        // Статус и error_code нужны вызывающему, чтобы отличить «нет такого
+        // аккаунта» от сбоя на нашей стороне. GoTrue кладёт в `code` число
+        // (дубль статуса), а строковый идентификатор — в `error_code`.
+        error.status = response.status;
+        error.code = json && typeof json.error_code === "string" ? json.error_code : null;
+        throw error;
+      }
+      return json;
+    }
+
+    // Один и тот же отказ «код не ушёл» бывает трёх разных природ, и вина у них
+    // разная: 422 — почты нет в базе, 429 — частим сами, 5xx — лежит SMTP на
+    // нашей стороне. Пока все три показывали «проверьте почту», серверный сбой
+    // выглядел как ошибка ученика, и человек бесконечно перебирал верный адрес.
+    function sendCodeErrorMessage(error) {
+      if (error.code === "otp_disabled" || error.status === 422) {
+        return "Аккаунта Acrab с такой почтой нет. Проверьте адрес или сначала заведите аккаунт в приложении.";
+      }
+      if (error.status === 429) {
+        return "Слишком много запросов подряд. Подождите минуту и попробуйте ещё раз.";
+      }
+      if (error.status >= 500) {
+        return "Отправка писем сейчас недоступна на нашей стороне — почта тут ни при чём. Попробуйте позже или напишите в поддержку на странице Q/A.";
+      }
+      if (error.status === 400) {
+        return "Проверьте, что адрес введён без опечаток и лишних пробелов.";
+      }
+      return "Не получилось отправить код. Проверьте связь и попробуйте ещё раз.";
+    }
+
+    function verifyCodeErrorMessage(error) {
+      // Ни одного HTTP-ответа не было (оборвалась сеть) — код тут ни при чём.
+      if (!error.status) {
+        return "Не удалось связаться с сервером. Проверьте связь и попробуйте ещё раз.";
+      }
+      if (error.status === 429) {
+        return "Слишком много попыток. Подождите минуту и попробуйте ещё раз.";
+      }
+      if (error.status >= 500) {
+        return "Проверка кода сейчас недоступна на нашей стороне. Попробуйте позже или напишите в поддержку на странице Q/A.";
+      }
+      return "Код неверный или истёк. Проверьте письмо и попробуйте снова.";
+    }
+
+    async function loadPrices() {
+      try {
+        const rows = await supabaseFetch("/rest/v1/premium_pricing?select=plan,amount,currency");
+        if (Array.isArray(rows)) {
+          for (const row of rows) {
+            if (row.currency === "RUB" && (row.plan === "monthly" || row.plan === "annual")) {
+              FALLBACK_PRICES[row.plan] = Number(row.amount);
+            }
+          }
+        }
+      } catch {
+        // keep hardcoded fallback prices shown on the buttons
+      }
+      document.getElementById("price-monthly").textContent = formatRub(FALLBACK_PRICES.monthly);
+      document.getElementById("price-annual").textContent = formatRub(FALLBACK_PRICES.annual);
+    }
+
+    document.getElementById("send-code-btn").addEventListener("click", async () => {
+      const emailInput = document.getElementById("email-input");
+      const email = emailInput.value.trim();
+      setError(document.getElementById("email-error"), "");
+      if (!email) {
+        setError(document.getElementById("email-error"), "Введите почту.");
+        return;
+      }
+      if (!document.getElementById("personal-data-consent").checked) {
+        setError(document.getElementById("email-error"), "Для отправки кода нужно дать отдельное согласие на обработку персональных данных.");
+        return;
+      }
+      // При `create_user: false` GoTrue отвечает `otp_disabled` ещё до проверки
+      // формата, поэтому «вася@» с сервера вернётся как «аккаунта нет». Ловим
+      // опечатку здесь, иначе сообщение уводит не туда. Кнопка вне <form>, так
+      // что нативная валидация type="email" сама не срабатывает.
+      emailInput.value = email;
+      if (!emailInput.checkValidity()) {
+        setError(document.getElementById("email-error"), "Проверьте, что адрес введён без опечаток и лишних пробелов.");
+        return;
+      }
+      const btn = document.getElementById("send-code-btn");
+      btn.disabled = true;
+      try {
+        await supabaseFetch("/auth/v1/otp", {
+          method: "POST",
+          body: JSON.stringify({ email, create_user: false }),
+        });
+        state.email = email;
+        document.getElementById("code-email-echo").textContent = email;
+        showStep("code");
+      } catch (error) {
+        setError(document.getElementById("email-error"), sendCodeErrorMessage(error));
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById("change-email-btn").addEventListener("click", () => {
+      showStep("email");
+      setError(document.getElementById("code-error"), "");
+    });
+
+    document.getElementById("verify-code-btn").addEventListener("click", async () => {
+      const code = document.getElementById("code-input").value.trim();
+      setError(document.getElementById("code-error"), "");
+      if (!code) {
+        setError(document.getElementById("code-error"), "Введите код из письма.");
+        return;
+      }
+      const btn = document.getElementById("verify-code-btn");
+      btn.disabled = true;
+      try {
+        const result = await supabaseFetch("/auth/v1/verify", {
+          method: "POST",
+          body: JSON.stringify({ email: state.email, token: code, type: "email" }),
+        });
+        if (!result || !result.access_token) {
+          // 200 без токена — сломан контракт сервера, а не введённый код.
+          throw Object.assign(new Error("Missing access_token"), { status: 500 });
+        }
+        state.accessToken = result.access_token;
+        document.getElementById("plan-email-echo").textContent = state.email;
+        showStep("plan");
+        loadPrices();
+      } catch (error) {
+        setError(document.getElementById("code-error"), verifyCodeErrorMessage(error));
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    for (const optionBtn of document.querySelectorAll(".plan-option")) {
+      optionBtn.addEventListener("click", () => {
+        for (const btn of document.querySelectorAll(".plan-option")) {
+          btn.classList.remove("is-selected");
+        }
+        optionBtn.classList.add("is-selected");
+        state.plan = optionBtn.dataset.plan;
+        document.getElementById("pay-btn").disabled = false;
+      });
+    }
+
+    document.getElementById("pay-btn").addEventListener("click", async () => {
+      setError(document.getElementById("plan-error"), "");
+      if (!state.plan || !state.accessToken) return;
+      if (!document.getElementById("offer-consent").checked) {
+        setError(document.getElementById("plan-error"), "Перед оплатой ознакомьтесь и примите условия публичной оферты.");
+        return;
+      }
+      const btn = document.getElementById("pay-btn");
+      btn.disabled = true;
+      try {
+        const result = await supabaseFetch("/functions/v1/tochka-payment", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${state.accessToken}` },
+          body: JSON.stringify({
+            action: "create",
+            plan: state.plan,
+            legalAcceptance: {
+              offerVersion: LEGAL_DOCUMENT_VERSION,
+              personalDataConsentVersion: LEGAL_DOCUMENT_VERSION,
+              source: "web-checkout",
+            },
+          }),
+        });
+        if (!result || !result.paymentLink) {
+          throw new Error("Missing paymentLink");
+        }
+        // Only ever redirect to Tochka's own HTTPS payment pages.
+        const link = new URL(result.paymentLink);
+        if (link.protocol !== "https:" || !(link.hostname === "tochka.com" || link.hostname.endsWith(".tochka.com"))) {
+          throw new Error("Unexpected payment link origin");
+        }
+        showStep("redirect");
+        window.location.href = link.href;
+      } catch (error) {
+        setError(document.getElementById("plan-error"), "Не получилось создать оплату. Попробуйте ещё раз через минуту или напишите в поддержку.");
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

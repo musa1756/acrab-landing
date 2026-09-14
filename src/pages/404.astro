@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Страница не найдена — Acrab" robots="noindex, follow">
+  <main id="main" class="not-found">
+<a class="brand" href="/" aria-label="Acrab, на главную">
+      <img src="/assets/acrab-app-icon.png" alt="" width="32" height="32">
+      <span>Acrab</span>
+    </a>
+    <p class="eyebrow">Ошибка 404</p>
+    <h1 class="page-title">Такой страницы нет</h1>
+    <p class="page-lead">Возможно, адрес изменился или в нём есть опечатка. Вернитесь к приложению или начните с руководства по арабскому языку.</p>
+    <div class="not-found-actions">
+      <a class="button button-primary" href="/">На главную</a>
+      <a class="button button-secondary" href="/learn-arabic/">Как учить арабский</a>
+    </div>
+  </main>
+</BaseLayout>
