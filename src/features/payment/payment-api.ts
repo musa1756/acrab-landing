@@ -1,4 +1,4 @@
-import { DEFAULT_PRICES, isPlan, LEGAL_DOCUMENT_VERSION, type PaymentResponse, type Plan, type Prices, type PricingRow, type VerifyResponse } from "./payment-model";
+import { DEFAULT_ANNUAL_LIFETIME_PRICE, DEFAULT_PRICES, isPlan, LEGAL_DOCUMENT_VERSION, type PaymentResponse, type Plan, type Pricing, type Prices, type PricingRow, type SubscriptionRow, type VerifyResponse } from "./payment-model";
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
 const SUPABASE_URL = "https://api.acrab.ru";
@@ -48,15 +48,30 @@ export function verifyOtp(email: string, token: string): Promise<VerifyResponse 
   return supabaseFetch<VerifyResponse>("/auth/v1/verify", { method: "POST", body: JSON.stringify({ email, token, type: "email" }) });
 }
 
-export async function loadPrices(): Promise<Prices> {
+export async function loadPricing(): Promise<Pricing> {
   const prices: Prices = { ...DEFAULT_PRICES };
+  let annualLifetimePrice = DEFAULT_ANNUAL_LIFETIME_PRICE;
   try {
     const rows = await supabaseFetch<PricingRow[]>("/rest/v1/premium_pricing?select=plan,amount,currency");
     if (Array.isArray(rows)) for (const row of rows) {
-      if (row.currency === "RUB" && isPlan(row.plan) && typeof row.amount === "number" && Number.isFinite(row.amount) && row.amount >= 0) prices[row.plan] = row.amount;
+      if (row.currency !== "RUB" || typeof row.amount !== "number" || !Number.isFinite(row.amount) || row.amount < 0) continue;
+      if (row.plan === "lifetime_annual") annualLifetimePrice = row.amount;
+      else if (isPlan(row.plan)) prices[row.plan] = row.amount;
     }
   } catch { /* keep hard-coded fallback prices */ }
-  return prices;
+  return { prices, annualLifetimePrice };
+}
+
+// Своя строка подписки читается по RLS-политике subscriptions_select_own.
+// Нужна только для показа цены: право на льготный переход и итоговую сумму
+// в любом случае решает сервер при создании оплаты.
+export async function loadSubscription(accessToken: string): Promise<SubscriptionRow | null> {
+  try {
+    const rows = await supabaseFetch<SubscriptionRow[]>("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return Array.isArray(rows) ? rows[0] ?? null : null;
+  } catch { return null; }
 }
 
 export function isTrustedPaymentLink(value: unknown): value is string {

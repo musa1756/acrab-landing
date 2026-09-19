@@ -526,7 +526,7 @@ code {
 .checkout-legal-note { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 1.5; text-align: center; }
 .checkout-legal-note a { color: var(--gold-text); font-weight: 600; }
 
-.plan-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.plan-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
 .plan-option {
   display: flex;
   flex-direction: column;
@@ -545,7 +545,7 @@ code {
 .plan-option.is-selected { border-color: var(--gold-strong); background: #fdf6e8; }
 .plan-option-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 650; }
 .plan-option-badge { padding: 3px 8px; border-radius: 999px; background: var(--gold); color: #3a2a08; font-size: 11px; font-weight: 700; }
-.plan-option-price { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.03em; }
+.plan-option-price { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.03em; }
 .plan-option-note { color: var(--ink-body); font-size: 13px; }
 
 /* ── Support FAQ ─────────────────────────────────────────────────────────── */

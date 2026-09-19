@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isTrustedPaymentLink, PaymentApiError } from "../src/features/payment/payment-api";
-import { sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
+import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
+import { DEFAULT_PRICING, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER } from "../src/features/payment/payment-model";
 import { APP_STORE_URL, RU_STORE_URL, storeTarget } from "../src/scripts/store-redirect-model";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -71,6 +72,16 @@ describe("generated site", () => {
     expect(page).toContain("PaymentFlow client:load");
   });
 
+  test("offers the same three plans on the published copy of /buy", () => {
+    const published = readSource("buy/index.html");
+    for (const plan of PLAN_ORDER) {
+      expect(published, plan).toContain(`data-plan="${plan}"`);
+      expect(published, plan).toContain(`id="price-${plan}"`);
+    }
+    expect(published).toContain("lifetime_annual");
+    expect(published).toContain("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1");
+  });
+
   test("keeps payment API contracts and public configuration", () => {
     const source = readSource("src/features/payment/payment-api.ts");
     expect(source).toContain('const SUPABASE_URL = "https://api.acrab.ru"');
@@ -88,6 +99,29 @@ describe("payment behavior", () => {
     expect(sendCodeErrorMessage(Object.assign(new PaymentApiError(""), { status: 429 }))).toContain("Слишком много запросов");
     expect(sendCodeErrorMessage(Object.assign(new PaymentApiError(""), { status: 500 }))).toContain("на нашей стороне");
     expect(verifyCodeErrorMessage(new PaymentApiError("network"))).toContain("связаться с сервером");
+  });
+
+  test("prices the lifetime plan and its annual upgrade", () => {
+    const pricing = DEFAULT_PRICING;
+    const annual = { plan: "annual", tier: "premium", status: "active", current_period_end: new Date(Date.now() + 86_400_000).toISOString() };
+    const expired = { ...annual, current_period_end: new Date(Date.now() - 86_400_000).toISOString() };
+    expect(PLAN_ORDER).toEqual(["annual", "monthly", "lifetime"]);
+    expect(planAmount("lifetime", pricing, null)).toBe(6490);
+    expect(planAmount("lifetime", pricing, annual)).toBe(3500);
+    expect(planAmount("lifetime", pricing, expired)).toBe(6490);
+    expect(planAmount("annual", pricing, annual)).toBe(2990);
+    expect(hasActiveAnnualPremium(annual)).toBe(true);
+    expect(hasActiveAnnualPremium({ ...annual, status: "canceled" })).toBe(false);
+    expect(isActiveLifetimePremium({ plan: "lifetime", tier: "premium", status: "paid" })).toBe(true);
+    expect(isActiveLifetimePremium(annual)).toBe(false);
+  });
+
+  test("shows the server reason when a payment cannot be created", () => {
+    expect(createPaymentErrorMessage(new PaymentApiError("network"))).toContain("временно недоступен");
+    expect(createPaymentErrorMessage(new PaymentApiError("Unauthorized", 401))).toContain("Сессия входа истекла");
+    expect(createPaymentErrorMessage(new PaymentApiError("Premium «Навсегда» уже активирован для этого аккаунта.", 409)))
+      .toBe("Premium «Навсегда» уже активирован для этого аккаунта.");
+    expect(createPaymentErrorMessage(new PaymentApiError("Unknown plan", 400))).toContain("ошибка 400");
   });
 
   test("allows only HTTPS Tochka payment links", () => {
