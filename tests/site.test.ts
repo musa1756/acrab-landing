@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { isTrustedPaymentLink, PaymentApiError } from "../src/features/payment/payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
 import { DEFAULT_PRICING, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER } from "../src/features/payment/payment-model";
-import { APP_STORE_URL, RU_STORE_URL, storeTarget } from "../src/scripts/store-redirect-model";
+import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -72,14 +72,15 @@ describe("generated site", () => {
     expect(page).toContain("PaymentFlow client:load");
   });
 
-  test("offers the same three plans on the published copy of /buy", () => {
-    const published = readSource("buy/index.html");
-    for (const plan of PLAN_ORDER) {
-      expect(published, plan).toContain(`data-plan="${plan}"`);
-      expect(published, plan).toContain(`id="price-${plan}"`);
-    }
-    expect(published).toContain("lifetime_annual");
-    expect(published).toContain("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1");
+  test("offers the same three plans and reads the subscription of the buyer", () => {
+    const flow = readSource("src/features/payment/PaymentFlow.tsx");
+    const api = readSource("src/features/payment/payment-api.ts");
+    expect(PLAN_ORDER).toEqual(["annual", "monthly", "lifetime"]);
+    expect(flow).toContain("PLAN_ORDER.map((option) => (");
+    expect(flow).toContain("data-plan={option}");
+    expect(flow).toContain("id={`price-${option}`}");
+    expect(api).toContain("lifetime_annual");
+    expect(api).toContain("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1");
   });
 
   test("keeps payment API contracts and public configuration", () => {
@@ -140,8 +141,8 @@ describe("store redirect", () => {
     expect(storeTarget("Mozilla Macintosh", 2)).toBe(APP_STORE_URL);
   });
 
-  test("redirects Android to RuStore and leaves desktop in place", () => {
-    expect(storeTarget("Mozilla Android", 0)).toBe(RU_STORE_URL);
+  test("redirects Android to Google Play and leaves desktop in place", () => {
+    expect(storeTarget("Mozilla Android", 0)).toBe(GOOGLE_PLAY_URL);
     expect(storeTarget("Mozilla Macintosh", 0)).toBeNull();
     expect(storeTarget("unknown", 0)).toBeNull();
   });
