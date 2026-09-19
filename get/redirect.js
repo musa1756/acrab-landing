@@ -12,7 +12,7 @@
   var target = isIOS
     ? "https://apps.apple.com/ru/app/id6763663680"
     : isAndroid
-      ? "https://www.rustore.ru/catalog/app/com.acrab"
+      ? "https://play.google.com/store/apps/details?id=com.acrab.arabic"
       : null;
 
   // replace, а не href: страница не остаётся в истории и кнопка «назад»

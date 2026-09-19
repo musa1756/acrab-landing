@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { isTrustedPaymentLink, PaymentApiError } from "../src/features/payment/payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
 import { DEFAULT_PRICING, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER } from "../src/features/payment/payment-model";
-import { APP_STORE_URL, RU_STORE_URL, storeTarget } from "../src/scripts/store-redirect-model";
+import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -140,8 +140,8 @@ describe("store redirect", () => {
     expect(storeTarget("Mozilla Macintosh", 2)).toBe(APP_STORE_URL);
   });
 
-  test("redirects Android to RuStore and leaves desktop in place", () => {
-    expect(storeTarget("Mozilla Android", 0)).toBe(RU_STORE_URL);
+  test("redirects Android to Google Play and leaves desktop in place", () => {
+    expect(storeTarget("Mozilla Android", 0)).toBe(GOOGLE_PLAY_URL);
     expect(storeTarget("Mozilla Macintosh", 0)).toBeNull();
     expect(storeTarget("unknown", 0)).toBeNull();
   });
