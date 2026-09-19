@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactElement } from "react";
-import { createPayment, loadPrices, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
+import { createPayment, loadPricing, loadSubscription, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "./payment-messages";
-import { DEFAULT_PRICES, formatRub, type PaymentStep, type Plan, type Prices } from "./payment-model";
+import { DEFAULT_PRICING, formatRub, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER, type PaymentStep, type Plan, type Pricing, type SubscriptionRow } from "./payment-model";
 
 // A meta CSP cannot express frame-ancestors. This guard runs as soon as the
 // payment island is evaluated and prevents checkout controls in a hostile frame.
@@ -10,6 +10,9 @@ if (typeof window !== "undefined" && window.top !== window.self) {
 }
 
 type PendingAction = "send-code" | "verify-code" | "create-payment" | null;
+
+const PLAN_TITLE: Record<Plan, string> = { annual: "Год", monthly: "Месяц", lifetime: "Навсегда" };
+const PLAN_NOTE: Record<Plan, string> = { annual: "за год", monthly: "в месяц", lifetime: "разовый платёж" };
 
 function ErrorMessage({ message }: { message: string }): ReactElement {
   return <p className="auth-error" role="alert" hidden={!message}>{message}</p>;
@@ -20,7 +23,8 @@ export default function PaymentFlow(): ReactElement {
   const [email, setEmail] = useState("");
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [plan, setPlan] = useState<Plan | null>(null);
-  const [prices, setPrices] = useState<Prices>(DEFAULT_PRICES);
+  const [pricing, setPricing] = useState<Pricing>(DEFAULT_PRICING);
+  const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
   const [personalDataConsent, setPersonalDataConsent] = useState(false);
   const [offerConsent, setOfferConsent] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -29,6 +33,12 @@ export default function PaymentFlow(): ReactElement {
   const [planError, setPlanError] = useState("");
   const emailInputRef = useRef<HTMLInputElement>(null);
   const codeInputRef = useRef<HTMLInputElement>(null);
+
+  // Premium «Навсегда» не продлевают и не покупают дважды: сервер отклоняет
+  // такую оплату, поэтому кнопки тарифов для этого аккаунта не показываем.
+  const lifetimeActive = isActiveLifetimePremium(subscription);
+  const lifetimeUpgrade = hasActiveAnnualPremium(subscription) &&
+    planAmount("lifetime", pricing, subscription) < pricing.prices.lifetime;
 
   async function handleSendCode(): Promise<void> {
     const normalizedEmail = email.trim();
@@ -70,6 +80,7 @@ export default function PaymentFlow(): ReactElement {
     setAccessToken(null);
     setPlan(null);
     setPlanError("");
+    setSubscription(null);
   }
 
   async function handleVerifyCode(): Promise<void> {
@@ -91,9 +102,12 @@ export default function PaymentFlow(): ReactElement {
       if (!result || typeof result.access_token !== "string") {
         throw new PaymentApiError("Missing access_token", 500);
       }
-      setAccessToken(result.access_token);
+      const token = result.access_token;
+      setAccessToken(token);
       setStep("plan");
-      setPrices(await loadPrices());
+      const [nextPricing, nextSubscription] = await Promise.all([loadPricing(), loadSubscription(token)]);
+      setPricing(nextPricing);
+      setSubscription(nextSubscription);
     } catch (error) {
       setCodeError(verifyCodeErrorMessage(error));
     } finally {
@@ -114,8 +128,8 @@ export default function PaymentFlow(): ReactElement {
       const paymentLink = await createPayment(accessToken, plan);
       setStep("redirect");
       window.location.href = paymentLink;
-    } catch {
-      setPlanError(createPaymentErrorMessage());
+    } catch (error) {
+      setPlanError(createPaymentErrorMessage(error));
       setPendingAction(null);
     }
   }
@@ -144,24 +158,31 @@ export default function PaymentFlow(): ReactElement {
 
       <div id="step-plan" className="auth-step" data-step="plan" hidden={step !== "plan"}>
         <p className="auth-hint">Вы вошли как <strong>{email}</strong>.</p>
-        <div className="plan-picker" role="group" aria-label="Выбор тарифа">
-          <button className={`plan-option${plan === "annual" ? " is-selected" : ""}`} type="button" data-plan="annual" aria-pressed={plan === "annual"} onClick={() => setPlan("annual")}>
-            <span className="plan-option-top"><span>Год</span><span className="plan-option-badge">Выгоднее</span></span>
-            <span className="plan-option-price" id="price-annual">{formatRub(prices.annual)}</span>
-            <span className="plan-option-note">за год</span>
-          </button>
-          <button className={`plan-option${plan === "monthly" ? " is-selected" : ""}`} type="button" data-plan="monthly" aria-pressed={plan === "monthly"} onClick={() => setPlan("monthly")}>
-            <span className="plan-option-top"><span>Месяц</span></span>
-            <span className="plan-option-price" id="price-monthly">{formatRub(prices.monthly)}</span>
-            <span className="plan-option-note">в месяц</span>
-          </button>
-        </div>
-        <label className="legal-consent">
-          <input id="offer-consent" type="checkbox" checked={offerConsent} onChange={(event) => setOfferConsent(event.currentTarget.checked)} />
-          <span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span>
-        </label>
-        <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || pendingAction !== null} onClick={handlePayment}>Оплатить</button>
-        <p className="checkout-legal-note">Переходя к оплате, вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a> и подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>.</p>
+        {lifetimeActive
+          ? <p className="auth-hint" id="lifetime-active-note">Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
+          : (
+            <>
+              {lifetimeUpgrade ? <p className="auth-hint" id="lifetime-upgrade-note">У вас действует годовой Premium: переход на «Навсегда» стоит {formatRub(planAmount("lifetime", pricing, subscription))} вместо {formatRub(pricing.prices.lifetime)}.</p> : null}
+              <div className="plan-picker" role="group" aria-label="Выбор тарифа">
+                {PLAN_ORDER.map((option) => (
+                  <button key={option} className={`plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
+                    <span className="plan-option-top">
+                      <span>{PLAN_TITLE[option]}</span>
+                      {option === "annual" ? <span className="plan-option-badge">Выгоднее</span> : null}
+                    </span>
+                    <span className="plan-option-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
+                    <span className="plan-option-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
+                  </button>
+                ))}
+              </div>
+              <label className="legal-consent">
+                <input id="offer-consent" type="checkbox" checked={offerConsent} onChange={(event) => setOfferConsent(event.currentTarget.checked)} />
+                <span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span>
+              </label>
+              <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || pendingAction !== null} onClick={handlePayment}>Оплатить</button>
+              <p className="checkout-legal-note">Переходя к оплате, вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a> и подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>.</p>
+            </>
+          )}
         <ErrorMessage message={planError} />
       </div>
 
