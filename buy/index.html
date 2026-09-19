@@ -66,6 +66,8 @@
 
         <div id="step-plan" class="auth-step" data-step="plan" hidden>
           <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
+          <p class="auth-hint" id="lifetime-active-note" hidden>Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
+          <p class="auth-hint" id="lifetime-upgrade-note" hidden></p>
           <div class="plan-picker" role="group" aria-label="Выбор тарифа">
             <button class="plan-option" type="button" data-plan="annual">
               <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
@@ -76,6 +78,11 @@
               <span class="plan-option-top"><span>Месяц</span></span>
               <span class="plan-option-price" id="price-monthly">399 ₽</span>
               <span class="plan-option-note">в месяц</span>
+            </button>
+            <button class="plan-option" type="button" data-plan="lifetime">
+              <span class="plan-option-top"><span>Навсегда</span></span>
+              <span class="plan-option-price" id="price-lifetime">6 490 ₽</span>
+              <span class="plan-option-note" id="lifetime-note">разовый платёж</span>
             </button>
           </div>
           <label class="legal-consent"><input id="offer-consent" type="checkbox"><span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span></label>
@@ -253,10 +260,15 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
     const SUPABASE_URL = "https://api.acrab.ru";
 
-    const FALLBACK_PRICES = { monthly: 399, annual: 2990 };
+    const FALLBACK_PRICES = { monthly: 399, annual: 2990, lifetime: 6490 };
+    // Цена перехода на «Навсегда» для действующей годовой подписки: строка
+    // lifetime_annual в premium_pricing. Сервер применяет её сам, здесь она
+    // нужна, чтобы кнопка показывала ту же сумму, что спишет банк.
+    let annualLifetimePrice = 3500;
+    const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "premium", "trialing"];
     const LEGAL_DOCUMENT_VERSION = "2026-08-09";
 
-    const state = { email: null, accessToken: null, plan: null };
+    const state = { email: null, accessToken: null, plan: null, subscription: null };
 
     const steps = {
       email: document.getElementById("step-email"),
@@ -344,12 +356,55 @@
       return "Код неверный или истёк. Проверьте письмо и попробуйте снова.";
     }
 
+    function lowercased(value) {
+      return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : null;
+    }
+
+    // Те же условия, что и в tochka-payment: tier premium, статус из списка,
+    // непросроченный период для годового тарифа.
+    function isActivePremium(subscription, plan) {
+      return lowercased(subscription && subscription.plan) === plan &&
+        lowercased(subscription && subscription.tier) === "premium" &&
+        ACTIVE_SUBSCRIPTION_STATUSES.includes(lowercased(subscription && subscription.status) || "");
+    }
+
+    function hasActiveAnnualPremium(subscription) {
+      if (!isActivePremium(subscription, "annual")) return false;
+      const periodEnd = Date.parse((subscription && subscription.current_period_end) || "");
+      return Number.isFinite(periodEnd) && periodEnd > Date.now();
+    }
+
+    function planAmount(plan) {
+      if (plan !== "lifetime" || !hasActiveAnnualPremium(state.subscription)) return FALLBACK_PRICES[plan];
+      return annualLifetimePrice > 0 && annualLifetimePrice < FALLBACK_PRICES.lifetime
+        ? annualLifetimePrice
+        : FALLBACK_PRICES.lifetime;
+    }
+
+    // Сервер возвращает разные причины отказа: истёкшая сессия, отклонение
+    // «Точки», уже активный Premium «Навсегда». Пока страница показывала на
+    // все случаи один текст, отличить сбой эквайринга от ошибки ученика было
+    // нельзя. Русский текст сервера показываем как есть — так же, как
+    // приложение; внутренние английские сообщения заменяем общим текстом со
+    // статусом ответа.
+    function createPaymentErrorMessage(error) {
+      if (!error || !error.status) {
+        return "Платёжный сервис временно недоступен. Проверьте связь и попробуйте ещё раз.";
+      }
+      if (error.status === 401) return "Сессия входа истекла. Запросите код на почту ещё раз.";
+      if (/[\u0400-\u04FF]/.test(error.message || "")) return error.message;
+      if (error.status === 429) return "Слишком много попыток подряд. Подождите минуту и попробуйте ещё раз.";
+      return `Не получилось создать оплату (ошибка ${error.status}). Попробуйте ещё раз через минуту или напишите в поддержку.`;
+    }
+
     async function loadPrices() {
       try {
         const rows = await supabaseFetch("/rest/v1/premium_pricing?select=plan,amount,currency");
         if (Array.isArray(rows)) {
           for (const row of rows) {
-            if (row.currency === "RUB" && (row.plan === "monthly" || row.plan === "annual")) {
+            if (row.currency !== "RUB" || !Number.isFinite(Number(row.amount)) || Number(row.amount) < 0) continue;
+            if (row.plan === "lifetime_annual") annualLifetimePrice = Number(row.amount);
+            else if (row.plan === "monthly" || row.plan === "annual" || row.plan === "lifetime") {
               FALLBACK_PRICES[row.plan] = Number(row.amount);
             }
           }
@@ -357,8 +412,46 @@
       } catch {
         // keep hardcoded fallback prices shown on the buttons
       }
-      document.getElementById("price-monthly").textContent = formatRub(FALLBACK_PRICES.monthly);
-      document.getElementById("price-annual").textContent = formatRub(FALLBACK_PRICES.annual);
+    }
+
+    // Своя строка подписки читается по RLS-политике subscriptions_select_own.
+    // Нужна только для показа цены: право на льготный переход и итоговую
+    // сумму в любом случае решает сервер при создании оплаты.
+    async function loadSubscription() {
+      try {
+        const rows = await supabaseFetch("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1", {
+          headers: { "Authorization": `Bearer ${state.accessToken}` },
+        });
+        state.subscription = Array.isArray(rows) ? rows[0] || null : null;
+      } catch {
+        state.subscription = null;
+      }
+    }
+
+    function renderPlanStep() {
+      for (const plan of ["monthly", "annual", "lifetime"]) {
+        document.getElementById(`price-${plan}`).textContent = formatRub(planAmount(plan));
+      }
+      const upgrade = hasActiveAnnualPremium(state.subscription) && planAmount("lifetime") < FALLBACK_PRICES.lifetime;
+      document.getElementById("lifetime-note").textContent = upgrade ? "переход с года" : "разовый платёж";
+      const upgradeNote = document.getElementById("lifetime-upgrade-note");
+      upgradeNote.hidden = !upgrade;
+      upgradeNote.textContent = upgrade
+        ? `У вас действует годовой Premium: переход на «Навсегда» стоит ${formatRub(planAmount("lifetime"))} вместо ${formatRub(FALLBACK_PRICES.lifetime)}.`
+        : "";
+      // Premium «Навсегда» не продлевают и не покупают дважды: сервер такую
+      // оплату отклоняет, поэтому выбор тарифа для этого аккаунта убираем.
+      // Именно удаляем: у picker, согласия и кнопки задан display, и атрибут
+      // hidden их не скрыл бы.
+      const lifetimeActive = isActivePremium(state.subscription, "lifetime");
+      document.getElementById("lifetime-active-note").hidden = !lifetimeActive;
+      if (lifetimeActive) {
+        state.plan = null;
+        document.querySelector(".plan-picker").remove();
+        document.getElementById("offer-consent").closest(".legal-consent").remove();
+        document.getElementById("pay-btn").remove();
+        document.querySelector("#step-plan .checkout-legal-note").remove();
+      }
     }
 
     document.getElementById("send-code-btn").addEventListener("click", async () => {
@@ -425,7 +518,7 @@
         state.accessToken = result.access_token;
         document.getElementById("plan-email-echo").textContent = state.email;
         showStep("plan");
-        loadPrices();
+        Promise.all([loadPrices(), loadSubscription()]).then(renderPlanStep);
       } catch (error) {
         setError(document.getElementById("code-error"), verifyCodeErrorMessage(error));
       } finally {
@@ -468,17 +561,17 @@
           }),
         });
         if (!result || !result.paymentLink) {
-          throw new Error("Missing paymentLink");
+          throw Object.assign(new Error("Missing paymentLink"), { status: 500 });
         }
         // Only ever redirect to Tochka's own HTTPS payment pages.
         const link = new URL(result.paymentLink);
         if (link.protocol !== "https:" || !(link.hostname === "tochka.com" || link.hostname.endsWith(".tochka.com"))) {
-          throw new Error("Unexpected payment link origin");
+          throw Object.assign(new Error("Unexpected payment link origin"), { status: 500 });
         }
         showStep("redirect");
         window.location.href = link.href;
       } catch (error) {
-        setError(document.getElementById("plan-error"), "Не получилось создать оплату. Попробуйте ещё раз через минуту или напишите в поддержку.");
+        setError(document.getElementById("plan-error"), createPaymentErrorMessage(error));
         btn.disabled = false;
       }
     });
