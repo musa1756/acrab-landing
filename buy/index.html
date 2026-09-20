@@ -13,7 +13,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self'; connect-src https://api.acrab.ru; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
-  <link rel="stylesheet" href="/styles.css?v=20260920-checkout-2">
+  <link rel="stylesheet" href="/styles.css?v=20260920-checkout-3">
 </head>
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
@@ -44,10 +44,29 @@
 
     <div class="panel-main">
       <section class="panel" aria-labelledby="buy-title">
-        <h2 id="buy-title" class="auth-title">Вход по почте</h2>
-        <p class="auth-lead">Premium привязывается к тому же аккаунту, с которым вы занимаетесь в приложении.</p>
+        <h2 id="buy-title" class="auth-title">Выберите тариф</h2>
+        <p class="auth-lead">Premium привязывается к тому же аккаунту, с которым вы занимаетесь в приложении: перед оплатой подтвердите его почту.</p>
+
+        <div class="plan-picker" role="group" aria-label="Выбор тарифа">
+          <button class="plan-option" type="button" data-plan="annual">
+            <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
+            <span class="plan-option-price" id="price-annual">2 990 ₽</span>
+            <span class="plan-option-note">за год</span>
+          </button>
+          <button class="plan-option" type="button" data-plan="monthly">
+            <span class="plan-option-top"><span>Месяц</span></span>
+            <span class="plan-option-price" id="price-monthly">399 ₽</span>
+            <span class="plan-option-note">в месяц</span>
+          </button>
+          <button class="plan-option" type="button" data-plan="lifetime">
+            <span class="plan-option-top"><span>Навсегда</span></span>
+            <span class="plan-option-price" id="price-lifetime">6 490 ₽</span>
+            <span class="plan-option-note" id="lifetime-note">разовый платёж</span>
+          </button>
+        </div>
 
         <div id="step-email" class="auth-step" data-step="email">
+          <p class="auth-hint" id="email-step-hint">Чтобы оплатить, подтвердите почту аккаунта Acrab: Premium привязывается к нему.</p>
           <label class="auth-label" for="email-input">Почта аккаунта Acrab</label>
           <input id="email-input" class="auth-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
           <label class="legal-consent"><input id="personal-data-consent" type="checkbox"><span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span></label>
@@ -68,23 +87,7 @@
           <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>. <button id="change-account-btn" class="auth-linklike auth-linklike-inline" type="button">Другая почта</button></p>
           <p class="auth-hint" id="lifetime-active-note" hidden>Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
           <p class="auth-hint" id="lifetime-upgrade-note" hidden></p>
-          <div class="plan-picker" role="group" aria-label="Выбор тарифа">
-            <button class="plan-option" type="button" data-plan="annual">
-              <span class="plan-option-top"><span>Год</span><span class="plan-option-badge">Выгоднее</span></span>
-              <span class="plan-option-price" id="price-annual">2 990 ₽</span>
-              <span class="plan-option-note">за год</span>
-            </button>
-            <button class="plan-option" type="button" data-plan="monthly">
-              <span class="plan-option-top"><span>Месяц</span></span>
-              <span class="plan-option-price" id="price-monthly">399 ₽</span>
-              <span class="plan-option-note">в месяц</span>
-            </button>
-            <button class="plan-option" type="button" data-plan="lifetime">
-              <span class="plan-option-top"><span>Навсегда</span></span>
-              <span class="plan-option-price" id="price-lifetime">6 490 ₽</span>
-              <span class="plan-option-note" id="lifetime-note">разовый платёж</span>
-            </button>
-          </div>
+          <p class="auth-hint" id="plan-required-note">Выберите тариф выше, чтобы оплатить.</p>
           <div id="pending-checkout" class="pending-checkout" hidden>
             <p class="auth-hint" id="pending-checkout-note"></p>
             <button id="open-pending-btn" class="auth-linklike" type="button">Открыть страницу оплаты снова</button>
@@ -459,7 +462,7 @@
       document.getElementById("lifetime-active-note").hidden = !lifetimeActive;
       if (lifetimeActive) {
         state.plan = null;
-        for (const node of document.querySelectorAll("#step-plan .plan-picker, #step-plan .pending-checkout, #pay-btn, #step-plan .checkout-legal-note")) node.remove();
+        for (const node of document.querySelectorAll(".plan-picker, #plan-required-note, #step-plan .pending-checkout, #pay-btn, #step-plan .checkout-legal-note")) node.remove();
       }
     }
 
@@ -482,6 +485,10 @@
       }
       const payBtn = document.getElementById("pay-btn");
       if (payBtn) payBtn.disabled = !plan;
+      const requiredNote = document.getElementById("plan-required-note");
+      if (requiredNote) requiredNote.hidden = !!plan;
+      document.getElementById("email-step-hint").textContent =
+        `Чтобы оплатить${plan ? ` тариф ${PLAN_ACCUSATIVE[plan]}` : ""}, подтвердите почту аккаунта Acrab: Premium привязывается к нему.`;
     }
 
     function setBusy(busy, label) {
@@ -663,7 +670,11 @@
       state.pending = readPending();
       if (state.pending) selectPlan(state.pending.plan);
       const session = readSession();
-      if (!session) return;
+      if (!session) {
+        // Тарифы видны до входа: цены публичные, подписка читается после кода.
+        loadPrices().then(renderPlanStep);
+        return;
+      }
       state.email = session.email;
       state.accessToken = session.accessToken;
       document.getElementById("email-input").value = session.email;
