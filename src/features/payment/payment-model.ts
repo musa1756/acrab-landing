@@ -1,9 +1,9 @@
 export type Plan = "monthly" | "annual" | "lifetime";
-export type PaymentStep = "email" | "code" | "plan" | "redirect";
+export type PaymentStep = "email" | "code" | "plan";
 
 export interface PricingRow { plan?: unknown; amount?: unknown; currency?: unknown; }
-export interface VerifyResponse { access_token?: unknown; }
-export interface PaymentResponse { paymentLink?: unknown; }
+export interface VerifyResponse { access_token?: unknown; expires_in?: unknown; expires_at?: unknown; }
+export interface PaymentResponse { paymentLink?: unknown; expiresAt?: unknown; }
 export interface SubscriptionRow { plan?: unknown; tier?: unknown; status?: unknown; current_period_end?: unknown; }
 export type Prices = Record<Plan, number>;
 
@@ -57,4 +57,52 @@ export function planAmount(plan: Plan, pricing: Pricing, subscription: Subscript
 
 export function formatRub(amount: number): string {
   return `${Math.round(amount).toLocaleString("ru-RU")} ₽`;
+}
+
+// Вход по коду живёт в текущей вкладке, пока не истёк access token: вернувшись
+// со страницы банка, человек сразу видит тарифы и может оплатить ещё раз, а не
+// запрашивает код заново. Так же ведёт себя приложение — оно не разлогинивает
+// после открытия оплаты.
+export interface CheckoutSession { email: string; accessToken: string; expiresAt: number; }
+
+/** Ссылка «Точки», которую уже открывали: живёт до `expiresAt`, иначе 30 минут с создания. */
+export interface PendingCheckout { plan: Plan; paymentLink: string; createdAt: number; expiresAt?: string | null; }
+
+export const PENDING_CHECKOUT_FALLBACK_TTL_MS = 30 * 60_000;
+export const SESSION_FALLBACK_TTL_MS = 60 * 60_000;
+
+export function pendingCheckoutDeadline(pending: Pick<PendingCheckout, "expiresAt" | "createdAt">): number {
+  const expiry = pending.expiresAt ? Date.parse(pending.expiresAt) : Number.NaN;
+  return Number.isFinite(expiry) ? expiry : pending.createdAt + PENDING_CHECKOUT_FALLBACK_TTL_MS;
+}
+
+export function isPendingCheckoutActive(pending: Pick<PendingCheckout, "expiresAt" | "createdAt">, now = Date.now()): boolean {
+  return now < pendingCheckoutDeadline(pending);
+}
+
+export function isCheckoutSessionActive(session: Pick<CheckoutSession, "expiresAt">, now = Date.now()): boolean {
+  return Number.isFinite(session.expiresAt) && now < session.expiresAt;
+}
+
+/** Момент истечения токена из ответа GoTrue: `expires_at` в секундах, иначе `expires_in`, иначе час. */
+export function sessionExpiry(result: VerifyResponse, now = Date.now()): number {
+  if (typeof result.expires_at === "number" && Number.isFinite(result.expires_at)) return result.expires_at * 1000;
+  if (typeof result.expires_in === "number" && Number.isFinite(result.expires_in)) return now + result.expires_in * 1000;
+  return now + SESSION_FALLBACK_TTL_MS;
+}
+
+export function decodeCheckoutSession(value: unknown): CheckoutSession | null {
+  if (!value || typeof value !== "object") return null;
+  const row = value as Record<string, unknown>;
+  if (typeof row.email !== "string" || typeof row.accessToken !== "string" || typeof row.expiresAt !== "number") return null;
+  const session = { email: row.email, accessToken: row.accessToken, expiresAt: row.expiresAt };
+  return isCheckoutSessionActive(session) ? session : null;
+}
+
+export function decodePendingCheckout(value: unknown): PendingCheckout | null {
+  if (!value || typeof value !== "object") return null;
+  const row = value as Record<string, unknown>;
+  if (!isPlan(row.plan) || typeof row.paymentLink !== "string" || typeof row.createdAt !== "number") return null;
+  const pending: PendingCheckout = { plan: row.plan, paymentLink: row.paymentLink, createdAt: row.createdAt, expiresAt: typeof row.expiresAt === "string" ? row.expiresAt : null };
+  return isPendingCheckoutActive(pending) ? pending : null;
 }

@@ -344,9 +344,8 @@ class SiteChecker:
             "code-input",
             "verify-code-btn",
             "step-plan",
-            "offer-consent",
+            "change-account-btn",
             "pay-btn",
-            "step-redirect",
         )
         for element_id in required_ids:
             if f'id="{element_id}"' not in text:

@@ -1,7 +1,8 @@
-import { useRef, useState, type ReactElement } from "react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import { createPayment, loadPricing, loadSubscription, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "./payment-messages";
-import { DEFAULT_PRICING, formatRub, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER, type PaymentStep, type Plan, type Pricing, type SubscriptionRow } from "./payment-model";
+import { DEFAULT_PRICING, formatRub, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, pendingCheckoutDeadline, planAmount, PLAN_ORDER, sessionExpiry, type PaymentStep, type PendingCheckout, type Plan, type Pricing, type SubscriptionRow } from "./payment-model";
+import { clearCheckoutSession, clearPendingCheckout, readCheckoutSession, readPendingCheckout, writeCheckoutSession, writePendingCheckout } from "./payment-storage";
 
 // A meta CSP cannot express frame-ancestors. This guard runs as soon as the
 // payment island is evaluated and prevents checkout controls in a hostile frame.
@@ -9,13 +10,18 @@ if (typeof window !== "undefined" && window.top !== window.self) {
   window.top!.location.href = window.self.location.href;
 }
 
-type PendingAction = "send-code" | "verify-code" | "create-payment" | null;
+type PendingAction = "send-code" | "verify-code" | "create-payment" | "open-checkout" | null;
 
 const PLAN_TITLE: Record<Plan, string> = { annual: "Год", monthly: "Месяц", lifetime: "Навсегда" };
 const PLAN_NOTE: Record<Plan, string> = { annual: "за год", monthly: "в месяц", lifetime: "разовый платёж" };
+const PLAN_ACCUSATIVE: Record<Plan, string> = { annual: "«Год»", monthly: "«Месяц»", lifetime: "«Навсегда»" };
 
 function ErrorMessage({ message }: { message: string }): ReactElement {
   return <p className="auth-error" role="alert" hidden={!message}>{message}</p>;
+}
+
+function formatDeadline(pending: PendingCheckout): string {
+  return new Date(pendingCheckoutDeadline(pending)).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
 }
 
 export default function PaymentFlow(): ReactElement {
@@ -25,8 +31,8 @@ export default function PaymentFlow(): ReactElement {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [pricing, setPricing] = useState<Pricing>(DEFAULT_PRICING);
   const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
+  const [pending, setPending] = useState<PendingCheckout | null>(null);
   const [personalDataConsent, setPersonalDataConsent] = useState(false);
-  const [offerConsent, setOfferConsent] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [emailError, setEmailError] = useState("");
   const [codeError, setCodeError] = useState("");
@@ -39,6 +45,40 @@ export default function PaymentFlow(): ReactElement {
   const lifetimeActive = isActiveLifetimePremium(subscription);
   const lifetimeUpgrade = hasActiveAnnualPremium(subscription) &&
     planAmount("lifetime", pricing, subscription) < pricing.prices.lifetime;
+
+  async function loadAccount(token: string): Promise<void> {
+    const [nextPricing, nextSubscription] = await Promise.all([loadPricing(), loadSubscription(token)]);
+    setPricing(nextPricing);
+    setSubscription(nextSubscription);
+  }
+
+  // Вернувшись со страницы банка, человек сразу видит тарифы: вход и ссылка
+  // «Точки» пережили переход в sessionStorage. Как в приложении, оплату можно
+  // создавать заново сколько угодно раз; прошлая ссылка остаётся доступной,
+  // пока не истекла. Возврат через bfcache восстанавливает страницу вместе с
+  // занятой кнопкой — pageshow её отпускает.
+  useEffect(() => {
+    const session = readCheckoutSession();
+    if (session) {
+      setEmail(session.email);
+      setAccessToken(session.accessToken);
+      setStep("plan");
+      void loadAccount(session.accessToken);
+    }
+    const storedPending = readPendingCheckout();
+    if (storedPending) {
+      setPending(storedPending);
+      setPlan(storedPending.plan);
+    }
+    const onPageShow = (event: PageTransitionEvent): void => {
+      if (event.persisted) {
+        setPendingAction(null);
+        setPending(readPendingCheckout());
+      }
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
 
   async function handleSendCode(): Promise<void> {
     const normalizedEmail = email.trim();
@@ -74,13 +114,16 @@ export default function PaymentFlow(): ReactElement {
     }
   }
 
-  function handleChangeEmail(): void {
-    setStep("email");
-    setCodeError("");
+  function resetAccount(): void {
+    clearCheckoutSession();
+    clearPendingCheckout();
     setAccessToken(null);
     setPlan(null);
     setPlanError("");
+    setCodeError("");
     setSubscription(null);
+    setPending(null);
+    setStep("email");
   }
 
   async function handleVerifyCode(): Promise<void> {
@@ -103,11 +146,10 @@ export default function PaymentFlow(): ReactElement {
         throw new PaymentApiError("Missing access_token", 500);
       }
       const token = result.access_token;
+      writeCheckoutSession({ email, accessToken: token, expiresAt: sessionExpiry(result) });
       setAccessToken(token);
       setStep("plan");
-      const [nextPricing, nextSubscription] = await Promise.all([loadPricing(), loadSubscription(token)]);
-      setPricing(nextPricing);
-      setSubscription(nextSubscription);
+      await loadAccount(token);
     } catch (error) {
       setCodeError(verifyCodeErrorMessage(error));
     } finally {
@@ -115,24 +157,46 @@ export default function PaymentFlow(): ReactElement {
     }
   }
 
+  function openCheckout(link: string): void {
+    setPendingAction("open-checkout");
+    window.location.assign(link);
+  }
+
   async function handlePayment(): Promise<void> {
     setPlanError("");
     if (!plan || !accessToken) return;
-    if (!offerConsent) {
-      setPlanError("Перед оплатой ознакомьтесь и примите условия публичной оферты.");
-      return;
-    }
 
     setPendingAction("create-payment");
     try {
-      const paymentLink = await createPayment(accessToken, plan);
-      setStep("redirect");
-      window.location.href = paymentLink;
+      const created = await createPayment(accessToken, plan);
+      const nextPending: PendingCheckout = { plan, paymentLink: created.paymentLink, createdAt: Date.now(), expiresAt: created.expiresAt };
+      writePendingCheckout(nextPending);
+      setPending(nextPending);
+      openCheckout(created.paymentLink);
     } catch (error) {
-      setPlanError(createPaymentErrorMessage(error));
+      const message = createPaymentErrorMessage(error);
       setPendingAction(null);
+      if (error instanceof PaymentApiError && error.status === 401) {
+        // Токен входа истёк: назад к почте, как просит текст ошибки.
+        resetAccount();
+        setEmailError(message);
+        return;
+      }
+      setPlanError(message);
     }
   }
+
+  function handleOpenPending(): void {
+    if (!pending || !isPendingCheckoutActive(pending)) {
+      clearPendingCheckout();
+      setPending(null);
+      return;
+    }
+    setPlanError("");
+    openCheckout(pending.paymentLink);
+  }
+
+  const busy = pendingAction !== null;
 
   return (
     <>
@@ -143,7 +207,7 @@ export default function PaymentFlow(): ReactElement {
           <input id="personal-data-consent" type="checkbox" checked={personalDataConsent} onChange={(event) => setPersonalDataConsent(event.currentTarget.checked)} />
           <span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span>
         </label>
-        <button id="send-code-btn" className="button button-primary auth-submit" type="button" disabled={pendingAction !== null} onClick={handleSendCode}>Получить код</button>
+        <button id="send-code-btn" className="button button-primary auth-submit" type="button" disabled={busy} onClick={handleSendCode}>Получить код</button>
         <ErrorMessage message={emailError} />
       </div>
 
@@ -151,13 +215,13 @@ export default function PaymentFlow(): ReactElement {
         <p className="auth-hint">Код отправлен на <strong>{email}</strong>.</p>
         <label className="auth-label" htmlFor="code-input">Код из письма</label>
         <input ref={codeInputRef} id="code-input" className="auth-input" type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6} autoComplete="one-time-code" placeholder="000000" required />
-        <button id="verify-code-btn" className="button button-primary auth-submit" type="button" disabled={pendingAction !== null} onClick={handleVerifyCode}>Подтвердить</button>
-        <button id="change-email-btn" className="auth-linklike" type="button" onClick={handleChangeEmail}>Изменить почту</button>
+        <button id="verify-code-btn" className="button button-primary auth-submit" type="button" disabled={busy} onClick={handleVerifyCode}>Подтвердить</button>
+        <button id="change-email-btn" className="auth-linklike" type="button" onClick={resetAccount}>Изменить почту</button>
         <ErrorMessage message={codeError} />
       </div>
 
       <div id="step-plan" className="auth-step" data-step="plan" hidden={step !== "plan"}>
-        <p className="auth-hint">Вы вошли как <strong>{email}</strong>.</p>
+        <p className="auth-hint">Вы вошли как <strong>{email}</strong>. <button id="change-account-btn" className="auth-linklike auth-linklike-inline" type="button" onClick={resetAccount}>Другая почта</button></p>
         {lifetimeActive
           ? <p className="auth-hint" id="lifetime-active-note">Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
           : (
@@ -175,19 +239,21 @@ export default function PaymentFlow(): ReactElement {
                   </button>
                 ))}
               </div>
-              <label className="legal-consent">
-                <input id="offer-consent" type="checkbox" checked={offerConsent} onChange={(event) => setOfferConsent(event.currentTarget.checked)} />
-                <span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span>
-              </label>
-              <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || pendingAction !== null} onClick={handlePayment}>Оплатить</button>
-              <p className="checkout-legal-note">Переходя к оплате, вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a> и подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>.</p>
+              {pending
+                ? (
+                  <div id="pending-checkout" className="pending-checkout">
+                    <p className="auth-hint">Ссылка на оплату {PLAN_ACCUSATIVE[pending.plan]} создана и действует до {formatDeadline(pending)}. Если вы закрыли страницу банка, Premium ещё не активирован: можно вернуться к той же ссылке или создать новую.</p>
+                    <button id="open-pending-btn" className="auth-linklike" type="button" disabled={busy} onClick={handleOpenPending}>Открыть страницу оплаты снова</button>
+                  </div>
+                )
+                : null}
+              <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || busy} onClick={handlePayment}>
+                {pendingAction === "create-payment" ? "Создаём оплату…" : pendingAction === "open-checkout" ? "Открываем страницу банка…" : "Оплатить"}
+              </button>
+              <p className="checkout-legal-note">Нажимая «Оплатить», вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a>, подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>, и даёте <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</p>
             </>
           )}
         <ErrorMessage message={planError} />
-      </div>
-
-      <div id="step-redirect" className="auth-step" data-step="redirect" hidden={step !== "redirect"}>
-        <p className="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
       </div>
     </>
   );
