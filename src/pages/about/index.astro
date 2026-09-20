@@ -21,7 +21,7 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
     </div>
     <div class="changelog">
       {releases.map((release) => <Release release={release} />)}
-      <p class="changelog-note">Более ранние версии не публиковались — до 1.1 Acrab распространялся только в закрытом тестировании.</p>
+      <p class="changelog-note">Здесь публикуются заметки начиная с версии 2.2. История более ранних версий доступна в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
     </div>
   </main>
   <Footer />
