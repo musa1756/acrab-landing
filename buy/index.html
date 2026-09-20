@@ -13,7 +13,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self'; connect-src https://api.acrab.ru; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="icon" href="/assets/acrab-app-icon.png">
   <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png">
-  <link rel="stylesheet" href="/styles.css?v=20260808-seo-1">
+  <link rel="stylesheet" href="/styles.css?v=20260920-checkout-2">
 </head>
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
@@ -65,7 +65,7 @@
         </div>
 
         <div id="step-plan" class="auth-step" data-step="plan" hidden>
-          <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>.</p>
+          <p class="auth-hint">Вы вошли как <strong id="plan-email-echo"></strong>. <button id="change-account-btn" class="auth-linklike auth-linklike-inline" type="button">Другая почта</button></p>
           <p class="auth-hint" id="lifetime-active-note" hidden>Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
           <p class="auth-hint" id="lifetime-upgrade-note" hidden></p>
           <div class="plan-picker" role="group" aria-label="Выбор тарифа">
@@ -85,14 +85,13 @@
               <span class="plan-option-note" id="lifetime-note">разовый платёж</span>
             </button>
           </div>
-          <label class="legal-consent"><input id="offer-consent" type="checkbox"><span>Я ознакомился и принимаю условия <a href="/offer" target="_blank" rel="noopener">публичной оферты</a>.</span></label>
+          <div id="pending-checkout" class="pending-checkout" hidden>
+            <p class="auth-hint" id="pending-checkout-note"></p>
+            <button id="open-pending-btn" class="auth-linklike" type="button">Открыть страницу оплаты снова</button>
+          </div>
           <button id="pay-btn" class="button button-primary auth-submit" type="button" disabled>Оплатить</button>
-          <p class="checkout-legal-note">Переходя к оплате, вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a> и подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>.</p>
+          <p class="checkout-legal-note">Нажимая «Оплатить», вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a>, подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>, и даёте <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</p>
           <p id="plan-error" class="auth-error" role="alert" hidden></p>
-        </div>
-
-        <div id="step-redirect" class="auth-step" data-step="redirect" hidden>
-          <p class="auth-hint">Открываем защищённую страницу оплаты «Точки»…</p>
         </div>
 
         <p class="auth-footnote">Обработку платежа выполняет банк «Точка» (эквайринг, соответствует PCI DSS Level&nbsp;1). Мы не получаем и не храним данные вашей карты. Каждая оплата разовая, на выбранный период — автосписания нет. Услуга цифровая: доставка не требуется, Premium активируется в приложении автоматически после подтверждения оплаты банком, обычно в течение нескольких минут. Вопросы по оплате — на <a href="/support">странице Q/A</a>.</p>
@@ -234,14 +233,61 @@
     const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "paid", "premium", "trialing"];
     const LEGAL_DOCUMENT_VERSION = "2026-08-09";
 
-    const state = { email: null, accessToken: null, plan: null, subscription: null };
+    const state = { email: null, accessToken: null, plan: null, subscription: null, pending: null };
 
     const steps = {
       email: document.getElementById("step-email"),
       code: document.getElementById("step-code"),
       plan: document.getElementById("step-plan"),
-      redirect: document.getElementById("step-redirect"),
     };
+
+    // Вход по коду и последняя ссылка «Точки» живут в sessionStorage этой
+    // вкладки: вернувшись со страницы банка, человек сразу видит тарифы и может
+    // оплатить ещё раз, а не запрашивает код заново. Так ведёт себя приложение —
+    // оно не разлогинивает после открытия оплаты. Ссылка живёт до серверного
+    // expiresAt, иначе 30 минут с создания; токен — до expires_at из GoTrue.
+    const SESSION_KEY = "acrab.checkout.session";
+    const PENDING_KEY = "acrab.checkout.pending";
+    const PENDING_FALLBACK_TTL_MS = 30 * 60_000;
+    const SESSION_FALLBACK_TTL_MS = 60 * 60_000;
+    const PLAN_ACCUSATIVE = { annual: "«Год»", monthly: "«Месяц»", lifetime: "«Навсегда»" };
+
+    function storageRead(key) {
+      try {
+        const raw = window.sessionStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    }
+    function storageWrite(key, value) {
+      try { window.sessionStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ }
+    }
+    function storageRemove(key) {
+      try { window.sessionStorage.removeItem(key); } catch { /* storage unavailable */ }
+    }
+
+    function sessionExpiry(result) {
+      if (typeof result.expires_at === "number" && Number.isFinite(result.expires_at)) return result.expires_at * 1000;
+      if (typeof result.expires_in === "number" && Number.isFinite(result.expires_in)) return Date.now() + result.expires_in * 1000;
+      return Date.now() + SESSION_FALLBACK_TTL_MS;
+    }
+    function readSession() {
+      const row = storageRead(SESSION_KEY);
+      const valid = row && typeof row.email === "string" && typeof row.accessToken === "string" &&
+        typeof row.expiresAt === "number" && Date.now() < row.expiresAt;
+      if (!valid) storageRemove(SESSION_KEY);
+      return valid ? row : null;
+    }
+    function pendingDeadline(pending) {
+      const expiry = pending.expiresAt ? Date.parse(pending.expiresAt) : NaN;
+      return Number.isFinite(expiry) ? expiry : pending.createdAt + PENDING_FALLBACK_TTL_MS;
+    }
+    function readPending() {
+      const row = storageRead(PENDING_KEY);
+      const valid = row && PLAN_ACCUSATIVE[row.plan] && typeof row.paymentLink === "string" &&
+        typeof row.createdAt === "number" && Date.now() < pendingDeadline(row);
+      if (!valid) storageRemove(PENDING_KEY);
+      return valid ? row : null;
+    }
 
     function showStep(name) {
       for (const key of Object.keys(steps)) {
@@ -413,11 +459,63 @@
       document.getElementById("lifetime-active-note").hidden = !lifetimeActive;
       if (lifetimeActive) {
         state.plan = null;
-        document.querySelector(".plan-picker").remove();
-        document.getElementById("offer-consent").closest(".legal-consent").remove();
-        document.getElementById("pay-btn").remove();
-        document.querySelector("#step-plan .checkout-legal-note").remove();
+        for (const node of document.querySelectorAll("#step-plan .plan-picker, #step-plan .pending-checkout, #pay-btn, #step-plan .checkout-legal-note")) node.remove();
       }
+    }
+
+    function renderPending() {
+      const box = document.getElementById("pending-checkout");
+      if (!box) return;
+      const pending = state.pending;
+      box.hidden = !pending;
+      if (!pending) return;
+      const deadline = new Date(pendingDeadline(pending)).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("pending-checkout-note").textContent =
+        `Ссылка на оплату ${PLAN_ACCUSATIVE[pending.plan]} создана и действует до ${deadline}. Если вы закрыли страницу банка, Premium ещё не активирован: можно вернуться к той же ссылке или создать новую.`;
+    }
+
+    function selectPlan(plan) {
+      state.plan = plan;
+      for (const btn of document.querySelectorAll(".plan-option")) {
+        btn.classList.toggle("is-selected", btn.dataset.plan === plan);
+        btn.setAttribute("aria-pressed", String(btn.dataset.plan === plan));
+      }
+      const payBtn = document.getElementById("pay-btn");
+      if (payBtn) payBtn.disabled = !plan;
+    }
+
+    function setBusy(busy, label) {
+      const payBtn = document.getElementById("pay-btn");
+      const openBtn = document.getElementById("open-pending-btn");
+      if (payBtn) {
+        payBtn.disabled = busy || !state.plan;
+        payBtn.textContent = busy ? label : "Оплатить";
+      }
+      if (openBtn) openBtn.disabled = busy;
+    }
+
+    function enterPlanStep() {
+      document.getElementById("plan-email-echo").textContent = state.email;
+      showStep("plan");
+      renderPending();
+      Promise.all([loadPrices(), loadSubscription()]).then(renderPlanStep);
+    }
+
+    function resetAccount() {
+      storageRemove(SESSION_KEY);
+      storageRemove(PENDING_KEY);
+      state.accessToken = null;
+      state.subscription = null;
+      state.pending = null;
+      selectPlan(null);
+      setError(document.getElementById("plan-error"), "");
+      setError(document.getElementById("code-error"), "");
+      showStep("email");
+    }
+
+    function openCheckout(link) {
+      setBusy(true, "Открываем страницу банка…");
+      window.location.assign(link);
     }
 
     document.getElementById("send-code-btn").addEventListener("click", async () => {
@@ -458,10 +556,8 @@
       }
     });
 
-    document.getElementById("change-email-btn").addEventListener("click", () => {
-      showStep("email");
-      setError(document.getElementById("code-error"), "");
-    });
+    document.getElementById("change-email-btn").addEventListener("click", resetAccount);
+    document.getElementById("change-account-btn").addEventListener("click", resetAccount);
 
     document.getElementById("verify-code-btn").addEventListener("click", async () => {
       const code = document.getElementById("code-input").value.trim();
@@ -482,9 +578,8 @@
           throw Object.assign(new Error("Missing access_token"), { status: 500 });
         }
         state.accessToken = result.access_token;
-        document.getElementById("plan-email-echo").textContent = state.email;
-        showStep("plan");
-        Promise.all([loadPrices(), loadSubscription()]).then(renderPlanStep);
+        storageWrite(SESSION_KEY, { email: state.email, accessToken: state.accessToken, expiresAt: sessionExpiry(result) });
+        enterPlanStep();
       } catch (error) {
         setError(document.getElementById("code-error"), verifyCodeErrorMessage(error));
       } finally {
@@ -493,25 +588,23 @@
     });
 
     for (const optionBtn of document.querySelectorAll(".plan-option")) {
-      optionBtn.addEventListener("click", () => {
-        for (const btn of document.querySelectorAll(".plan-option")) {
-          btn.classList.remove("is-selected");
-        }
-        optionBtn.classList.add("is-selected");
-        state.plan = optionBtn.dataset.plan;
-        document.getElementById("pay-btn").disabled = false;
-      });
+      optionBtn.addEventListener("click", () => selectPlan(optionBtn.dataset.plan));
     }
 
+    document.getElementById("open-pending-btn").addEventListener("click", () => {
+      state.pending = readPending();
+      renderPending();
+      if (!state.pending) return;
+      setError(document.getElementById("plan-error"), "");
+      openCheckout(state.pending.paymentLink);
+    });
+
+    // Как в приложении: оплату можно создавать заново сколько угодно раз,
+    // прошлая ссылка остаётся доступной, пока не истекла.
     document.getElementById("pay-btn").addEventListener("click", async () => {
       setError(document.getElementById("plan-error"), "");
       if (!state.plan || !state.accessToken) return;
-      if (!document.getElementById("offer-consent").checked) {
-        setError(document.getElementById("plan-error"), "Перед оплатой ознакомьтесь и примите условия публичной оферты.");
-        return;
-      }
-      const btn = document.getElementById("pay-btn");
-      btn.disabled = true;
+      setBusy(true, "Создаём оплату…");
       try {
         const result = await supabaseFetch("/functions/v1/tochka-payment", {
           method: "POST",
@@ -526,21 +619,56 @@
             },
           }),
         });
-        if (!result || !result.paymentLink) {
-          throw Object.assign(new Error("Missing paymentLink"), { status: 500 });
+        // Та же проверка, что в приложении: ссылка приходит от нашей функции
+        // tochka-payment, поэтому достаточно HTTPS без логина и пароля. Список
+        // доменов «Точки» здесь не держим: платёжные страницы банка живут не на
+        // tochka.com, и такой список отбрасывал настоящие ссылки как «ошибку 500».
+        let link = null;
+        try { link = result && typeof result.paymentLink === "string" ? new URL(result.paymentLink) : null; } catch { link = null; }
+        if (!link || link.protocol !== "https:" || !link.hostname || link.username || link.password) {
+          throw Object.assign(new Error("Missing or insecure paymentLink"), { status: 500 });
         }
-        // Only ever redirect to Tochka's own HTTPS payment pages.
-        const link = new URL(result.paymentLink);
-        if (link.protocol !== "https:" || !(link.hostname === "tochka.com" || link.hostname.endsWith(".tochka.com"))) {
-          throw Object.assign(new Error("Unexpected payment link origin"), { status: 500 });
-        }
-        showStep("redirect");
-        window.location.href = link.href;
+        state.pending = {
+          plan: state.plan,
+          paymentLink: link.href,
+          createdAt: Date.now(),
+          expiresAt: typeof result.expiresAt === "string" ? result.expiresAt : null,
+        };
+        storageWrite(PENDING_KEY, state.pending);
+        renderPending();
+        openCheckout(link.href);
       } catch (error) {
+        setBusy(false);
+        if (error && error.status === 401) {
+          // Токен входа истёк: назад к почте, как просит текст ошибки.
+          resetAccount();
+          setError(document.getElementById("email-error"), createPaymentErrorMessage(error));
+          return;
+        }
         setError(document.getElementById("plan-error"), createPaymentErrorMessage(error));
-        btn.disabled = false;
       }
     });
+
+    // Возврат со страницы банка через bfcache восстанавливает страницу вместе с
+    // занятой кнопкой — pageshow её отпускает; полная перезагрузка идёт через
+    // restoreFromStorage.
+    window.addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      state.pending = readPending();
+      renderPending();
+      setBusy(false);
+    });
+
+    (function restoreFromStorage() {
+      state.pending = readPending();
+      if (state.pending) selectPlan(state.pending.plan);
+      const session = readSession();
+      if (!session) return;
+      state.email = session.email;
+      state.accessToken = session.accessToken;
+      document.getElementById("email-input").value = session.email;
+      enterPlanStep();
+    })();
   </script>
 </body>
 </html>

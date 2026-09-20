@@ -74,20 +74,26 @@ export async function loadSubscription(accessToken: string): Promise<Subscriptio
   } catch { return null; }
 }
 
-export function isTrustedPaymentLink(value: unknown): value is string {
+// Та же проверка, что `decodePaymentSession` в приложении: ссылка приходит от
+// нашей функции tochka-payment, поэтому достаточно HTTPS без логина и пароля.
+// Список доменов «Точки» здесь не держим: платёжные страницы банка живут не на
+// tochka.com, и такой список отбрасывал настоящие ссылки как «ошибку 500».
+export function isSecurePaymentLink(value: unknown): value is string {
   if (typeof value !== "string") return false;
   try {
     const link = new URL(value);
-    return link.protocol === "https:" && (link.hostname === "tochka.com" || link.hostname.endsWith(".tochka.com"));
+    return link.protocol === "https:" && link.hostname.length > 0 && !link.username && !link.password;
   } catch { return false; }
 }
 
-export async function createPayment(accessToken: string, plan: Plan): Promise<string> {
+export interface CreatedPayment { paymentLink: string; expiresAt: string | null; }
+
+export async function createPayment(accessToken: string, plan: Plan): Promise<CreatedPayment> {
   const result = await supabaseFetch<PaymentResponse>("/functions/v1/tochka-payment", {
     method: "POST",
     headers: { Authorization: `Bearer ${accessToken}` },
     body: JSON.stringify({ action: "create", plan, legalAcceptance: { offerVersion: LEGAL_DOCUMENT_VERSION, personalDataConsentVersion: LEGAL_DOCUMENT_VERSION, source: "web-checkout" } }),
   });
-  if (!result || !isTrustedPaymentLink(result.paymentLink)) throw new PaymentApiError("Missing or untrusted paymentLink", 500);
-  return result.paymentLink;
+  if (!result || !isSecurePaymentLink(result.paymentLink)) throw new PaymentApiError("Missing or insecure paymentLink", 500);
+  return { paymentLink: result.paymentLink, expiresAt: typeof result.expiresAt === "string" ? result.expiresAt : null };
 }

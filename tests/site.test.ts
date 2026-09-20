@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isTrustedPaymentLink, PaymentApiError } from "../src/features/payment/payment-api";
+import { isSecurePaymentLink, PaymentApiError } from "../src/features/payment/payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
-import { DEFAULT_PRICING, hasActiveAnnualPremium, isActiveLifetimePremium, planAmount, PLAN_ORDER } from "../src/features/payment/payment-model";
+import { DEFAULT_PRICING, decodeCheckoutSession, decodePendingCheckout, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, planAmount, PLAN_ORDER, sessionExpiry } from "../src/features/payment/payment-model";
 import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -66,10 +66,26 @@ describe("generated site", () => {
   test("keeps payment shell controls for a browser smoke", () => {
     const page = readSource("src/pages/buy/index.astro");
     const source = readSource("src/features/payment/PaymentFlow.tsx");
-    for (const id of ["step-email", "email-input", "personal-data-consent", "send-code-btn", "step-code", "code-input", "verify-code-btn", "step-plan", "offer-consent", "pay-btn", "step-redirect"]) {
+    for (const id of ["step-email", "email-input", "personal-data-consent", "send-code-btn", "step-code", "code-input", "verify-code-btn", "step-plan", "change-account-btn", "pending-checkout", "open-pending-btn", "pay-btn"]) {
       expect(source, `#${id}`).toContain(`id="${id}"`);
     }
     expect(page).toContain("PaymentFlow client:load");
+  });
+
+  test("agrees to the offer by pressing «Оплатить» instead of a checkbox", () => {
+    for (const path of ["src/features/payment/PaymentFlow.tsx", "buy/index.html"]) {
+      const source = readSource(path);
+      expect(source, path).not.toContain('id="offer-consent"');
+      expect(source, path).not.toContain('id="step-redirect"');
+      expect(source, path).toContain("Нажимая «Оплатить», вы принимаете условия");
+      expect(source, path).toContain('"pageshow"');
+    }
+    for (const path of ["src/features/payment/payment-storage.ts", "buy/index.html"]) {
+      const source = readSource(path);
+      expect(source, path).toContain("acrab.checkout.session");
+      expect(source, path).toContain("acrab.checkout.pending");
+      expect(source, path).toContain("sessionStorage");
+    }
   });
 
   test("offers the same three plans on the published copy of /buy", () => {
@@ -124,13 +140,30 @@ describe("payment behavior", () => {
     expect(createPaymentErrorMessage(new PaymentApiError("Unknown plan", 400))).toContain("ошибка 400");
   });
 
-  test("allows only HTTPS Tochka payment links", () => {
-    expect(isTrustedPaymentLink("https://tochka.com/pay")).toBe(true);
-    expect(isTrustedPaymentLink("https://pay.tochka.com/pay")).toBe(true);
-    expect(isTrustedPaymentLink("http://tochka.com/pay")).toBe(false);
-    expect(isTrustedPaymentLink("https://tochka.com.evil.test/pay")).toBe(false);
-    expect(isTrustedPaymentLink("/relative")).toBe(false);
-    expect(isTrustedPaymentLink(null)).toBe(false);
+  test("accepts any HTTPS payment link without credentials, like the app", () => {
+    expect(isSecurePaymentLink("https://tochka.com/pay")).toBe(true);
+    expect(isSecurePaymentLink("https://merch.bank24.int/order/?uuid=1")).toBe(true);
+    expect(isSecurePaymentLink("http://tochka.com/pay")).toBe(false);
+    expect(isSecurePaymentLink("https://user:pass@tochka.com/pay")).toBe(false);
+    expect(isSecurePaymentLink("/relative")).toBe(false);
+    expect(isSecurePaymentLink(null)).toBe(false);
+  });
+
+  test("keeps the sign-in and the last payment link alive like the app's pending payment", () => {
+    const now = Date.now();
+    expect(sessionExpiry({ expires_at: 1_800_000_000 }, now)).toBe(1_800_000_000_000);
+    expect(sessionExpiry({ expires_in: 3600 }, now)).toBe(now + 3_600_000);
+    expect(sessionExpiry({}, now)).toBe(now + 3_600_000);
+    expect(decodeCheckoutSession({ email: "a@b.c", accessToken: "t", expiresAt: now + 60_000 })).toEqual({ email: "a@b.c", accessToken: "t", expiresAt: now + 60_000 });
+    expect(decodeCheckoutSession({ email: "a@b.c", accessToken: "t", expiresAt: now - 1 })).toBeNull();
+    expect(decodeCheckoutSession({ email: "a@b.c" })).toBeNull();
+    const pending = { plan: "annual" as const, paymentLink: "https://merch.bank24.int/order/?uuid=1", createdAt: now, expiresAt: null };
+    expect(decodePendingCheckout(pending)).toEqual(pending);
+    expect(isPendingCheckoutActive(pending, now + 29 * 60_000)).toBe(true);
+    expect(isPendingCheckoutActive(pending, now + 31 * 60_000)).toBe(false);
+    expect(isPendingCheckoutActive({ createdAt: now, expiresAt: new Date(now + 5 * 60_000).toISOString() }, now + 6 * 60_000)).toBe(false);
+    expect(decodePendingCheckout({ ...pending, createdAt: now - 31 * 60_000 })).toBeNull();
+    expect(decodePendingCheckout({ ...pending, plan: "weekly" })).toBeNull();
   });
 });
 
