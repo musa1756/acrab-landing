@@ -528,6 +528,7 @@ code {
 .auth-linklike-inline { display: inline; font-size: inherit; vertical-align: baseline; }
 .pending-checkout { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1px solid var(--gold-wash-strong); border-radius: 12px; background: #fdf6e8; }
 .pending-checkout .auth-hint { margin: 0; }
+.pending-checkout[hidden] { display: none; }
 .auth-linklike:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .plan-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }

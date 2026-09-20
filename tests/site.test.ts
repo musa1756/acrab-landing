@@ -72,6 +72,18 @@ describe("generated site", () => {
     expect(page).toContain("PaymentFlow client:load");
   });
 
+  test("shows the plans before sign-in and asks for the email only to pay", () => {
+    for (const path of ["src/features/payment/PaymentFlow.tsx", "buy/index.html"]) {
+      const source = readSource(path);
+      expect(source.indexOf('className="plan-picker"') >= 0 ? source.indexOf('className="plan-picker"') : source.indexOf('class="plan-picker"'), path).toBeLessThan(source.indexOf('id="step-email"'));
+      expect(source, path).toContain("подтвердите почту аккаунта Acrab");
+      expect(source, path).toContain('id="plan-required-note"');
+    }
+    for (const path of ["src/pages/buy/index.astro", "buy/index.html"]) {
+      expect(readSource(path), path).toContain("Выберите тариф</h2>");
+    }
+  });
+
   test("agrees to the offer by pressing «Оплатить» instead of a checkbox", () => {
     for (const path of ["src/features/payment/PaymentFlow.tsx", "buy/index.html"]) {
       const source = readSource(path);

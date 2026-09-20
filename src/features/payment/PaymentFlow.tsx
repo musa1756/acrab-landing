@@ -64,6 +64,9 @@ export default function PaymentFlow(): ReactElement {
       setAccessToken(session.accessToken);
       setStep("plan");
       void loadAccount(session.accessToken);
+    } else {
+      // Тарифы видны до входа: цены публичные, подписка читается после кода.
+      void loadPricing().then(setPricing);
     }
     const storedPending = readPendingCheckout();
     if (storedPending) {
@@ -198,9 +201,30 @@ export default function PaymentFlow(): ReactElement {
 
   const busy = pendingAction !== null;
 
+  // Тарифы стоят выше входа и видны всегда: выбрать можно до почты, а
+  // подтверждение почты нужно только чтобы нажать «Оплатить». Для аккаунта с
+  // активным «Навсегда» выбор убирается после входа.
+  const picker = lifetimeActive ? null : (
+    <div className="plan-picker" role="group" aria-label="Выбор тарифа">
+      {PLAN_ORDER.map((option) => (
+        <button key={option} className={`plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
+          <span className="plan-option-top">
+            <span>{PLAN_TITLE[option]}</span>
+            {option === "annual" ? <span className="plan-option-badge">Выгоднее</span> : null}
+          </span>
+          <span className="plan-option-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
+          <span className="plan-option-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <>
+      {picker}
+
       <div id="step-email" className="auth-step" data-step="email" hidden={step !== "email"}>
+        <p className="auth-hint">Чтобы оплатить{plan ? ` тариф ${PLAN_ACCUSATIVE[plan]}` : ""}, подтвердите почту аккаунта Acrab: Premium привязывается к нему.</p>
         <label className="auth-label" htmlFor="email-input">Почта аккаунта Acrab</label>
         <input ref={emailInputRef} id="email-input" className="auth-input" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" required value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
         <label className="legal-consent">
@@ -227,18 +251,7 @@ export default function PaymentFlow(): ReactElement {
           : (
             <>
               {lifetimeUpgrade ? <p className="auth-hint" id="lifetime-upgrade-note">У вас действует годовой Premium: переход на «Навсегда» стоит {formatRub(planAmount("lifetime", pricing, subscription))} вместо {formatRub(pricing.prices.lifetime)}.</p> : null}
-              <div className="plan-picker" role="group" aria-label="Выбор тарифа">
-                {PLAN_ORDER.map((option) => (
-                  <button key={option} className={`plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
-                    <span className="plan-option-top">
-                      <span>{PLAN_TITLE[option]}</span>
-                      {option === "annual" ? <span className="plan-option-badge">Выгоднее</span> : null}
-                    </span>
-                    <span className="plan-option-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
-                    <span className="plan-option-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
-                  </button>
-                ))}
-              </div>
+              {plan ? null : <p className="auth-hint" id="plan-required-note">Выберите тариф выше, чтобы оплатить.</p>}
               {pending
                 ? (
                   <div id="pending-checkout" className="pending-checkout">
