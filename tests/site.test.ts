@@ -73,26 +73,26 @@ describe("generated site", () => {
   });
 
   test("shows the plans before sign-in and asks for the email only to pay", () => {
-    for (const path of ["src/features/payment/PaymentFlow.tsx", "buy/index.html"]) {
+    for (const path of ["src/features/payment/PaymentFlow.tsx", "site/buy/index.html"]) {
       const source = readSource(path);
       expect(source.indexOf('className="plan-picker"') >= 0 ? source.indexOf('className="plan-picker"') : source.indexOf('class="plan-picker"'), path).toBeLessThan(source.indexOf('id="step-email"'));
       expect(source, path).toContain("подтвердите почту аккаунта Acrab");
       expect(source, path).toContain('id="plan-required-note"');
     }
-    for (const path of ["src/pages/buy/index.astro", "buy/index.html"]) {
+    for (const path of ["src/pages/buy/index.astro", "site/buy/index.html"]) {
       expect(readSource(path), path).toContain("Выберите тариф</h2>");
     }
   });
 
   test("agrees to the offer by pressing «Оплатить» instead of a checkbox", () => {
-    for (const path of ["src/features/payment/PaymentFlow.tsx", "buy/index.html"]) {
+    for (const path of ["src/features/payment/PaymentFlow.tsx", "site/buy/index.html"]) {
       const source = readSource(path);
       expect(source, path).not.toContain('id="offer-consent"');
       expect(source, path).not.toContain('id="step-redirect"');
       expect(source, path).toContain("Нажимая «Оплатить», вы принимаете условия");
       expect(source, path).toContain('"pageshow"');
     }
-    for (const path of ["src/features/payment/payment-storage.ts", "buy/index.html"]) {
+    for (const path of ["src/features/payment/payment-storage.ts", "site/buy/index.html"]) {
       const source = readSource(path);
       expect(source, path).toContain("acrab.checkout.session");
       expect(source, path).toContain("acrab.checkout.pending");
@@ -101,7 +101,7 @@ describe("generated site", () => {
   });
 
   test("offers the same three plans on the published copy of /buy", () => {
-    const published = readSource("buy/index.html");
+    const published = readSource("site/buy/index.html");
     for (const plan of PLAN_ORDER) {
       expect(published, plan).toContain(`data-plan="${plan}"`);
       expect(published, plan).toContain(`id="price-${plan}"`);

@@ -103,7 +103,7 @@ HTTPS без логина и пароля, как в `decodePaymentSession` пр
 серверного `expiresAt` ссылки: вернувшись со страницы банка, человек видит
 тарифы, может открыть ту же ссылку снова или создать новую; `pageshow` из
 bfcache отпускает занятую кнопку. Ответ 401 возвращает к вводу почты.
-Опубликованная копия `buy/index.html` повторяет ту же логику на чистом JS и
+Опубликованная копия `site/buy/index.html` повторяет ту же логику на чистом JS и
 меняется вместе с `src/`.
 
 `SUPABASE_ANON_KEY` — публичный клиентский anon key, тот же, который уже
@@ -141,20 +141,19 @@ python3 tools/check_site.py dist
 
 ## Timeweb
 
-Настройки статического приложения:
+acrab.ru — приложение Timeweb Cloud 226073 (`static-nobuild`) с автодеплоем
+из ветки `main`. Сборка на хостинге не выполняется: раздаётся только каталог
+`site/` (настройка `index_dir = /site`) — опубликованные страницы, `styles.css`,
+`assets/`, `robots.txt`, `sitemap.xml` и `404.html`. Исходники Astro, тесты,
+инструменты и документы в корне репозитория наружу не отдаются. Новый
+публичный файл кладётся в `site/`; правка страницы вносится и в `src/`, и в её
+опубликованную копию в `site/`.
 
-```text
-Build command:
-bun install --frozen-lockfile && bun run build
-
-Output directory:
-dist
-```
-
-Среда сборки должна использовать Node.js 22.12 или новее и Bun из
-`.bun-version`. SPA fallback запрещён: отсутствующий URL должен возвращать
-реальный HTTP 404. После смены deployment-настроек проверяются `/buy`,
-`/support`, `/robots.txt`, `/sitemap.xml` и случайный отсутствующий URL.
+Проверить настройку: `twc apps get 226073 -o json` (поля `framework`,
+`index_dir`, `branch`, `is_auto_deploy`). SPA fallback запрещён:
+отсутствующий URL должен возвращать реальный HTTP 404. После смены
+deployment-настроек проверяются `/buy`, `/support`, `/robots.txt`,
+`/sitemap.xml`, случайный отсутствующий URL и то, что `/README.md` отдаёт 404.
 
 Платёжную страницу следует дополнительно защищать HTTP-заголовками хостинга:
 `Content-Security-Policy` с `frame-ancestors 'none'`, `X-Frame-Options: DENY`,

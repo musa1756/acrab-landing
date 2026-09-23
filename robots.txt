@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://acrab.ru/sitemap.xml

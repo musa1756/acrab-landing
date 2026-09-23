@@ -447,7 +447,7 @@ code {
 .button-primary { background: var(--ink); color: #fff; }
 .button-primary:hover { background: #2c261c; }
 
-/* ── Payment flow (/buy) — class names are load-bearing for buy/index.html JS */
+/* ── Payment flow (/buy) — class names are load-bearing for site/buy/index.html JS */
 
 .auth-title { margin-bottom: 10px; font-size: clamp(1.5rem, 3vw, 1.9rem); font-weight: 700; line-height: 1.14; }
 .auth-lead { margin-bottom: 26px; color: var(--ink-body); font-size: 16px; }
