@@ -8,7 +8,6 @@ const changelog = defineCollection({
     version: z.string(),
     date: z.coerce.date(),
     dateLabel: z.string(),
-    emoji: z.string(),
     title: z.string(),
     description: z.array(z.string()),
     image: z.object({

@@ -195,7 +195,6 @@ a.version-chip:hover { background: var(--gold-wash-strong); }
   font-weight: 700;
   line-height: 1.18;
 }
-.release-title .emoji { margin-right: 8px; font-weight: 400; }
 
 .release-media {
   margin: 0 0 30px;

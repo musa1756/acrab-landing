@@ -21,7 +21,7 @@ const sections = [
     <time class="release-date" datetime={data.date.toISOString().slice(0, 10)}>{data.dateLabel}</time>
   </div>
   <div class="release-main">
-    <h2 class="release-title" id={titleId}><span class="emoji" aria-hidden="true">{data.emoji}</span>{data.title}</h2>
+    <h2 class="release-title" id={titleId}>{data.title}</h2>
     {data.image ? (
       <figure class="release-media">
         <img src={data.image.src} alt={data.image.alt} width={data.image.width} height={data.image.height} />
