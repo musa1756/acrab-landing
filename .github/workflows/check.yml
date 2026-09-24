@@ -28,8 +28,11 @@ jobs:
       - name: Запустить тесты
         run: bun run test
 
-      - name: Собрать статический сайт
+      - name: Собрать сайт в site/
         run: bun run build
+
+      - name: Опубликованный site/ совпадает со сборкой
+        run: bun run verify:published
 
       - name: Установить Chromium для browser smoke
         run: bunx playwright install --with-deps chromium
@@ -37,11 +40,11 @@ jobs:
       - name: Проверить React payment island в браузере
         run: bun run test:browser
 
-      - name: Проверить содержимое dist
-        run: python3 tools/check_site.py dist
+      - name: Проверить содержимое site
+        run: python3 tools/check_site.py site
 
       - name: Проверить HTTP-маршруты
-        working-directory: dist
+        working-directory: site
         run: |
           python3 -m http.server 8899 &
           server_pid=$!
@@ -68,9 +71,9 @@ jobs:
             exit 1
           fi
 
-      - name: Сохранить dist как артефакт
+      - name: Сохранить site как артефакт
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: site
+          path: site
           if-no-files-found: error

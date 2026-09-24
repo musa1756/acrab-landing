@@ -7,9 +7,9 @@ assets emitted by Astro/Vite.
 
 Usage::
 
-    python3 tools/check_site.py dist
+    python3 tools/check_site.py site
 
-The default keeps local use convenient, while CI passes ``dist`` explicitly.
+``site/`` is where ``astro build`` writes and what Timeweb serves.
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from urllib.parse import unquote, urlsplit
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_SITE_ROOT = ROOT / "dist"
+DEFAULT_SITE_ROOT = ROOT / "site"
 
 # Every public route that must be emitted by the static build. The keys are
 # extensionless URLs registered with Apple and used by the site's navigation.
@@ -115,13 +115,13 @@ class SiteChecker:
 
         for relative_path in REQUIRED_FILES:
             if not (self.site_root / relative_path).is_file():
-                self.fail(f"отсутствует обязательный файл dist/{relative_path}")
+                self.fail(f"отсутствует обязательный файл {relative_path}")
 
         # Astro emits versioned assets; checking for a hard-coded styles.css
         # would reject a valid build. Every page must still load a stylesheet.
         css_files = list(self.site_root.rglob("*.css"))
         if not css_files:
-            self.fail("dist: сборка не содержит CSS-файла")
+            self.fail("сборка не содержит CSS-файла")
 
     def resolve_internal_path(self, target: str) -> Path | None:
         """Map an absolute site URL to the file it must serve, if any."""
@@ -162,7 +162,7 @@ class SiteChecker:
         if resolved is None:
             self.fail(
                 f"{source.relative_to(self.site_root)}: ссылка/ассет {target!r} "
-                "не резолвится в файл dist"
+                "не резолвится в файл сборки"
             )
             return
         try:
@@ -170,13 +170,13 @@ class SiteChecker:
         except ValueError:
             self.fail(
                 f"{source.relative_to(self.site_root)}: ссылка/ассет {target!r} "
-                "выходит за пределы dist"
+                "выходит за пределы сборки"
             )
             return
         if not resolved.is_file():
             self.fail(
                 f"{source.relative_to(self.site_root)}: ссылка/ассет {target!r} "
-                "не резолвится в файл dist"
+                "не резолвится в файл сборки"
             )
 
     def check_links_and_assets(self) -> None:
@@ -386,7 +386,7 @@ class SiteChecker:
 
     def check_junk(self) -> None:
         for path in self.site_root.rglob(".DS_Store"):
-            self.fail(f"в dist лежит {path.relative_to(self.site_root)}")
+            self.fail(f"в сборке лежит {path.relative_to(self.site_root)}")
 
     def run(self) -> int:
         if not self.site_root.is_dir():
@@ -408,7 +408,7 @@ class SiteChecker:
             return 1
 
         print(
-            "Проверка dist пройдена: "
+            f"Проверка {self.site_root.name} пройдена: "
             f"{len(REQUIRED_ROUTES)} маршрутов, metadata, sitemap, ссылки и /buy OK."
         )
         return 0

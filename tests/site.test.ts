@@ -73,41 +73,25 @@ describe("generated site", () => {
   });
 
   test("shows the plans before sign-in and asks for the email only to pay", () => {
-    for (const path of ["src/features/payment/PaymentFlow.tsx", "site/buy/index.html"]) {
-      const source = readSource(path);
-      expect(source.indexOf('className="plan-picker"') >= 0 ? source.indexOf('className="plan-picker"') : source.indexOf('class="plan-picker"'), path).toBeLessThan(source.indexOf('id="step-email"'));
-      expect(source, path).toContain("подтвердите почту аккаунта Acrab");
-      expect(source, path).toContain('id="plan-required-note"');
-    }
-    for (const path of ["src/pages/buy/index.astro", "site/buy/index.html"]) {
-      expect(readSource(path), path).toContain("Выберите тариф</h2>");
-    }
+    const source = readSource("src/features/payment/PaymentFlow.tsx");
+    expect(source.indexOf('className="plan-picker"')).toBeLessThan(source.indexOf('id="step-email"'));
+    expect(source).toContain("подтвердите почту аккаунта Acrab");
+    expect(source).toContain('id="plan-required-note"');
+    expect(readSource("src/pages/buy/index.astro")).toContain("Выберите тариф</h2>");
   });
 
   test("agrees to the offer by pressing «Оплатить» instead of a checkbox", () => {
-    for (const path of ["src/features/payment/PaymentFlow.tsx", "site/buy/index.html"]) {
-      const source = readSource(path);
-      expect(source, path).not.toContain('id="offer-consent"');
-      expect(source, path).not.toContain('id="step-redirect"');
-      expect(source, path).toContain("Нажимая «Оплатить», вы принимаете условия");
-      expect(source, path).toContain('"pageshow"');
-    }
-    for (const path of ["src/features/payment/payment-storage.ts", "site/buy/index.html"]) {
-      const source = readSource(path);
-      expect(source, path).toContain("acrab.checkout.session");
-      expect(source, path).toContain("acrab.checkout.pending");
-      expect(source, path).toContain("sessionStorage");
-    }
-  });
-
-  test("offers the same three plans on the published copy of /buy", () => {
-    const published = readSource("site/buy/index.html");
-    for (const plan of PLAN_ORDER) {
-      expect(published, plan).toContain(`data-plan="${plan}"`);
-      expect(published, plan).toContain(`id="price-${plan}"`);
-    }
-    expect(published).toContain("lifetime_annual");
-    expect(published).toContain("/rest/v1/subscriptions?select=plan,tier,status,current_period_end&limit=1");
+    const flow = readSource("src/features/payment/PaymentFlow.tsx");
+    expect(flow).not.toContain('id="offer-consent"');
+    expect(flow).not.toContain('id="step-redirect"');
+    expect(flow).toContain("Нажимая «Оплатить», вы принимаете условия");
+    expect(flow).toContain('"pageshow"');
+    // Те же ключи, что у прежней рукописной страницы: незавершённая оплата
+    // переживает выкладку.
+    const storage = readSource("src/features/payment/payment-storage.ts");
+    expect(storage).toContain("acrab.checkout.session");
+    expect(storage).toContain("acrab.checkout.pending");
+    expect(storage).toContain("sessionStorage");
   });
 
   test("keeps payment API contracts and public configuration", () => {

@@ -14,7 +14,8 @@
     "typecheck": "astro check",
     "test": "bun test",
     "test:browser": "playwright test",
-    "check": "bun run typecheck && bun run test && bun run build && python3 tools/check_site.py dist"
+    "check": "bun run typecheck && bun run test && bun run build && python3 tools/check_site.py site",
+    "verify:published": "git diff --quiet -- site && test -z \"$(git status --porcelain -- site)\""
   },
   "dependencies": {
     "@astrojs/react": "6.0.5",

@@ -15,7 +15,8 @@ export interface Pricing { prices: Prices; annualLifetimePrice: number; }
 export const DEFAULT_PRICES: Prices = { monthly: 399, annual: 2990, lifetime: 6490 };
 export const DEFAULT_ANNUAL_LIFETIME_PRICE = 3500;
 export const DEFAULT_PRICING: Pricing = { prices: DEFAULT_PRICES, annualLifetimePrice: DEFAULT_ANNUAL_LIFETIME_PRICE };
-export const LEGAL_DOCUMENT_VERSION = "2026-08-09";
+/** Редакция оферты и согласия на обработку данных, которые принимает покупатель (обе — 25 августа 2026). */
+export const LEGAL_DOCUMENT_VERSION = "2026-08-25";
 
 /** Порядок кнопок тарифа на странице оплаты. */
 export const PLAN_ORDER: readonly Plan[] = ["annual", "monthly", "lifetime"];

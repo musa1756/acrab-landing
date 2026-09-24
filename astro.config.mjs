@@ -5,6 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   site: "https://acrab.ru",
   output: "static",
+  // Timeweb раздаёт каталог site/ как есть (static-nobuild, index_dir = /site),
+  // поэтому сборка пишется прямо туда и коммитится вместе с исходниками.
+  outDir: "./site",
   trailingSlash: "always",
   build: {
     format: "directory",
