@@ -59,7 +59,7 @@ bun run test:browser
 - `src/styles/global.css` — сохранённая визуальная система и Tailwind utilities.
 - `public/assets/`, `public/robots.txt` и `public/sitemap.xml` — файлы с неизменными публичными URL.
 - `site/` — результат `bun run build`, который публикует Timeweb; коммитится вместе с исходниками.
-- `tests/` и `tools/check_site.py` — проверки исходников и готового `site/`.
+- `tests/` и `tools/check_site.py` — проверки исходников и готового `site/`; `e2e/payment.smoke.ts` — браузерный smoke оплаты (`bun run test:browser`).
 
 ## Маршруты и SEO
 
@@ -86,14 +86,13 @@ bun run test:browser
 `null`; отсутствие изображения не ломает сборку. Страница сортирует релизы по
 дате от новых к старым.
 
-Изображения релизов размещаются в `public/assets/changelog/`. Изменение
-`assets/changelog/1-4.png`, существовавшее до миграции, не перезаписывается.
+Изображения релизов размещаются в `public/assets/changelog/`.
 
 ## Оплата
 
 `/buy` остаётся статическим Astro shell с React island. Сценарий: тарифы и
 публичные цены видны сразу, без входа; выбор тарифа, затем email OTP
-существующего аккаунта и проверка кода только ради оплаты, чтение своей
+существующего аккаунта (код уходит только после отдельной галочки согласия на обработку персональных данных) и проверка кода только ради оплаты, чтение своей
 подписки после кода, создание платежа кнопкой «Оплатить» и переход по
 HTTPS-ссылке, которую вернула функция `tochka-payment`. Отдельного чекбокса оферты нет: нажатие «Оплатить» означает
 принятие оферты, политики конфиденциальности и согласия на обработку данных —
@@ -124,7 +123,7 @@ bfcache отпускает занятую кнопку. Ответ 401 возв�
 
 ## CI
 
-`.github/workflows/check.yml` запускается для каждого pull request и push в
+`.github/workflows/check.yml` запускается в репозитории `acrab-landing` (в монорепо корневого `.github/` нет) для каждого pull request и push в
 `main` в одном фиксированном порядке:
 
 ```text
@@ -137,6 +136,10 @@ bun run test
 bun run build
         ↓
 bun run verify:published
+        ↓
+bunx playwright install --with-deps chromium
+        ↓
+bun run test:browser
         ↓
 python3 tools/check_site.py site
 ```
