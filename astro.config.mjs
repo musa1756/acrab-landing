@@ -21,12 +21,18 @@ export default defineConfig({
     csp: {
       directives: [
         "default-src 'self'",
-        "img-src 'self'",
-        "connect-src 'self' https://api.acrab.ru",
+        // Яндекс.Метрика: пиксели, отправка данных и Вебвизор (blob-фрейм).
+        "img-src 'self' https://mc.yandex.ru https://mc.yandex.com",
+        "connect-src 'self' https://api.acrab.ru https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru",
+        "frame-src blob: https://mc.yandex.ru https://mc.yandex.com",
+        "child-src blob: https://mc.yandex.ru https://mc.yandex.com",
         "object-src 'none'",
         "base-uri 'none'",
         "form-action 'self'",
       ],
+      scriptDirective: {
+        resources: ["'self'", "https://mc.yandex.ru", "https://yastatic.net"],
+      },
     },
   },
   vite: {
