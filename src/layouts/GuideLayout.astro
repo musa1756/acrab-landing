@@ -25,7 +25,7 @@ const crumbs = guide.crumbs;
 
 <BaseLayout {...props} jsonLd={[articleSchema(guide), breadcrumbSchema(crumbs)]}>
   <a class="skip-link" href="#main">К содержанию</a>
-  <Header />
+  <Header active="articles" />
   <main id="main" class="guide-page">
     <nav class="breadcrumbs" aria-label="Хлебные крошки">
       {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (

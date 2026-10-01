@@ -13,6 +13,7 @@ const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
 const sourceRoutes = {
   "/": "src/pages/index.astro",
   "/about": "src/pages/about/index.astro",
+  "/articles": "src/pages/articles/index.astro",
   "/learn-arabic": "src/pages/learn-arabic/index.astro",
   "/arabic-alphabet": "src/pages/arabic-alphabet/index.astro",
   "/fusha": "src/pages/fusha/index.astro",
@@ -27,7 +28,7 @@ const sourceRoutes = {
   "/get": "src/pages/get/index.astro",
 } as const;
 
-const indexableRoutes = ["/", "/about", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app", "/support", "/privacy"] as const;
+const indexableRoutes = ["/", "/about", "/articles", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app", "/support", "/privacy"] as const;
 const guideRoutes = ["/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app"] as const;
 const noindexRoutes = ["/buy", "/offer", "/consent", "/get"] as const;
 

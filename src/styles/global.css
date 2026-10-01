@@ -98,6 +98,7 @@ p { text-wrap: pretty; }
   transition: color 150ms ease;
 }
 .site-nav a:hover { color: var(--ink); }
+.nav-short { display: none; }
 .site-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
 .site-nav a[aria-current="page"]::after {
   content: "";
@@ -1068,6 +1069,8 @@ code {
 .home-guides strong { font-size: 16px; font-weight: 650; }
 .home-guides p { margin: 0; color: var(--ink-body); font-size: 15px; }
 .home-guides a:hover strong { color: var(--gold-text); }
+.articles-group { margin-bottom: clamp(40px, 6vw, 64px); }
+.articles-group h2 { margin-bottom: 4px; font-size: clamp(1.3rem, 2.4vw, 1.6rem); }
 
 .not-found { width: min(640px, calc(100% - 40px)); margin: auto; padding: 64px 0; }
 .not-found .brand { margin-bottom: 64px; }
@@ -1233,9 +1236,12 @@ code {
   html { scroll-padding-top: 130px; }
   .site-header-inner { grid-template-columns: 1fr; justify-items: center; padding: 12px 0 0; gap: 10px; }
   .brand { justify-self: center; }
-  /* Four tabs have to fit a 358 pt row without wrapping. */
-  .site-nav { justify-content: center; gap: 14px; }
-  .site-nav a { padding: 10px 2px 12px; font-size: 14px; }
+  /* Five tabs have to fit a 343 pt row (iPhone SE) without wrapping. */
+  /* На самых узких экранах строка прокручивается, а не обрезается. */
+  .site-nav { justify-content: safe center; gap: 12px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .site-nav a { padding: 10px 1px 12px; font-size: 14px; }
+  .nav-full { display: none; }
+  .nav-short { display: inline; }
   .release-media { aspect-ratio: 4 / 3; }
   .dash-list li { padding-left: 24px; }
   /* Squeeze the comparison so a phone reads it without sideways scrolling;

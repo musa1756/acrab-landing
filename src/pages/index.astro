@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { organizationSchema, websiteSchema } from "../seo/schema";
+import { GUIDES } from "../seo/guides";
 ---
 
 <BaseLayout title="Арабский язык с нуля — приложение для изучения | Acrab" description="Учите литературный арабский язык с нуля в Acrab: алфавит, грамматика по-русски, слова с огласовками, аудирование и интервальное повторение." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Последовательная программа фусхи, теория по-русски, полная огласовка, аудирование и повторение — в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema]}>
@@ -419,13 +420,11 @@ import { organizationSchema, websiteSchema } from "../seo/schema";
           <p class="about-p">Короткие руководства по первым шагам: какой арабский выбрать, как читать буквы и огласовки и как не бросить на второй неделе.</p>
         </div>
         <nav class="home-guides" aria-label="Руководства по арабскому языку">
-          <a href="/learn-arabic/"><span>План</span><strong>Как выучить арабский с нуля</strong><p>Пять этапов, режим занятий и частые ошибки.</p></a>
-          <a href="/arabic-alphabet/"><span>Чтение</span><strong>Арабский алфавит</strong><p>Таблица 28 букв с формами и звуками.</p></a>
-          <a href="/arabic-vowels/"><span>Чтение</span><strong>Огласовки</strong><p>Фатха, касра, дамма, сукун, шадда и танвин.</p></a>
-          <a href="/sun-moon-letters/"><span>Первое правило</span><strong>Солнечные и лунные буквы</strong><p>Когда артикль звучит «аль», а когда сливается.</p></a>
-          <a href="/fusha/"><span>Выбор</span><strong>Что такое фусха</strong><p>Литературный арабский и диалекты на примерах.</p></a>
-          <a href="/arabic-app/"><span>Инструмент</span><strong>Как выбрать приложение</strong><p>Пять признаков хорошей программы.</p></a>
+          {GUIDES.map((guide) => (
+            <a href={guide.href}><span>{guide.kicker}</span><strong>{guide.title}</strong><p>{guide.summary}</p></a>
+          ))}
         </nav>
+        <p class="about-plans-link"><a href="/articles/">Все статьи →</a></p>
       </section>
 
       <!-- ═══ CTA ═════════════════════════════════════════════════════════ -->

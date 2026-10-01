@@ -31,6 +31,7 @@ DEFAULT_SITE_ROOT = ROOT / "site"
 REQUIRED_ROUTES = {
     "/": "index.html",
     "/about": "about/index.html",
+    "/articles": "articles/index.html",
     "/learn-arabic": "learn-arabic/index.html",
     "/arabic-alphabet": "arabic-alphabet/index.html",
     "/fusha": "fusha/index.html",

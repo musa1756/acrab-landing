@@ -1,5 +1,6 @@
 ---
 import StoreLinks from "./StoreLinks.astro";
+import { GUIDES } from "../seo/guides";
 
 interface Props {
   variant?: "full" | "guide" | "offer" | "consent" | "get";
@@ -24,14 +25,6 @@ const legalLinks = {
     { href: "/privacy", label: "Конфиденциальность" },
   ],
 } as const;
-const guideLinks = [
-  { href: "/learn-arabic/", label: "Как выучить арабский" },
-  { href: "/arabic-alphabet/", label: "Арабский алфавит" },
-  { href: "/arabic-vowels/", label: "Огласовки" },
-  { href: "/sun-moon-letters/", label: "Солнечные и лунные буквы" },
-  { href: "/fusha/", label: "Что такое фусха" },
-  { href: "/arabic-app/", label: "Приложение для арабского" },
-] as const;
 ---
 
 <footer class="site-footer">
@@ -71,7 +64,8 @@ const guideLinks = [
     )}
     {(isFull || variant === "guide") && (
       <nav class="footer-links footer-guides" aria-label="Руководства">
-        {guideLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+        <a href="/articles/">Все статьи</a>
+        {GUIDES.map((guide) => <a href={guide.href}>{guide.short}</a>)}
       </nav>
     )}
   </div>

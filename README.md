@@ -65,7 +65,7 @@ bun run test:browser
 
 ## Маршруты и SEO
 
-Сохраняются маршруты `/`, `/about`, `/learn-arabic`, `/arabic-alphabet`,
+Сохраняются маршруты `/`, `/about`, `/articles`, `/learn-arabic`, `/arabic-alphabet`,
 `/arabic-vowels`, `/sun-moon-letters`, `/fusha`, `/arabic-app`, `/buy`,
 `/support`, `/privacy`, `/offer`, `/consent`, `/get` и `/404.html`. Сборка использует directory-style output, поэтому
 `/buy` остаётся совместим с directory redirect на `/buy/`.
@@ -79,7 +79,7 @@ bun run test:browser
 1. страница в `src/pages/` и её SEO-поля; статья — на `GuideLayout` с объектом `guide` и блоком `GuideFaq`;
 2. список URL в `public/sitemap.xml` и ссылка в `public/llms.txt`;
 3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`;
-4. для статьи — ссылка в блоке «Если вы только начинаете» на главной и в подвале (`Footer.astro`).
+4. для статьи — запись в `src/seo/guides.ts`: из неё строятся раздел «Статьи» (`/articles/`), блок на главной и строка в подвале; в крошках статьи средний пункт — «Статьи».
 
 При содержательной правке статьи меняются `dateModified` в её объекте `guide` и
 `lastmod` в `public/sitemap.xml`: дата видна на странице как «Обновлено» и уходит
