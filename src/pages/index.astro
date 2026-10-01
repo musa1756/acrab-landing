@@ -2,12 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { organizationSchema, websiteSchema } from "../seo/schema";
+import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import { GUIDES } from "../seo/guides";
 ---
 
-<BaseLayout title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 44 модуля от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 44 модулей, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema]}>
-  <script is:inline type="application/ld+json" slot="head" set:html={JSON.stringify({"@context":"https://schema.org","@type":"MobileApplication","@id":"https://acrab.ru/#app","name":"Acrab","publisher":{"@id":"https://acrab.ru/#organization"},"url":"https://acrab.ru/","image":"https://acrab.ru/assets/acrab-app-icon.png","description":"Приложение для последовательного изучения литературного арабского языка с объяснениями на русском.","applicationCategory":"EducationalApplication","operatingSystem":"iOS, iPadOS, Android","inLanguage":"ru","offers":{"@type":"Offer","price":"0","priceCurrency":"RUB"},"downloadUrl":["https://apps.apple.com/ru/app/id6763663680","https://www.rustore.ru/catalog/app/com.acrab","https://play.google.com/store/apps/details?id=com.acrab.arabic"]})} />
+<BaseLayout title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 44 модуля от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 44 модулей, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema, appSchema]}>
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active="home" />
   <main id="main">

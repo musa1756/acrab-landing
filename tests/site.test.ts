@@ -6,6 +6,7 @@ import { isSecurePaymentLink, PaymentApiError } from "../src/features/payment/pa
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "../src/features/payment/payment-messages";
 import { DEFAULT_PRICING, decodeCheckoutSession, decodePendingCheckout, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, planAmount, PLAN_ORDER, sessionExpiry } from "../src/features/payment/payment-model";
 import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
+import { appSchema, RUSTORE_URL } from "../src/seo/schema";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -63,8 +64,9 @@ describe("generated site", () => {
       expect(readSource(sourceRoutes[route]), route).toMatch(/robots\s*["`]?\s*[:=]\s*["`]\s*noindex/i);
     }
     const home = readSource(sourceRoutes["/"]);
-    expect(home).toContain('type="application/ld+json"');
-    expect(home).toContain('"@type":"MobileApplication"');
+    expect(home).toContain("jsonLd={[organizationSchema, websiteSchema, appSchema]}");
+    expect(appSchema["@type"]).toBe("MobileApplication");
+    expect(appSchema.sameAs).toEqual([APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL]);
   });
 
   test("gives every guide article metadata and the same canonical path", () => {

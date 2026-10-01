@@ -36,6 +36,27 @@ export const organizationSchema: Schema = {
   },
 };
 
+/** Приложение одно в трёх магазинах: имена, по которым его ищут, и ссылки на каждую страницу магазина. */
+export const appSchema: Schema = {
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "@id": `${SITE_URL}/#app`,
+  name: "Acrab",
+  alternateName: ["Акраб", "Арабский язык с нуля - Acrab"],
+  publisher: { "@id": ORGANIZATION_ID },
+  url: `${SITE_URL}/`,
+  image: `${SITE_URL}/assets/acrab-app-icon.png`,
+  description: "Приложение для последовательного изучения литературного арабского языка (фусхи) с объяснениями на русском: алфавит, огласовки, грамматика, слова, спряжение глаголов и ИИ-помощник.",
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "iOS, iPadOS, Android",
+  inLanguage: "ru",
+  about: { "@type": "Language", name: "Арабский язык", alternateName: "ar" },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "RUB" },
+  installUrl: [APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL],
+  downloadUrl: [APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL],
+  sameAs: [APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL],
+};
+
 export const websiteSchema: Schema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
