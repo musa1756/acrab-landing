@@ -2,6 +2,7 @@
 import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
+import StoreLinks from "../../components/StoreLinks.astro";
 import { formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
@@ -65,7 +66,7 @@ const faq = [
         <p class="eyebrow">Acrab для iPhone, iPad и Android</p>
         <h1 class="page-title">Приложение для изучения арабского языка с нуля</h1>
         <p class="guide-lead">Acrab учит литературному арабскому на русском языке: от алфавита до чтения текстов с огласовками. Теория, упражнения, аудирование, повторение и инструменты собраны в одном приложении.</p>
-        <div class="hero-downloads"><a class="button button-primary" href="https://apps.apple.com/ru/app/id6763663680" target="_blank" rel="noopener">Скачать в App Store</a><a class="button button-secondary" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener">Скачать в RuStore</a><a class="button button-secondary" href="https://play.google.com/store/apps/details?id=com.acrab.arabic" target="_blank" rel="noopener">Скачать в Google Play</a></div>
+        <div class="hero-downloads"><StoreLinks /></div>
         <p class="hero-fineprint">Первые 6 из 44 модулей бесплатны и без срока.</p>
         <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
       </div>

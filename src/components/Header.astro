@@ -9,22 +9,22 @@ const linkSets = {
   primary: [
     { id: "home", href: "/", label: "О приложении", short: "Главная" },
     { id: "articles", href: "/articles/", label: "Статьи" },
-    { id: "updates", href: "/about", label: "Обновления" },
-    { id: "buy", href: "/buy", label: "Оплата" },
-    { id: "support", href: "/support", label: "Помощь" },
+    { id: "updates", href: "/about/", label: "Обновления" },
+    { id: "buy", href: "/buy/", label: "Оплата" },
+    { id: "support", href: "/support/", label: "Помощь" },
   ],
   offer: [
-      { id: "buy", href: "/buy", label: "Оплата" },
-      { id: "support", href: "/support", label: "Помощь" },
-      { id: "privacy", href: "/privacy", label: "Конфиденциальность" },
+      { id: "buy", href: "/buy/", label: "Оплата" },
+      { id: "support", href: "/support/", label: "Помощь" },
+      { id: "privacy", href: "/privacy/", label: "Конфиденциальность" },
   ],
   consent: [
-      { id: "buy", href: "/buy", label: "Оплата" },
-      { id: "privacy", href: "/privacy", label: "Конфиденциальность" },
+      { id: "buy", href: "/buy/", label: "Оплата" },
+      { id: "privacy", href: "/privacy/", label: "Конфиденциальность" },
   ],
   get: [
       { id: "home", href: "/", label: "О приложении" },
-      { id: "support", href: "/support", label: "Помощь" },
+      { id: "support", href: "/support/", label: "Помощь" },
   ],
 } as const;
 const links = linkSets[variant];

@@ -1,9 +1,10 @@
 ---
 import SeoHead from "../../components/SeoHead.astro";
+import { BUILD_ID } from "../../lib/build-id";
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-build={BUILD_ID}>
 <head>
   <SeoHead title="Политика обработки персональных данных — Acrab" description="Политика Acrab в отношении обработки персональных данных." canonical="https://acrab.ru/privacy/" ogTitle="Политика обработки персональных данных — Acrab" ogDescription="Политика Acrab в отношении обработки персональных данных." ogType="article" ogImage="https://acrab.ru/assets/acrab-app-icon.png" ogImageAlt="Иконка приложения Acrab" viewport="width=device-width, initial-scale=1.0" themeColor={null} includeIcons={false} />
   <style is:global>
@@ -279,9 +280,10 @@ import SeoHead from "../../components/SeoHead.astro";
     </div>
 
     <div class="footer">
-      <p><a href="/support">Поддержка и контакты</a> · <a href="/offer">Публичная оферта</a> · <a href="/consent">Согласие на обработку данных</a> · © 2026 Acrab</p>
+      <p><a href="/support/">Поддержка и контакты</a> · <a href="/offer/">Публичная оферта</a> · <a href="/consent/">Согласие на обработку данных</a> · © 2026 Acrab</p>
     </div>
 
   </div>
+  <script src="../../scripts/fresh-page.ts"></script>
 </body>
 </html>

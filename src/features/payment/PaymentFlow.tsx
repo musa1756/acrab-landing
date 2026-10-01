@@ -229,7 +229,7 @@ export default function PaymentFlow(): ReactElement {
         <input ref={emailInputRef} id="email-input" className="auth-input" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" required value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
         <label className="legal-consent">
           <input id="personal-data-consent" type="checkbox" checked={personalDataConsent} onChange={(event) => setPersonalDataConsent(event.currentTarget.checked)} />
-          <span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span>
+          <span>Даю <a href="/consent/" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span>
         </label>
         <button id="send-code-btn" className="button button-primary auth-submit" type="button" disabled={busy} onClick={handleSendCode}>Получить код</button>
         <ErrorMessage message={emailError} />
@@ -263,7 +263,7 @@ export default function PaymentFlow(): ReactElement {
               <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || busy} onClick={handlePayment}>
                 {pendingAction === "create-payment" ? "Создаём оплату…" : pendingAction === "open-checkout" ? "Открываем страницу банка…" : "Оплатить"}
               </button>
-              <p className="checkout-legal-note">Нажимая «Оплатить», вы принимаете условия <a href="/offer" target="_blank" rel="noopener">Публичной оферты</a>, подтверждаете, что ознакомились с <a href="/privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a>, и даёте <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</p>
+              <p className="checkout-legal-note">Нажимая «Оплатить», вы принимаете условия <a href="/offer/" target="_blank" rel="noopener">Публичной оферты</a>, подтверждаете, что ознакомились с <a href="/privacy/" target="_blank" rel="noopener">Политикой конфиденциальности</a>, и даёте <a href="/consent/" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</p>
             </>
           )}
         <ErrorMessage message={planError} />

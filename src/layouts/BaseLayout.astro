@@ -1,5 +1,6 @@
 ---
 import SeoHead from "../components/SeoHead.astro";
+import { BUILD_ID } from "../lib/build-id";
 import "../styles/global.css";
 
 interface Props {
@@ -24,12 +25,13 @@ const { bodyClass, ...seo } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-build={BUILD_ID}>
   <head>
     <SeoHead {...seo} />
     <slot name="head" />
   </head>
   <body class={bodyClass}>
     <slot />
+    <script src="../scripts/fresh-page.ts"></script>
   </body>
 </html>

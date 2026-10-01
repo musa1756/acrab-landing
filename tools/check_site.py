@@ -426,6 +426,20 @@ class SiteChecker:
             if not re.search(r"connect-src\s+[^;]*https://api\.acrab\.ru(?:\s|;|$)", policy):
                 self.fail("buy/index.html: CSP должна разрешать connect-src https://api.acrab.ru")
 
+    def check_build_id(self) -> None:
+        """Every page carries the build id that /build.txt serves (fresh-page.ts)."""
+        build_path = self.site_root / "build.txt"
+        if not build_path.is_file():
+            self.fail("нет build.txt: устаревшие страницы из кэша не перезагрузятся")
+            return
+        build_id = build_path.read_text(encoding="utf-8").strip()
+        if not re.fullmatch(r"[0-9a-f]{12}", build_id):
+            self.fail(f"build.txt: неожиданный номер сборки {build_id!r}")
+        for path in self.html_files():
+            match = re.search(r'<html\b[^>]*\bdata-build="([^"]*)"', path.read_text(encoding="utf-8"))
+            if not match or match.group(1) != build_id:
+                self.fail(f"{path.relative_to(self.site_root)}: data-build не совпадает с build.txt")
+
     def check_junk(self) -> None:
         for path in self.site_root.rglob(".DS_Store"):
             self.fail(f"в сборке лежит {path.relative_to(self.site_root)}")
@@ -442,6 +456,7 @@ class SiteChecker:
             self.check_structured_data()
             self.check_crawling_files()
             self.check_buy_smoke()
+            self.check_build_id()
             self.check_junk()
 
         if self.failures:
