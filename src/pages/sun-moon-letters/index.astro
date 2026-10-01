@@ -67,8 +67,8 @@ const faq = [
       <p class="eyebrow">Первое правило чтения</p>
       <h1 class="page-title">Солнечные и лунные буквы</h1>
       <p class="guide-lead">Определённый артикль <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> пишется одинаково, но звучит по-разному. Перед <strong>лунными</strong> буквами слышно «аль», а перед <strong>солнечными</strong> звук «л» пропадает, и первая буква слова удваивается.</p>
-      <div class="arabic-example" lang="ar" dir="rtl"><span>الشَّمْسُ</span><span>الْقَمَرُ</span></div>
-      <div class="guide-answer"><strong>Коротко:</strong> 14 солнечных букв «поглощают» звук «л» артикля — <span class="arabic-inline" lang="ar" dir="rtl">الشَّمْسُ</span> читается «аш-шамсу». Перед 14 лунными «л» звучит полностью — <span class="arabic-inline" lang="ar" dir="rtl">الْقَمَرُ</span> читается «аль-камару».</div>
+      <div class="arabic-example" lang="ar" dir="rtl" data-appear-group><span class="tile tile-gold">الشَّمْسُ</span><span class="tile tile-gold">الْقَمَرُ</span></div>
+      <div class="guide-answer card"><strong>Коротко:</strong> 14 солнечных букв «поглощают» звук «л» артикля — <span class="arabic-inline" lang="ar" dir="rtl">الشَّمْسُ</span> читается «аш-шамсу». Перед 14 лунными «л» звучит полностью — <span class="arabic-inline" lang="ar" dir="rtl">الْقَمَرُ</span> читается «аль-камару».</div>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
@@ -84,24 +84,24 @@ const faq = [
         <section id="groups">
           <h2>Списки солнечных и лунных букв</h2>
           <p>Буквы алфавита делятся пополам. Группы названы по двум словам: <span class="arabic-inline" lang="ar" dir="rtl">شَمْسٌ</span> («солнце») начинается с солнечной буквы, <span class="arabic-inline" lang="ar" dir="rtl">قَمَرٌ</span> («луна») — с лунной.</p>
-          <div class="letter-groups">
-            <div>
+          <div class="letter-groups" data-appear-group>
+            <div class="card card-plain">
               <strong>Солнечные — «л» сливается</strong>
               <p class="letters" lang="ar" dir="rtl">ت ث د ذ ر ز س ش ص ض ط ظ ل ن</p>
               <p>Звук «л» артикля не произносится, первая буква слова звучит дважды.</p>
             </div>
-            <div>
+            <div class="card card-plain">
               <strong>Лунные — «л» звучит</strong>
               <p class="letters" lang="ar" dir="rtl">ا ب ج ح خ ع غ ف ق ك م ه و ي</p>
               <p>Артикль читается полностью, как «аль», первая буква слова не меняется.</p>
             </div>
           </div>
-          <div class="guide-note"><strong>Подсказка:</strong> почти все солнечные буквы произносятся кончиком языка у зубов. Одно исключение запомните отдельно: <span class="arabic-inline" lang="ar" dir="rtl">ج</span> лунная.</div>
+          <div class="guide-note card card-neutral card-warm"><strong>Подсказка:</strong> почти все солнечные буквы произносятся кончиком языка у зубов. Одно исключение запомните отдельно: <span class="arabic-inline" lang="ar" dir="rtl">ج</span> лунная.</div>
         </section>
 
         <section id="examples">
           <h2>Примеры чтения</h2>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">Слово</th><th scope="col">Чтение</th><th scope="col">Перевод</th><th scope="col">Почему</th></tr></thead>
               <tbody>
@@ -132,7 +132,7 @@ const faq = [
 
         <section id="mistakes">
           <h2>Частые ошибки</h2>
-          <div class="mistake-list">
+          <div class="mistake-list card card-plain" data-appear>
             <div><strong>Читать «ал-шамс»</strong><p>Перед солнечной буквой «л» не произносится. Правильно — «аш-шамсу».</p></div>
             <div><strong>Удваивать лунную букву</strong><p>Лунная буква после артикля не удваивается: <span class="arabic-inline" lang="ar" dir="rtl">الْبَحْرُ</span> — «аль-бахру», без двойного «б».</p></div>
             <div><strong>Ставить артикль вместе с танвином</strong><p>Слово либо определённое, с <span class="arabic-inline" lang="ar" dir="rtl">الـ</span>, либо неопределённое, с танвином. Вместе — ошибка.</p></div>
@@ -146,5 +146,5 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/arabic-vowels/"><span>Знаки чтения</span><strong>Огласовки в арабском →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/arabic-vowels/"><span>Знаки чтения</span><strong>Огласовки в арабском →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
 </GuideLayout>

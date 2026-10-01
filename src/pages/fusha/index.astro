@@ -64,8 +64,8 @@ const faq = [
       <p class="eyebrow">Литературный арабский</p>
       <h1 class="page-title">Что такое фусха и зачем её учить</h1>
       <p class="guide-lead"><strong>Фусха</strong> — общая литературная форма арабского языка. На ней написаны книги и официальные документы, идут новости, ведётся обучение и звучат подготовленные выступления.</p>
-      <div class="fusha-word" lang="ar" dir="rtl"><span>اَلْعَرَبِيَّةُ الْفُصْحَى</span><small>аль-арабийя аль-фусха — литературный арабский язык</small></div>
-      <div class="guide-answer"><strong>Коротко:</strong> фусха — единый письменный и официальный арабский для всех арабских стран. Диалекты — местная разговорная речь. Начинающему, который хочет читать и не привязан к одной стране, удобнее начать с фусхи.</div>
+      <div class="fusha-word tile tile-gold" lang="ar" dir="rtl"><span>اَلْعَرَبِيَّةُ الْفُصْحَى</span><small>аль-арабийя аль-фусха — литературный арабский язык</small></div>
+      <div class="guide-answer card"><strong>Коротко:</strong> фусха — единый письменный и официальный арабский для всех арабских стран. Диалекты — местная разговорная речь. Начинающему, который хочет читать и не привязан к одной стране, удобнее начать с фусхи.</div>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
@@ -86,9 +86,9 @@ const faq = [
 
         <section id="difference">
           <h2>Чем фусха отличается от разговорного диалекта</h2>
-          <div class="comparison-pair">
-            <div><span class="comparison-label">Фусха</span><h3>Общая система</h3><p>Стандартная грамматика и лексика. Подходит для чтения, образования и общения за пределами одной страны.</p></div>
-            <div><span class="comparison-label">Диалект</span><h3>Живая местная речь</h3><p>Египетский, левантийский, диалекты стран Залива и другие варианты различаются произношением, словами и некоторыми конструкциями.</p></div>
+          <div class="comparison-pair" data-appear-group>
+            <div class="card card-plain"><span class="comparison-label">Фусха</span><h3>Общая система</h3><p>Стандартная грамматика и лексика. Подходит для чтения, образования и общения за пределами одной страны.</p></div>
+            <div class="card card-plain"><span class="comparison-label">Диалект</span><h3>Живая местная речь</h3><p>Египетский, левантийский, диалекты стран Залива и другие варианты различаются произношением, словами и некоторыми конструкциями.</p></div>
           </div>
           <p>Они не конкурируют: фусха отвечает на вопрос «как читать и понимать общий арабский», диалект — на вопрос «как люди говорят в быту в конкретном регионе».</p>
         </section>
@@ -96,7 +96,7 @@ const faq = [
         <section id="examples">
           <h2>Примеры: одни и те же фразы на фусхе и в диалектах</h2>
           <p>Различия заметнее всего в самых частых бытовых словах. В диалектах многие из них короче и звучат иначе:</p>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">По-русски</th><th scope="col">Фусха</th><th scope="col">Египет</th><th scope="col">Левант</th></tr></thead>
               <tbody>
@@ -116,9 +116,9 @@ const faq = [
 
         <section id="choice">
           <h2>Что выбрать начинающему</h2>
-          <div class="decision-list">
-            <div><strong>Выбирайте фусху, если…</strong><ul><li>хотите читать и писать;</li><li>ещё не привязаны к одной стране;</li><li>нужна системная грамматическая основа;</li><li>планируете понимать материалы из разных регионов.</li></ul></div>
-            <div><strong>Начинайте с диалекта, если…</strong><ul><li>скоро переезжаете в конкретную страну;</li><li>главная цель — бытовой разговор;</li><li>у вас есть семья или собеседники, говорящие на одном диалекте;</li><li>письменные тексты пока не приоритет.</li></ul></div>
+          <div class="decision-list" data-appear-group>
+            <div class="card card-plain"><strong>Выбирайте фусху, если…</strong><ul><li>хотите читать и писать;</li><li>ещё не привязаны к одной стране;</li><li>нужна системная грамматическая основа;</li><li>планируете понимать материалы из разных регионов.</li></ul></div>
+            <div class="card card-plain"><strong>Начинайте с диалекта, если…</strong><ul><li>скоро переезжаете в конкретную страну;</li><li>главная цель — бытовой разговор;</li><li>у вас есть семья или собеседники, говорящие на одном диалекте;</li><li>письменные тексты пока не приоритет.</li></ul></div>
           </div>
           <p>Два пути можно совместить: основная программа по фусхе и параллельно небольшая разговорная практика диалекта выбранного региона.</p>
         </section>
@@ -134,5 +134,5 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи"><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a><a href="/arabic-alphabet/"><span>Первый навык</span><strong>Арабский алфавит →</strong></a><a href="/arabic-app/"><span>Инструмент</span><strong>Как выбрать приложение →</strong></a></nav>
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a><a href="/arabic-alphabet/"><span>Первый навык</span><strong>Арабский алфавит →</strong></a><a href="/arabic-app/"><span>Инструмент</span><strong>Как выбрать приложение →</strong></a></nav>
 </GuideLayout>

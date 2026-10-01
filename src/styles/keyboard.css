@@ -1,7 +1,9 @@
 /* Онлайн-клавиатура `/arabic-keyboard/`. Подключается компонентом ArabicKeyboard,
    поэтому грузится только на этой странице. Токены и типографика — из tokens.css
-   и global.css. Ширина клавиш задана классами kbd-dN (компьютер, 30 колонок) и
-   kbd-mN (телефон, 25 колонок), а не style="": CSP сайта запрещает встроенные стили. */
+   и kit.css. Ширина клавиш задана классами kbd-dN (компьютер, 30 колонок) и
+   kbd-mN (телефон, 25 колонок), а не style="": CSP сайта запрещает встроенные стили.
+   Клавиша — плитка сборки предложения в уроке (AssemblyTile.tsx): белое лицо,
+   рамка 2, ребро снизу, нажатие опускает лицо на ребро; кнопки — `.btn`. */
 
 .guide-hero.tool-hero { padding-bottom: clamp(20px, 3vw, 30px); }
 .guide-hero.tool-hero .page-title { max-width: none; }
@@ -24,33 +26,36 @@
   border: 0;
 }
 
+/* Поле набора — белая карточка приложения с тенью high. */
 .kbd-text {
   display: block;
   width: 100%;
   min-height: 9.5rem;
   padding: 16px 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--arabic);
+  border: 0;
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-high);
+  color: var(--c-text);
+  font-family: var(--font-arabic);
   font-size: clamp(1.6rem, 4vw, 2.1rem);
   line-height: 1.95;
   resize: vertical;
 }
-.kbd-text::placeholder { color: var(--ink-faint); opacity: 1; }
-.kbd-text:focus-visible { outline: 2px solid var(--gold-strong); outline-offset: 2px; border-radius: var(--radius-lg); }
+.kbd-text::placeholder { color: var(--c-text-tertiary); opacity: 1; }
+.kbd-text:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; border-radius: var(--r-surface); }
 
+/* Транслитерация — тёплая карточка с рамкой .32, как раскрытая расшифровка в уроке. */
 .kbd-translit {
   padding: 14px 18px;
-  border: 1px solid var(--gold-wash-strong);
-  border-radius: var(--radius-md);
-  background: var(--surface-soft);
+  border: var(--b-emphasis) solid var(--gold-32);
+  border-radius: var(--r-surface);
+  background: var(--c-surface-warm);
 }
 .kbd-translit[hidden] { display: none; }
-.kbd-translit-label { margin: 0 0 4px; color: var(--ink-muted); font-size: 13px; }
-.kbd-translit-out { margin: 0; color: var(--ink); font-size: 1.15rem; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
-.kbd-translit-empty { color: var(--ink-muted); font-size: 15px; }
+.kbd-translit-label { margin: 0 0 4px; color: var(--c-text-secondary); font-size: 13px; }
+.kbd-translit-out { margin: 0; color: var(--c-text); font-size: 1.15rem; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
+.kbd-translit-empty { color: var(--c-text-secondary); font-size: 15px; }
 
 .kbd-actions {
   display: flex;
@@ -58,16 +63,16 @@
   align-items: center;
   gap: 8px 12px;
 }
-.kbd-actions .button { cursor: pointer; font-family: inherit; }
-.kbd-status { min-height: 1.4em; margin: 0; color: var(--ink-body); font-size: 14px; }
+.kbd-status { min-height: 1.4em; margin: 0; color: var(--c-text-secondary); font-size: 14px; }
 
 /* Ссылка «Пропустить клавиатуру» видна только в фокусе: клавиш больше пятидесяти. */
 .kbd-skip {
   justify-self: start;
   padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--ink);
-  color: #fff;
+  border-radius: var(--r-control);
+  background: var(--c-brand);
+  color: var(--c-text-on-brand);
+  font-family: var(--font-rounded);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -86,13 +91,13 @@
 /* ── Клавиши ─────────────────────────────────────────────────────────────── */
 
 .kbd-board {
-  --kbd-gap: 5px;
+  --kbd-gap: 6px;
   display: grid;
   gap: var(--kbd-gap);
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--surface-soft);
+  padding: 14px 14px 11px;
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-high);
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -112,33 +117,43 @@
 .kbd-d20 { grid-column: span 20; }
 
 .kbd-key {
+  --key-face: var(--c-surface);
+  --key-border: var(--c-brand);
+  --key-edge: var(--c-brand);
   position: relative;
   display: grid;
   height: 52px;
+  margin: 0 0 var(--press-depth);
   place-items: center;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--ink);
+  border: var(--b-emphasis) solid var(--key-border);
+  border-radius: var(--r-control);
+  background: var(--key-face);
+  box-shadow: 0 var(--press-depth) 0 var(--key-edge);
+  color: var(--c-text);
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    transform var(--press-out) var(--ease-press),
+    box-shadow var(--press-out) var(--ease-press),
+    border-color var(--spring-micro-duration) var(--spring-micro),
+    background-color var(--spring-micro-duration) var(--spring-micro);
 }
-@media (hover: hover) {
-  .kbd-key:hover { border-color: var(--gold-wash-strong); background: var(--gold-wash); }
+.kbd-key:active {
+  transform: translateY(var(--press-depth));
+  box-shadow: 0 0 0 var(--key-edge);
+  transition-duration: var(--press-in), var(--press-in), var(--spring-micro-duration), var(--spring-micro-duration);
 }
-.kbd-key:active { background: var(--gold-wash-strong); }
-.kbd-key:focus-visible { outline: 2px solid var(--gold-strong); outline-offset: 1px; z-index: 1; }
+.kbd-key:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; z-index: 1; }
 
-.kbd-main { font-family: var(--arabic); font-size: 1.6rem; line-height: 1; pointer-events: none; }
+.kbd-main { font-family: var(--font-arabic); font-size: 1.6rem; line-height: 1; pointer-events: none; }
 .kbd-alt {
   position: absolute;
   top: 4px;
   right: 6px;
-  color: var(--ink-muted);
-  font-family: var(--arabic);
+  color: var(--c-text-secondary);
+  font-family: var(--font-arabic);
   font-size: 0.82rem;
   line-height: 1;
   pointer-events: none;
@@ -147,20 +162,18 @@
   position: absolute;
   bottom: 3px;
   left: 6px;
-  color: var(--ink-faint);
+  color: var(--c-text-secondary);
+  font-family: var(--font-rounded);
   font-size: 10px;
-  font-weight: 650;
+  font-weight: 700;
   line-height: 1;
   pointer-events: none;
 }
 
-.kbd-fn { background: transparent; font-size: 14px; font-weight: 650; }
-.kbd-fn .kbd-main { font-family: var(--sans); font-size: 14px; }
-.kbd-fn[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
-@media (hover: hover) {
-  .kbd-fn[aria-pressed="true"]:hover { background: #2a251c; }
-}
-.kbd-space { background: var(--surface); }
+/* Служебные клавиши — нейтральная плитка (песочная рамка и ребро); Shift нажат — выбранная плитка. */
+.kbd-fn { --key-border: var(--c-line); --key-edge: var(--c-edge-neutral); font-family: var(--font-rounded); font-size: 14px; font-weight: 600; }
+.kbd-fn .kbd-main { font-family: var(--font-rounded); font-size: 14px; font-weight: 600; }
+.kbd-fn[aria-pressed="true"] { --key-face: var(--c-selected-face); --key-border: var(--c-brand-strong); --key-edge: var(--c-brand-strong); color: var(--c-brand-text); }
 
 .kbd-gap { pointer-events: none; }
 
@@ -171,17 +184,46 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  gap: 10px;
-  color: var(--ink);
+  gap: 12px;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
-.kbd-toggle input { width: 20px; height: 20px; margin: 0; accent-color: var(--gold-strong); cursor: pointer; }
-.kbd-hint { max-width: 70ch; margin: 0; color: var(--ink-muted); font-size: 14px; }
+/* Переключатель — SettingsSwitch приложения: дорожка lineSoft, включённая — золото, белый бегунок. */
+.kbd-toggle input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 51px;
+  height: 31px;
+  flex: 0 0 auto;
+  margin: 0;
+  border-radius: var(--r-pill);
+  background: var(--c-line-soft);
+  cursor: pointer;
+  transition: background-color var(--spring-micro-duration) var(--spring-micro);
+}
+.kbd-toggle input::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-mid);
+  transition: transform var(--spring-micro-duration) var(--spring-micro);
+}
+.kbd-toggle input:checked { background: var(--c-brand); }
+.kbd-toggle input:checked::before { transform: translateX(20px); }
+.kbd-toggle input:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+.kbd-hint { max-width: 70ch; margin: 0; color: var(--c-text-secondary); font-size: 14px; }
 .kbd-hint .arabic-inline { font-size: 1.3em; }
 
-.kbd-noscript { margin: 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--ink-body); }
+.kbd-noscript { margin: 0; padding: 14px 18px; border: var(--b-emphasis) solid var(--c-line); border-radius: var(--r-surface); background: var(--c-surface); color: var(--c-text-secondary); }
 
 @media (max-width: 640px) {
   .guide-hero.tool-hero { padding-top: 18px; padding-bottom: 16px; }
@@ -189,10 +231,10 @@
   .tool-hero .guide-updated { margin-top: 10px; }
   .kbd-app { gap: 10px; }
   .kbd-text { min-height: 6.5rem; padding: 10px 16px; resize: none; }
-  .kbd-actions .button { flex: 1 1 0; }
+  .kbd-actions .btn { flex: 1 1 0; }
   .kbd-status { flex-basis: 100%; }
-  /* 12 клавиш в ряд на 375 pt: рамка выходит на поля страницы, чтобы клавиши были шире. */
-  .kbd-board { --kbd-gap: 2px; margin-inline: -10px; padding: 4px; }
+  /* 12 клавиш в ряд на 375 pt: клавиатура выходит на поля страницы без карточки, чтобы клавиши были шире. */
+  .kbd-board { --kbd-gap: 2px; margin-inline: -10px; padding: 4px 0 0; border-radius: 0; background: none; box-shadow: none; }
   .kbd-row { grid-template-columns: repeat(25, minmax(0, 1fr)); }
   .kbd-key, .kbd-gap { grid-column: span 2; }
   .kbd-m1 { grid-column: span 1; }
@@ -200,7 +242,7 @@
   .kbd-m5 { grid-column: span 5; }
   .kbd-m16 { grid-column: span 16; }
   .kbd-hide-m { display: none; }
-  .kbd-key { height: 48px; }
+  .kbd-key { height: 48px; border-radius: var(--r-sm); }
   .kbd-main { font-size: 1.4rem; }
   .kbd-alt { top: 2px; right: 3px; font-size: 0.7rem; }
   .kbd-latin { display: none; }
@@ -208,9 +250,29 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kbd-key { transition: none; }
+  .kbd-key { transition: border-color var(--fade) ease-out, background-color var(--fade) ease-out; }
+  .kbd-key:active { transform: none; box-shadow: 0 var(--press-depth) 0 var(--key-edge); }
+  .kbd-toggle input, .kbd-toggle input::before { transition: none; }
 }
 
-/* Шаги установки раскладки на странице. */
-.kbd-steps { margin: 0 0 22px; padding-left: 22px; color: var(--ink-body); }
-.kbd-steps li + li { margin-top: 6px; }
+/* Шаги установки раскладки на странице: номер в круге на дорожке бренда, как в списке ответа ассистента. */
+.kbd-steps { margin: 0 0 22px; padding: 0; list-style: none; counter-reset: kbd-step; color: var(--c-text-secondary); }
+.kbd-steps li { position: relative; padding-left: 38px; counter-increment: kbd-step; }
+.kbd-steps li + li { margin-top: 10px; }
+.kbd-steps li::before {
+  content: counter(kbd-step);
+  position: absolute;
+  top: 1px;
+  left: 0;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--c-brand-track);
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}

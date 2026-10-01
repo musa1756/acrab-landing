@@ -78,12 +78,12 @@ const faq = [
       <p class="eyebrow">Первые слова разговора</p>
       <h1 class="page-title">Привет на арабском</h1>
       <p class="guide-lead">Самое простое «привет» по-арабски — <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> («мархабан»). Оно подходит любому собеседнику и в любое время суток. Для тёплой встречи есть <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا</span> («ахлян»), а мусульмане здороваются словами <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> («ас-саляму алайкум»).</p>
-      <div class="phrase-hero">
+      <div class="phrase-hero tile tile-gold">
         <span class="phrase-hero-ar" lang="ar" dir="rtl">مَرْحَبًا</span>
         <div class="phrase-hero-meta"><strong>мархабан</strong><small>«привет»</small></div>
-        <AudioButton src="/assets/audio/marhaban.mp3" label="мархабан" />
+        <AudioButton large src="/assets/audio/marhaban.mp3" label="мархабан" />
       </div>
-      <div class="guide-answer"><strong>Коротко:</strong> <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> — «привет», <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا</span> — «добро пожаловать», <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> — «мир вам», в ответ <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> — «и вам мир». Утром говорят <span class="arabic-inline" lang="ar" dir="rtl">صَبَاحُ الْخَيْرِ</span>, вечером — <span class="arabic-inline" lang="ar" dir="rtl">مَسَاءُ الْخَيْرِ</span>, о делах спрашивают <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ حَالُكَ؟</span></div>
+      <div class="guide-answer card"><strong>Коротко:</strong> <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> — «привет», <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا</span> — «добро пожаловать», <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> — «мир вам», в ответ <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> — «и вам мир». Утром говорят <span class="arabic-inline" lang="ar" dir="rtl">صَبَاحُ الْخَيْرِ</span>, вечером — <span class="arabic-inline" lang="ar" dir="rtl">مَسَاءُ الْخَيْرِ</span>, о делах спрашивают <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ حَالُكَ؟</span></div>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
@@ -99,10 +99,10 @@ const faq = [
         <section id="ahlan">
           <h2>Ахлян и «добро пожаловать»</h2>
           <p><span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا</span> («ахлян») — «здравствуйте, привет». Буквально слово значит «свои, родные»: так встречают человека как своего. Чтобы обратиться к конкретному человеку, после него ставят окончание:</p>
-          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы приветствия">
-            <div><span lang="ar" dir="rtl">أَهْلًا بِكَ</span><strong>ахлян бика</strong><small>мужчине</small></div>
-            <div><span lang="ar" dir="rtl">أَهْلًا بِكِ</span><strong>ахлян бики</strong><small>женщине</small></div>
-            <div><span lang="ar" dir="rtl">أَهْلًا بِكُمْ</span><strong>ахлян бикум</strong><small>нескольким людям</small></div>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы приветствия" data-appear-group>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">أَهْلًا بِكَ</span><strong>ахлян бика</strong><small>мужчине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">أَهْلًا بِكِ</span><strong>ахлян бики</strong><small>женщине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">أَهْلًا بِكُمْ</span><strong>ахлян бикум</strong><small>нескольким людям</small></div>
           </div>
           <p>Полная формула приёма гостя — <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا</span> («ахлян ва сахлян»), «добро пожаловать».<AudioButton src="/assets/audio/ahlan-wa-sahlan.mp3" label="ахлян ва сахлян" /> Гостю у порога говорят: <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا، تَفَضَّلْ!</span> («ахлян ва сахлян, тафаддаль») — «Добро пожаловать, проходи!».</p>
         </section>
@@ -112,7 +112,7 @@ const faq = [
           <p><span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> («ас-саляму алайкум») — «мир вам». Так здороваются мусульмане: при встрече, при входе в дом, в письмах и сообщениях. В русском это приветствие чаще пишут «ассаляму алейкум».<AudioButton src="/assets/audio/as-salamu-alaykum.mp3" label="ас-саляму алайкум" /></p>
           <p>Правильный ответ — <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> («ва алайкуму-с-салям»), «и вам мир». Слова в ответе идут в обратном порядке, а в начале добавляется <span class="arabic-inline" lang="ar" dir="rtl">وَ</span> — «и».</p>
           <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">س</span> в слове <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ</span> солнечная, поэтому «л» артикля сливается с ней: «ас-салям», а не «аль-салям». Это правило разобрано в статье про <a href="/sun-moon-letters/">солнечные и лунные буквы</a>.</p>
-          <div class="guide-note"><strong>Подсказка:</strong> если не знаете, мусульманин ли собеседник, начните с <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span>: оно подходит всем.</div>
+          <div class="guide-note card card-neutral card-warm"><strong>Подсказка:</strong> если не знаете, мусульманин ли собеседник, начните с <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span>: оно подходит всем.</div>
         </section>
 
         <section id="time">
@@ -143,7 +143,7 @@ const faq = [
 
         <section id="table">
           <h2>Все приветствия в одной таблице</h2>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">Фраза</th><th scope="col">Чтение</th><th scope="col">Значение</th></tr></thead>
               <tbody>
@@ -165,5 +165,5 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-thank-you/"><span>Следующая фраза</span><strong>Спасибо на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-thank-you/"><span>Следующая фраза</span><strong>Спасибо на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
 </GuideLayout>

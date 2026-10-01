@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import Icon from "../../components/Icon.astro";
 import { faqSchema } from "../../seo/schema";
 
 // Ответы — HTML со ссылками; в разметку FAQPage идёт тот же текст без тегов.
@@ -52,22 +53,35 @@ const faq = faqSchema(questions.map((item) => ({ question: item.question, answer
     </div>
 
     <div class="panel-main">
-      <section class="panel panel-wide" aria-label="Вопросы и ответы">
-        <div class="support-contact">
-          <a class="button button-primary" href="https://t.me/musa_1756" target="_blank" rel="noopener">Написать в поддержку</a>
-          <span class="support-contact-email">Telegram <strong>@musa_1756</strong> · почта <a href="mailto:lagutkin.maksim.03@mail.ru?subject=Acrab%20Support">lagutkin.maksim.03@mail.ru</a> · телефон <a href="tel:+79999988923">+7 999 998-89-23</a></span>
+      <section class="support-stack" aria-label="Вопросы и ответы" data-appear-group>
+        <div class="support-contact card card-plain">
+          <a class="btn btn-block" href="https://t.me/musa_1756" target="_blank" rel="noopener">Написать в поддержку</a>
+          <ul class="support-rows">
+            <li class="support-row">
+              <span class="icon-badge"><Icon name="telegram-logo" /></span>
+              <span class="support-row-text"><span class="support-row-label">Telegram</span><strong>@musa_1756</strong></span>
+            </li>
+            <li class="support-row">
+              <span class="icon-badge"><Icon name="envelope-simple" /></span>
+              <span class="support-row-text"><span class="support-row-label">почта</span><a href="mailto:lagutkin.maksim.03@mail.ru?subject=Acrab%20Support">lagutkin.maksim.03@mail.ru</a></span>
+            </li>
+            <li class="support-row">
+              <span class="icon-badge"><Icon name="phone" /></span>
+              <span class="support-row-text"><span class="support-row-label">телефон</span><a href="tel:+79999988923">+7 999 998-89-23</a></span>
+            </li>
+          </ul>
         </div>
 
-        <div class="support-faq">
+        <div class="support-faq card card-plain">
           {questions.map((item) => (
             <article>
-              <h2>{item.question}</h2>
+              <h2 class="t-headline">{item.question}</h2>
               <p set:html={item.answer} />
             </article>
           ))}
 
           <article>
-            <h2>Реквизиты и контакты</h2>
+            <h2 class="t-headline">Реквизиты и контакты</h2>
             <p>Услугу оказывает ИП Лагуткин Максим Дмитриевич, ИНН 650503291805, ОГРНИП 326650000012191 — правообладатель приложения Acrab.<br>
             Адрес: 694760, Сахалинская обл., с. Горнозаводск, ул. Советская, д. 31А<br>
             Почта: <a href="mailto:lagutkin.maksim.03@mail.ru?subject=Acrab%20Support">lagutkin.maksim.03@mail.ru</a><br>

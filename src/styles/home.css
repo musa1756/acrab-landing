@@ -1,0 +1,502 @@
+/* Главная: тур по приложению. Каждый блок повторяет экран или компонент
+   приложения (источник — у блока); значения — токены tokens.css, плитки и
+   кнопки — классы kit.css. Скриншоты — настоящие снимки экрана, поэтому рамка
+   у них — карточка приложения, без нарисованного корпуса. */
+
+.about {
+  width: var(--page);
+  margin: 0 auto;
+  padding-bottom: clamp(72px, 10vw, 130px);
+}
+
+/* ── Герой ───────────────────────────────────────────────────────────────── */
+
+.about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 292px;
+  gap: var(--gap);
+  align-items: center;
+  padding-bottom: clamp(40px, 5vw, 64px);
+}
+.about-hero-copy { max-width: 640px; }
+.about-hero-lead {
+  margin-bottom: clamp(26px, 3vw, 34px);
+  color: var(--c-text-secondary);
+  font-size: clamp(16px, 1.6vw, 19px);
+}
+.about-hero-actions { margin: -8px 0 clamp(28px, 3vw, 36px); }
+
+/* Число и подпись — LaurelStat онбординга (OnboardingSimulation/PremiumPlanStep):
+   значение 28/700 круглым шрифтом, подпись 14 серым. Ветви лавра — SF Symbols,
+   на сайте их нет. */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+.about-stat { display: flex; flex-direction: column; gap: 2px; }
+.about-stat dd {
+  order: 1;
+  margin: 0;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-title-large);
+  font-weight: 700;
+  line-height: 32px;
+}
+.about-stat dt {
+  order: 2;
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+}
+
+/* ── Карта разделов ────────────────────────────────────────────────────────
+   Пять вкладок приложения (AppTabs.tsx) плитками-ссылками: .tile-neutral,
+   значок строки — .icon-badge; нажатие опускает плитку, как кнопку. */
+.about-map {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: clamp(8px, 1.5vw, 16px);
+}
+.about-map .tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+}
+.about-map .icon-badge { margin-bottom: 4px; }
+.about-map-name {
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}
+.about-map-sub {
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+}
+
+/* ── Раздел: заголовок, абзац, список ──────────────────────────────────────
+   Шкала приложения: заголовок раздела --t-section 700 круглым шрифтом, блок
+   внутри — titleSmall 20/700, текст — secondary. */
+.about-section { padding-top: clamp(52px, 6.5vw, 92px); }
+.about-section-head { max-width: 720px; margin-bottom: clamp(26px, 3.4vw, 40px); }
+.about-h {
+  margin-bottom: 12px;
+  font-size: var(--t-section);
+  font-weight: 700;
+  line-height: 1.18;
+}
+.about-p { max-width: 62ch; margin-bottom: 0; color: var(--c-text-secondary); }
+.about-p + .about-p { margin-top: 16px; }
+.about-p a { color: var(--c-brand-text); font-weight: 600; }
+
+.about-subhead {
+  margin: clamp(38px, 5vw, 62px) 0 16px;
+  font-size: var(--t-title-small);
+  font-weight: 700;
+  line-height: var(--lh-title-small);
+}
+
+/* Строка преимущества — «золотая галочка + текст» (PainAnswers в
+   PremiumPlanStep: checkmark.circle.fill в золоте, ведущая фраза крупнее). */
+.about-points { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.about-points-spaced { margin-top: 24px; }
+.about-points li { position: relative; padding-left: 28px; color: var(--c-text-secondary); }
+.about-points li .about-check {
+  position: absolute;
+  top: calc(0.775em - 9px);
+  left: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--c-brand);
+}
+.about-points strong { color: var(--c-text); font-family: var(--font-rounded); font-weight: 600; }
+
+/* Утверждение — на одной стороне, экран, который его подтверждает, — на другой. */
+.about-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 292px;
+  gap: var(--gap);
+  /* Сверху, а не по центру: экраны намного выше списков рядом, и по центру
+     текст уезжает вниз, оставляя пустоту под заголовком раздела. */
+  align-items: start;
+}
+/* Экраны «Программа» и «Ассистент» плотные — им нужно место. */
+.about-showcase-tall { grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 356px); }
+.about-showcase-integrated {
+  grid-template-areas:
+    "head figure"
+    "copy figure";
+  /* Высота экрана достаётся нижней строке, а не делится пополам: иначе между
+     абзацем и списком остаётся пустота. */
+  grid-template-rows: auto 1fr;
+  row-gap: 0;
+}
+.about-showcase-integrated .about-section-head { grid-area: head; }
+.about-showcase-integrated .about-showcase-copy { grid-area: copy; }
+.about-showcase-integrated .about-showcase-figure { grid-area: figure; }
+.about-showcase-flip { grid-template-columns: 292px minmax(0, 1fr); }
+.about-showcase-flip .about-showcase-figure { order: -1; }
+/* Календарь серии — квадратный кадр, а не телефон: чтобы читался так же крупно,
+   ему нужна ширина. */
+.about-showcase-wide { grid-template-columns: 372px minmax(0, 1fr); }
+
+/* Рамка скриншота: карточка над фоном экрана — радиус surface 20, тень high,
+   без обводки. */
+.shot {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-surface);
+  background: var(--c-surface-warm);
+  box-shadow: var(--shadow-high);
+}
+.shot img { width: 100%; height: auto; }
+/* Снимки разной высоты; общий кадр выравнивает ряд. */
+.shot-crop { aspect-ratio: 5 / 8; }
+.shot-crop img { height: 100%; object-fit: cover; object-position: top center; }
+
+/* ── Типы заданий ──────────────────────────────────────────────────────────
+   Белая карточка с тенью high, как карточки Профиля (ProfileCard): рамка 1 px
+   золота .12, заголовок строки — headline. */
+.about-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.about-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--b-line) solid var(--gold-12);
+}
+.about-card-shot {
+  margin: 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--c-surface-warm);
+}
+.about-card-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.about-card-body { padding: 16px; }
+.about-card h3 {
+  margin-bottom: 6px;
+  font-size: var(--t-headline);
+  font-weight: 600;
+  line-height: var(--lh-headline);
+}
+.about-card p {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+}
+
+/* ── Быстрые тренировки ────────────────────────────────────────────────────
+   QuickTrainings.tsx (mobile/src/features/fusha/program): белая плитка радиуса
+   16 с рамкой 1 px золота .12; слева квадрат 44 в цвете режима, справа метка
+   с заливкой того же цвета .12; ниже название 16/600 и подпись 14. Цвета
+   режимов — из приложения: золото, #FF9500, красный, #30B0C7. */
+.drill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.drill {
+  --drill: var(--c-brand-strong);
+  --drill-tint: rgba(204, 166, 66, 0.12);
+  display: flex;
+  min-height: 152px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+  border: var(--b-line) solid var(--gold-12);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.drill-speed { --drill: #ff9500; --drill-tint: rgba(255, 149, 0, 0.12); }
+.drill-hard { --drill: var(--c-danger); --drill-tint: rgba(255, 59, 48, 0.12); }
+.drill-listen { --drill: #30b0c7; --drill-tint: rgba(48, 176, 199, 0.12); }
+.drill-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.drill-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--r-control);
+  background: var(--drill);
+  color: var(--c-text-on-brand);
+}
+.drill-icon svg { width: 16px; height: 16px; fill: currentColor; }
+/* Метка в цвете режима, но темнее: на светлой заливке чистые #FF9500 и #30B0C7
+   читаются хуже нормы для мелкого текста. */
+.drill-count {
+  padding: 8px;
+  border-radius: var(--r-pill);
+  background: var(--drill-tint);
+  color: var(--drill);
+  color: color-mix(in srgb, var(--drill) 62%, #000);
+  font-size: var(--t-caption);
+  font-weight: 600;
+  line-height: var(--lh-footnote);
+  font-variant-numeric: tabular-nums;
+}
+.drill-copy { display: grid; gap: 6px; }
+.drill-name { margin: 0; color: var(--c-text); font-size: 16px; font-weight: 600; line-height: 19px; }
+.drill-note { margin: 0; color: var(--c-text-secondary); font-size: var(--t-subhead); line-height: var(--lh-subhead); }
+
+/* Строка «Мои слова» под тренировками (vocabularyCard): золотой квадрат 44
+   со значком, рядом подпись. */
+.drill-words {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px;
+  border: var(--b-line) solid var(--gold-12);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.drill-words-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--r-control);
+  background: var(--c-brand);
+  color: var(--c-text-on-brand);
+}
+.drill-words-icon svg { width: 18px; height: 18px; fill: currentColor; }
+.drill-words .about-p { max-width: none; font-size: var(--t-callout); line-height: var(--lh-callout); }
+
+/* ── Инструменты ───────────────────────────────────────────────────────────
+   ToolsScreen.tsx: три группы, в каждой плитки радиуса 16 с градиентом
+   toolAccent → второй цвет по диагонали, тенью high, значком 24 слева вверху,
+   арабским словом справа, названием и подписью внизу. «Перевод» — на всю
+   ширину ряда. Значки — Phosphor Bold, те же рисунки, что у приложения. */
+.tool-groups { display: grid; gap: 20px; }
+.tool-group { display: grid; gap: 10px; }
+.tool-group-title { margin: 0; color: var(--c-text-secondary); }
+.tool-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.tool {
+  --tool-soft: rgba(255, 255, 255, 0.85);
+  display: flex;
+  min-height: 130px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--r-tile);
+  background: linear-gradient(to bottom right, var(--tool-a), var(--tool-b));
+  box-shadow: var(--shadow-high);
+  color: var(--c-text-on-brand);
+}
+.tool-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tool-top svg { width: 24px; height: 24px; flex: 0 0 auto; fill: currentColor; }
+.tool-ar { color: var(--tool-soft); font-family: var(--font-arabic); font-size: var(--t-subhead); line-height: 1.4; }
+.tool-copy { display: grid; gap: 4px; }
+.tool-name { margin: 0; font-family: var(--font-rounded); font-size: var(--t-callout); font-weight: 600; line-height: 1.25; }
+.tool-sub { margin: 0; color: var(--tool-soft); font-size: var(--t-caption-small); line-height: 15px; }
+.tool-translate { --tool-a: #bf73e6; --tool-b: #8c47c7; }
+.tool-harakat { --tool-a: #d58f40; --tool-b: #854a26; }
+.tool-voice { --tool-a: #5c8ef7; --tool-b: #3d59d9; }
+.tool-vocab { --tool-a: #e66b85; --tool-b: #b93f62; }
+.tool-examples { --tool-a: #4da0bf; --tool-b: #2e6b9e; }
+.tool-image { --tool-a: #fa9d52; --tool-b: #ed6b3d; }
+.tool-anki { --tool-a: #e8c987; --tool-b: #c99738; }
+.tool-conj { --tool-a: #8fd16b; --tool-b: #4da652; }
+.tool-root { --tool-a: #92732e; --tool-b: #478547; }
+
+/* Пять экранов инструментов — лента с прокруткой по горизонтали: сеткой они
+   растянули бы раздел на два экрана. Поля вокруг ленты оставляют место тени
+   карточек, которую иначе срезала бы прокрутка. */
+.shot-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 224px;
+  gap: 18px;
+  margin: calc(clamp(30px, 4vw, 46px) - 16px) -12px 0;
+  padding: 16px 12px 28px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 12px;
+}
+.shot-row > figure { margin: 0; scroll-snap-align: start; }
+.shot-row .shot { margin-bottom: 14px; }
+.shot-row figcaption {
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+}
+.shot-row figcaption strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}
+
+/* ── Факты: друзья и аккаунт ───────────────────────────────────────────────
+   Строка настроек профиля (SettingsRow): квадрат 30 со значком на золоте .12
+   слева, название headline и подпись справа, всё в белой карточке Профиля. */
+.about-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.about-fact {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 18px;
+  border: var(--b-line) solid var(--gold-12);
+}
+.about-fact .icon-badge { margin-top: -4px; }
+.about-fact h3 { margin: 0 0 4px; }
+.about-fact p {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+}
+
+/* ── Free и Premium ────────────────────────────────────────────────────────
+   Карточка Premium из профиля (PremiumCard.tsx): золотая рамка 2, радиус 20,
+   круглый значок с короной 44, название 20/700, строки преимуществ со
+   значком на золоте .12, кнопка покупки — .btn-outline-premium. Free — та же
+   карточка с рамкой lineStrong, как плитка Free в сравнении тарифов. */
+.about-plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.about-plan { display: flex; flex-direction: column; gap: 16px; padding: 18px; }
+.about-plan-free { border-color: var(--c-line-strong); }
+.about-plan-head { display: flex; align-items: center; gap: 12px; }
+.about-plan-badge {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: var(--b-emphasis) solid var(--c-line-strong);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text-secondary);
+}
+.about-plan-premium .about-plan-badge { border-color: var(--c-brand); color: var(--c-brand-strong); }
+.about-plan-badge svg { width: 19px; height: 19px; fill: currentColor; }
+.about-plan-copy { min-width: 0; }
+.about-plan-kicker {
+  margin: 0 0 2px;
+  color: var(--c-text-secondary);
+  font-family: var(--font-rounded);
+  font-size: var(--t-body);
+  font-weight: 600;
+  line-height: var(--lh-body);
+}
+.about-plan-premium .about-plan-kicker { color: var(--c-brand-text); }
+.about-plan h3 { margin: 0; font-size: var(--t-title-small); line-height: var(--lh-title-small); }
+.about-plan-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.about-plan-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c-text);
+  font-size: var(--t-callout);
+  line-height: var(--lh-callout);
+}
+.about-plan-price {
+  margin: -4px 0 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+  text-align: center;
+}
+
+/* Текстовая кнопка (TextAction.tsx): золото и значок, без заливки и ребра,
+   нажатие — прозрачность .65. */
+.about-link-row { margin: 8px 0 0; text-align: center; }
+.about-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+  text-decoration: none;
+  transition: opacity var(--press-out) var(--ease-press);
+}
+.about-action svg { width: 18px; height: 18px; fill: currentColor; }
+.about-action:active { opacity: 0.65; transition-duration: var(--press-in); }
+
+/* ── Призыв ────────────────────────────────────────────────────────────────
+   Карточка-окно приложения (.card — RaisedTileSurface: рамка 2, радиус 20), без
+   градиента; заголовок — как у экрана оплаты (28/700), кнопки магазинов —
+   .store-link. */
+.about-cta {
+  margin-top: clamp(52px, 6.5vw, 92px);
+  padding: clamp(28px, 5vw, 48px) clamp(20px, 4vw, 48px);
+  text-align: center;
+}
+.about-cta h2 { margin-bottom: 10px; font-size: var(--t-title-large); line-height: var(--lh-title-large); }
+.about-cta p { max-width: 52ch; margin: 0 auto clamp(20px, 3vw, 28px); color: var(--c-text-secondary); }
+.about-cta .store-links { justify-content: center; }
+
+/* ── Ширина ──────────────────────────────────────────────────────────────── */
+
+@media (min-width: 861px) {
+  .tool-name { font-size: var(--t-body); }
+  .tool-ar { font-size: var(--t-callout); }
+  .tool-sub { font-size: var(--t-footnote); line-height: var(--lh-footnote); }
+}
+
+@media (max-width: 1000px) {
+  .about-map { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .about-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .about-hero { grid-template-columns: minmax(0, 1fr); }
+  .about-showcase,
+  .about-showcase-flip { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .about-showcase-wide { grid-template-columns: minmax(0, 1fr); }
+  .about-hero-figure,
+  .about-showcase-figure { width: min(288px, 100%); margin-inline: auto; }
+  .about-showcase-wide .about-showcase-figure { width: min(400px, 100%); }
+  .about-showcase-flip .about-showcase-figure { order: 0; }
+  .about-showcase-integrated {
+    grid-template-areas:
+      "head"
+      "figure"
+      "copy";
+    grid-template-rows: none;
+    row-gap: 34px;
+  }
+  .about-showcase-integrated .about-section-head { margin-bottom: 0; }
+  /* Как на экране приложения: две плитки в ряд, «Перевод» — на весь ряд. */
+  .tool-grid { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tool-translate { grid-column: 1 / -1; }
+}
+
+@media (max-width: 640px) {
+  .about-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
+  .about-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about-map .tile:last-child { grid-column: 1 / -1; }
+  .about-cards { grid-template-columns: minmax(0, 1fr); }
+  /* Одна карточка в ряду — кадр можно сделать квадратным: при 5/4 снимок
+     обрывается над тем, что доказывает мысль. */
+  .about-card-shot { aspect-ratio: 1 / 1; }
+  .about-facts { grid-template-columns: minmax(0, 1fr); }
+  .about-plans { grid-template-columns: minmax(0, 1fr); }
+  .shot-row { grid-auto-columns: 196px; }
+  .about-hero-actions.store-links { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+/* Совсем узкий экран: тренировки встают по одной, как и инструменты в одну колонку
+   при крупном шрифте (ToolsScreen: fontScale ≥ 1.4 → одна колонка). */
+@media (max-width: 359px) {
+  .drill-grid { grid-template-columns: minmax(0, 1fr); }
+  .tool-grid { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,147 @@
+/* Панель /buy и /get, юридические страницы, пустое состояние и страница 404. */
+
+
+/* ── Panel: /buy, /get ───────────────────────────────────────────────────── */
+
+.panel-main {
+  width: var(--page);
+  margin: 0 auto;
+  padding-bottom: clamp(72px, 10vw, 130px);
+}
+/* Панель — белая карточка над фоном экрана, как карточки Программы и Профиля
+   (скругление surface 20, тень high, без рамки). */
+.panel {
+  width: min(600px, 100%);
+  margin-inline: auto;
+  padding: clamp(22px, 4vw, 36px);
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-high);
+}
+/* /get кладёт панель прямо в main, без обёртки с полями. */
+.legal-page > .panel { width: min(600px, calc(100% - 32px)); }
+@media (max-width: 640px) {
+  /* Три магазина в две колонки: последний встаёт по центру нижней строки. */
+  .panel .store-links > .store-link:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; }
+}
+
+/* ── Юридические страницы: /offer, /consent ───────────────────────────────
+   Документ собран как лист политики приложения (PrivacyPolicySheet.tsx):
+   раздел — белая плашка радиуса tile с заголовком headline (17/22 600
+   круглым шрифтом) и текстом 15/22 цветом textSecondary; плашки идут
+   столбцом с зазором 16. Текст документов не правится. */
+
+.legal-page { padding-bottom: clamp(72px, 10vw, 130px); }
+.legal-copy {
+  display: grid;
+  gap: 16px;
+  width: min(640px, calc(100% - 32px));
+  margin-inline: auto;
+}
+.legal-section {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.legal-section h2 {
+  margin: 0 0 -2px;
+  color: var(--c-text);
+  font-size: var(--t-headline);
+  font-weight: 600;
+  line-height: var(--lh-headline);
+}
+.legal-section p,
+.legal-section li {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: 22px;
+}
+.legal-section ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.legal-section li { position: relative; padding-left: 15px; }
+.legal-section li::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--c-brand);
+}
+.legal-section a {
+  color: var(--c-brand-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--gold-55);
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+.legal-section a:hover { text-decoration-color: var(--c-brand-text); }
+
+@media (min-width: 641px) {
+  .legal-section { padding: 20px; }
+}
+
+/* ── Пустое состояние: LibraryEmptyState ───────────────────────────────────
+   mobile/src/features/library/sections/common.tsx — круг 88 на золоте .06 со
+   значком тёмного золота .55, заголовок 20/26 круглым шрифтом, подпись, ниже
+   действие с отступом 20. Подпись на сайте — textSecondary, а не textDisabled
+   приложения: мелкий текст по делу не светлее #636E80. */
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  max-width: 480px;
+  text-align: center;
+}
+.empty-state-icon {
+  display: grid;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 16px;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--gold-06);
+  color: var(--c-brand-strong);
+  color: color-mix(in srgb, var(--c-brand-strong) 55%, transparent);
+}
+.empty-state-icon svg { width: 37px; height: 37px; fill: currentColor; }
+.empty-state-title {
+  margin: 0 0 16px;
+  color: var(--c-text-tertiary);
+  font-size: var(--t-title-small);
+  font-weight: 700;
+  line-height: 26px;
+}
+.empty-state-text {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: 20px;
+}
+.empty-state a:not(.btn) { color: var(--c-brand-text); font-weight: 600; }
+.empty-state-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
+
+/* Страница 404 — пустое состояние на весь экран: единственный заголовок
+   страницы — h1 шкалы titleLarge цветом text, подпись — body. */
+.page-missing {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  align-items: center;
+  width: min(640px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 clamp(48px, 10vw, 96px);
+}
+.page-missing .empty-state { margin-block: auto; padding-top: clamp(40px, 9vw, 96px); }
+.empty-state-page .eyebrow { margin-bottom: 12px; }
+.empty-state-page .empty-state-title {
+  margin-bottom: 12px;
+  color: var(--c-text);
+  font-size: var(--t-title-large);
+  line-height: var(--lh-title-large);
+}
+.empty-state-page .empty-state-text { font-size: var(--t-body); line-height: var(--lh-body); }

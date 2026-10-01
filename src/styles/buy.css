@@ -1,0 +1,301 @@
+/* Оплата (/buy/): экран оплаты Premium приложения —
+   mobile/src/features/profile/PremiumPaywall.tsx (плитки тарифов, таблица
+   сравнения, плашки) и mobile/src/features/profile/EmailOtpForm.tsx (вход по
+   почте). Фон страницы тёплый (surfaceWarm, base.css), элементы лежат на нём
+   без общей панели, как в приложении. Классы .auth-*, .plan-* и id в
+   PaymentFlow.tsx, .compare-* в buy/index.astro — несущие. */
+
+
+/* ── Экран ───────────────────────────────────────────────────────────────── */
+
+/* Заголовок, плитки и форма стоят прямо на фоне: в приложении под ними нет
+   карточки-панели. */
+.buy-panel { padding: 0; background: none; box-shadow: none; }
+
+/* Герой экрана: titleLarge по центру и подпись subtitle (15/21, secondary). */
+.auth-title,
+.compare-title {
+  margin-bottom: 8px;
+  font-size: var(--t-title-large);
+  line-height: var(--lh-title-large);
+  text-align: center;
+}
+.auth-lead,
+.compare-lead {
+  max-width: 46ch;
+  margin: 0 auto 22px;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: 21px;
+  text-align: center;
+}
+
+
+/* ── Тарифы: PlanCard / PremiumPlanRow ───────────────────────────────────── */
+
+/* Три плитки в ряд с зазором 12 — и на телефоне, как в приложении. */
+.plan-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+/* Плитка с ребром (.tile): рамка 2, ребро 3, радиус 16. Лицо всегда белое;
+   выбор меняет только рамку, ребро, корону и цену пружиной «micro». Список
+   переходов — в порядке kit.css (transform, box-shadow, border-color,
+   background-color), чтобы нажатие по-прежнему брало свои длительности. */
+.plan-option {
+  display: flex;
+  min-height: 105px;
+  padding: 16px 6px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: inherit;
+  text-align: center;
+  transition:
+    transform var(--press-out) var(--ease-press),
+    box-shadow var(--spring-micro-duration) var(--spring-micro),
+    border-color var(--spring-micro-duration) var(--spring-micro),
+    background-color var(--spring-micro-duration) var(--spring-micro);
+}
+.plan-option.is-selected { --tile-border: var(--c-brand-strong); --tile-edge: var(--c-brand-strong); }
+
+/* Корона 24 в боксе 26: серая, у выбранного — тёмное золото. */
+.plan-crown {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  color: var(--c-text-tertiary);
+  transition: color var(--spring-micro-duration) var(--spring-micro);
+}
+.plan-crown svg { width: 24px; height: 24px; fill: currentColor; }
+.plan-option.is-selected .plan-crown { color: var(--c-brand-strong); }
+
+.plan-copy { display: flex; max-width: 100%; flex-direction: column; align-items: center; gap: 6px; }
+.plan-title {
+  align-self: stretch;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-headline);
+  font-weight: 600;
+  line-height: var(--lh-headline);
+  white-space: nowrap;
+}
+.plan-price {
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-title-small);
+  font-weight: 700;
+  line-height: var(--lh-title-small);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--spring-micro-duration) var(--spring-micro);
+}
+.plan-option.is-selected .plan-price { color: var(--c-brand-strong); }
+.plan-note {
+  color: var(--c-text-secondary);
+  font-size: var(--t-caption);
+  line-height: var(--lh-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Бейдж «Выгоднее» — пилюля .badge над верхним краем: top −9 и right 10 от
+   внешнего края плитки (рамка 2 в отсчёте от внутреннего). */
+.plan-badge { position: absolute; top: -11px; right: 8px; pointer-events: none; }
+
+
+/* ── Таблица сравнения: ComparisonTable ──────────────────────────────────── */
+
+.compare { width: min(600px, 100%); margin: clamp(46px, 6vw, 76px) auto 0; }
+
+/* RaisedTileSurface с padding 18 (.card — рамка 2 золото, радиус 20). */
+.compare-card { padding: 18px; }
+.compare-card-title { margin: 0 0 12px; }
+
+/* Ряд мини-плиток тарифов над строками. */
+.compare-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.compare-mini { display: flex; padding: 10px 12px; flex-direction: column; gap: 4px; }
+.compare-mini-title {
+  color: var(--c-text-secondary);
+  font-family: var(--font-rounded);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 21px;
+}
+.compare-mini.is-premium .compare-mini-title { color: var(--c-brand-text); }
+.compare-mini-sub { color: var(--c-text-secondary); font-size: var(--t-footnote); line-height: var(--lh-footnote); }
+
+/* Строка: значок · название · выигрыш, под ним две плитки значений. */
+.compare-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px 0;
+}
+.compare-row:not(:last-child) { border-bottom: 1px solid var(--c-hairline); }
+.compare-row-head { display: flex; grid-column: 1 / -1; align-items: center; gap: 10px; }
+.compare-row-title {
+  min-width: 0;
+  flex: 1;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}
+
+/* ComparisonValue: подпись 11 с разрядкой .5, под ней значение. */
+.compare-value { display: flex; min-height: 58px; padding: 10px 12px; flex-direction: column; justify-content: flex-start; gap: 6px; }
+.compare-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c-text-secondary);
+  font-size: var(--t-caption-small);
+  line-height: var(--lh-caption-small);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.compare-label svg { width: 10px; height: 10px; flex: 0 0 auto; fill: currentColor; }
+.compare-value.is-premium .compare-label { color: var(--c-brand-text); }
+.compare-free {
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+  font-variant-numeric: tabular-nums;
+}
+.compare-premium {
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-note,
+.auth-footnote {
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+  text-align: center;
+}
+.compare-note { margin: 16px 0 0; }
+.auth-footnote a { color: var(--c-brand-text); font-weight: 600; text-decoration: underline; }
+.auth-footnote { margin: 32px 0 0; padding-top: 20px; border-top: 1px solid var(--c-hairline); }
+
+
+/* ── Вход и оплата: EmailOtpForm, PurchaseTile, StatusBanner ─────────────── */
+
+.auth-step { display: flex; flex-direction: column; gap: 16px; }
+.auth-step[hidden] { display: none; }
+
+/* Подсказка шага — subtitle (15/21, secondary). */
+.auth-hint { margin: 0; color: var(--c-text-secondary); font-size: var(--t-callout); line-height: 21px; text-align: center; }
+.auth-hint strong { color: var(--c-text); font-weight: 600; }
+
+/* Подпись поля — «группа» шкалы (13/18, 600), ближе к своему полю. */
+.auth-label {
+  margin-bottom: -8px;
+  color: var(--c-text-secondary);
+  font-family: var(--font-rounded);
+  font-size: var(--t-footnote);
+  font-weight: 600;
+  line-height: var(--lh-footnote);
+}
+
+/* Поле почты — styles.input: высота 52, радиус 16, рамка hairlineStrong 1,
+   белая вуаль, текст 17. Код — как цифры OTP: 22/700 rounded. */
+.auth-input {
+  min-height: 52px;
+  padding: 0 16px;
+  border: var(--b-line) solid var(--c-hairline-strong);
+  border-radius: var(--r-tile);
+  background: var(--c-veil-strong);
+  color: var(--c-text);
+  font-family: var(--font-text);
+  font-size: var(--t-headline);
+}
+.auth-input::placeholder { color: var(--c-text-tertiary); }
+.auth-input:focus-visible { border-color: var(--c-brand); outline: 2px solid var(--c-brand-strong); outline-offset: 2px; }
+#code-input {
+  font-family: var(--font-rounded);
+  font-size: var(--t-title);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-indent: 0.3em;
+}
+
+/* Согласие: чекбокс 20 в тёмном золоте, текст footnote. */
+.legal-consent { display: flex; align-items: flex-start; gap: 10px; margin: 0; color: var(--c-text-secondary); font-size: var(--t-footnote); line-height: var(--lh-footnote); }
+.legal-consent input { flex: 0 0 auto; width: 20px; height: 20px; margin: -1px 0 0; accent-color: var(--c-brand-strong); }
+.legal-consent a { color: var(--c-brand-text); font-weight: 600; text-decoration: underline; }
+
+/* Юридическая строка под кнопкой — s.legal: 11/15 по центру, ссылки золотом с подчёркиванием. */
+.checkout-legal-note { margin: 0; color: var(--c-text-secondary); font-size: var(--t-caption-small); line-height: 15px; text-align: center; }
+.checkout-legal-note a { color: var(--c-brand-text); text-decoration: underline; }
+
+/* Текстовое действие — TextAction: без заливки, тёмное золото, 15/600;
+   нажатая и занятая бледнеют до .65. */
+.auth-linklike {
+  align-self: center;
+  padding: 12px 16px;
+  border: 0;
+  background: none;
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+  text-align: center;
+  cursor: pointer;
+  transition: opacity var(--press-out) var(--ease-press);
+}
+.auth-linklike:active:not(:disabled) { opacity: 0.65; transition-duration: var(--press-in); }
+.auth-linklike:disabled { opacity: 0.65; cursor: not-allowed; }
+.auth-linklike-inline { display: inline; padding: 0; font-size: inherit; line-height: inherit; vertical-align: baseline; }
+
+/* Плашка — StatusBanner: карточка с рамкой 2 тёмного золота, радиус 16,
+   значок 17 в боксе 24 и текст. Ошибка и состояние — заголовок 15/600;
+   поясняющий абзац — 13/18 secondary. */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: var(--b-emphasis) solid var(--c-brand-strong);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.banner[hidden] { display: none; }
+.banner-icon { display: grid; width: 24px; height: 24px; flex: 0 0 auto; place-items: center; color: var(--c-brand-strong); }
+.banner-icon svg { width: 17px; height: 17px; fill: currentColor; }
+.banner-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; align-items: flex-start; gap: 4px; }
+.banner-title,
+.banner-message { min-width: 0; margin: 0; }
+.banner-title { flex: 1; color: var(--c-text); font-family: var(--font-rounded); font-size: var(--t-callout); font-weight: 600; line-height: var(--lh-callout); }
+.banner-message { color: var(--c-text-secondary); font-size: var(--t-footnote); line-height: var(--lh-footnote); }
+.banner .auth-linklike { align-self: flex-start; padding: 4px 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Выбор тарифа без пружины: цвета сменяются за --fade, как у кнопок. */
+  .plan-option, .plan-crown, .plan-price {
+    transition-duration: var(--fade);
+    transition-timing-function: ease-out;
+  }
+  .auth-linklike { transition-duration: var(--fade); }
+}

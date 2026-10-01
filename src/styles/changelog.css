@@ -1,0 +1,107 @@
+/* Обновления (/about/): лента релизов. Карточка релиза повторяет ReleaseCard
+   листа «Что нового» (mobile/src/features/whatsNew/WhatsNewScreen.tsx):
+   белая плашка радиуса 20 с рамкой 1 золотом .12, в голове чип версии и дата,
+   ниже заголовок, картинка 16:9 и заметки. Разделы «Новое / Улучшения /
+   Исправления» — заголовок headline и строки с золотой точкой. */
+
+.changelog {
+  display: grid;
+  gap: 14px;
+  width: min(640px, var(--page));
+  margin: 0 auto;
+  padding-bottom: clamp(72px, 10vw, 130px);
+}
+
+.release {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: var(--b-line) solid var(--gold-12);
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+}
+
+/* head: чип версии (paddingV 4, paddingH 10) и дата */
+.release-head { display: flex; align-items: center; gap: 10px; }
+.version-chip { padding: 4px 10px; border: 0; }
+.release-date {
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: 17px;
+}
+
+.release-title { margin: 0; }
+
+/* figure: 16:9 в рамке 1 золотом .16, радиус tile, подложка surfaceWarm */
+.release-media {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: var(--b-line) solid var(--gold-16);
+  border-radius: var(--r-tile);
+  background: var(--c-surface-warm);
+}
+.release-media > img { width: 100%; height: 100%; object-fit: cover; }
+.media-placeholder { display: grid; place-items: center; }
+
+/* body: paddingTop 12 от головы, gap 14 */
+.release-body { display: grid; gap: 14px; padding-top: 2px; }
+.release-body p {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: 21px;
+}
+.release-body strong { color: var(--c-text); font-weight: 700; }
+.release-body a {
+  color: var(--c-brand-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--gold-55);
+  text-underline-offset: 2px;
+}
+
+.release-section { display: grid; gap: 8px; }
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--c-text);
+  font-size: var(--t-headline);
+  font-weight: 600;
+  line-height: var(--lh-headline);
+}
+.section-head .emoji { font-size: 17px; font-weight: 400; line-height: 1; }
+
+.note-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.note-list li {
+  position: relative;
+  padding-left: 15px;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: 21px;
+}
+/* Точка на линии первой строки пункта, а не по центру абзаца. */
+.note-list li::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--c-brand);
+}
+
+.changelog-note {
+  margin: 10px 0 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+  text-align: center;
+}
+
+@media (min-width: 641px) {
+  .release { padding: 20px; }
+}

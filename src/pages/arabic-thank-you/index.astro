@@ -77,12 +77,12 @@ const faq = [
       <p class="eyebrow">Первая вежливая фраза</p>
       <h1 class="page-title">Спасибо на арабском</h1>
       <p class="guide-lead">Чтобы поблагодарить по-арабски, скажите <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> («шукран»). Слово подходит всем: продавцу, таксисту, коллеге и другу. Его понимают в любой арабской стране.</p>
-      <div class="phrase-hero">
+      <div class="phrase-hero tile tile-gold">
         <span class="phrase-hero-ar" lang="ar" dir="rtl">شُكْرًا</span>
         <div class="phrase-hero-meta"><strong>шукран</strong><small>«спасибо»</small></div>
-        <AudioButton src="/assets/audio/shukran.mp3" label="шукран" />
+        <AudioButton large src="/assets/audio/shukran.mp3" label="шукран" />
       </div>
-      <div class="guide-answer"><strong>Коротко:</strong> «спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> (шукран), «большое спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا جَزِيلًا</span> (шукран джазилян). В ответ говорят <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> (афван) — «не за что».</div>
+      <div class="guide-answer card"><strong>Коротко:</strong> «спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> (шукран), «большое спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا جَزِيلًا</span> (шукран джазилян). В ответ говорят <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> (афван) — «не за что».</div>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
@@ -109,10 +109,10 @@ const faq = [
         <section id="forms">
           <h2>Спасибо мужчине, женщине и нескольким людям</h2>
           <p>Само слово <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> одинаково для всех. Чтобы сказать «спасибо тебе» или «спасибо вам», после него ставят окончание, которое зависит от того, к кому вы обращаетесь:</p>
-          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы благодарности">
-            <div><span lang="ar" dir="rtl">شُكْرًا لَكَ</span><strong>шукран лака</strong><small>мужчине</small></div>
-            <div><span lang="ar" dir="rtl">شُكْرًا لَكِ</span><strong>шукран лаки</strong><small>женщине</small></div>
-            <div><span lang="ar" dir="rtl">شُكْرًا لَكُمْ</span><strong>шукран лакум</strong><small>нескольким людям</small></div>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы благодарности" data-appear-group>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">شُكْرًا لَكَ</span><strong>шукран лака</strong><small>мужчине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">شُكْرًا لَكِ</span><strong>шукран лаки</strong><small>женщине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">شُكْرًا لَكُمْ</span><strong>шукран лакум</strong><small>нескольким людям</small></div>
           </div>
           <p>Двоим говорят <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُمَا</span> («шукран лакума»), группе женщин — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُنَّ</span> («шукран лакунна»).</p>
         </section>
@@ -120,10 +120,10 @@ const faq = [
         <section id="religious">
           <h2>Религиозная форма благодарности</h2>
           <p>Мусульмане благодарят друг друга формулой <span class="arabic-inline" lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span> («джазака-Ллаhу хайран») — «да воздаст тебе Аллаh добром».<AudioButton src="/assets/audio/jazaka-llahu-khayran.mp3" label="джазака-Ллаhу хайран" /> Её говорят за помощь, подарок или доброе слово. В обычной ситуации, например в магазине или такси, достаточно <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span>.</p>
-          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Формула для мужчины, женщины и нескольких людей">
-            <div><span lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span><strong>джазака-Ллаhу хайран</strong><small>мужчине</small></div>
-            <div><span lang="ar" dir="rtl">جَزَاكِ اللَّهُ خَيْرًا</span><strong>джазаки-Ллаhу хайран</strong><small>женщине</small></div>
-            <div><span lang="ar" dir="rtl">جَزَاكُمُ اللَّهُ خَيْرًا</span><strong>джазакуму-Ллаhу хайран</strong><small>нескольким людям</small></div>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Формула для мужчины, женщины и нескольких людей" data-appear-group>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span><strong>джазака-Ллаhу хайран</strong><small>мужчине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">جَزَاكِ اللَّهُ خَيْرًا</span><strong>джазаки-Ллаhу хайран</strong><small>женщине</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">جَزَاكُمُ اللَّهُ خَيْرًا</span><strong>джазакуму-Ллаhу хайран</strong><small>нескольким людям</small></div>
           </div>
           <p>В ответ говорят <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكَ</span> («ва-иййака») — «и тебе тоже»; женщине — <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكِ</span> («ва-иййаки»), нескольким людям — <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكُمْ</span> («ва-иййакум»).</p>
         </section>
@@ -135,12 +135,12 @@ const faq = [
             <li><span class="arabic-inline" lang="ar" dir="rtl">لَا شُكْرَ عَلَى وَاجِبٍ</span> («ля шукра аля ваджиб») — буквально «за долг не благодарят»: так отвечают, когда помощь — само собой разумеющееся.</li>
             <li><span class="arabic-inline" lang="ar" dir="rtl">بِكُلِّ سُرُورٍ</span> («би-кулли сурур») — «с удовольствием».</li>
           </ul>
-          <div class="guide-note"><strong>Не путайте:</strong> перед вопросом <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> значит «извините»: <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا، مَا اسْمُكَ؟</span> («афван, ма-смука?») — «Извините, как вас зовут?». После «спасибо» то же слово значит «не за что».</div>
+          <div class="guide-note card card-neutral card-warm"><strong>Не путайте:</strong> перед вопросом <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> значит «извините»: <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا، مَا اسْمُكَ؟</span> («афван, ма-смука?») — «Извините, как вас зовут?». После «спасибо» то же слово значит «не за что».</div>
         </section>
 
         <section id="table">
           <h2>Все фразы в одной таблице</h2>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">Фраза</th><th scope="col">Чтение</th><th scope="col">Значение</th></tr></thead>
               <tbody>
@@ -162,5 +162,5 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-hello/"><span>Следующая фраза</span><strong>Привет на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-hello/"><span>Следующая фраза</span><strong>Привет на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
 </GuideLayout>

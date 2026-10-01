@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import Icon from "../../components/Icon.astro";
 import { GUIDES, GUIDE_GROUPS } from "../../seo/guides";
 import { breadcrumbSchema, SITE_URL } from "../../seo/schema";
 
@@ -33,7 +34,7 @@ const crumbs = [{ name: "Acrab", path: "/" }, { name: "Статьи", path: "/ar
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active="articles" />
   <main id="main" class="guide-page">
-    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Acrab</a><span aria-hidden="true">/</span><span>Статьи</span></nav>
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a class="chip" href="/">Acrab</a><Icon name="caret-right" class="crumb-sep" /><span class="chip" aria-current="page">Статьи</span></nav>
     <header class="guide-hero">
       <p class="eyebrow">Статьи</p>
       <h1 class="page-title">Статьи об арабском языке</h1>
@@ -42,7 +43,7 @@ const crumbs = [{ name: "Acrab", path: "/" }, { name: "Статьи", path: "/ar
     {groups.map((group) => (
       <section class="articles-group" aria-label={group.title}>
         <h2>{group.title}</h2>
-        <nav class="home-guides">
+        <nav class="home-guides" data-appear-group>
           {group.guides.map((guide) => (
             <a href={guide.href}><span>{guide.kicker}</span><strong>{guide.title}</strong><p>{guide.summary}</p></a>
           ))}

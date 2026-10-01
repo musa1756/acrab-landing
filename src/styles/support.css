@@ -1,0 +1,83 @@
+/* Помощь (/support/). В приложении отдельного экрана помощи нет, поэтому
+   страница собрана из его частей: белые карточки над фоном экрана
+   (ListGroup профиля, mobile/src/features/profile/ProfileList.tsx), кнопка
+   действия .btn, строки со значком .icon-badge и разделители hairline,
+   вопросы — как разделы листа политики (PrivacyPolicySheet.tsx): заголовок
+   headline и текст 15/22 цветом textSecondary. */
+
+.support-stack {
+  display: grid;
+  gap: 16px;
+  width: min(640px, 100%);
+  margin-inline: auto;
+}
+.support-contact, .support-faq { --row-pad: 16px; padding: var(--row-pad); }
+
+/* Контакты: главная кнопка и три строки со значком. */
+.support-contact .btn { margin-bottom: calc(var(--press-depth) + 8px); }
+.support-rows { display: grid; margin: 0 calc(var(--row-pad) * -1); padding: 0; list-style: none; }
+.support-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px var(--row-pad);
+}
+/* Разделитель строки — hairline от текста строки до правого поля (ListDivider). */
+.support-row + .support-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: var(--row-pad);
+  left: calc(var(--row-pad) + 42px);
+  height: 1px;
+  background: var(--c-hairline);
+}
+.support-row-text { display: grid; min-width: 0; }
+.support-row-label {
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+}
+.support-row-label::first-letter { text-transform: uppercase; }
+.support-row-text strong,
+.support-row-text a {
+  overflow-wrap: anywhere;
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}
+.support-row-text strong { color: var(--c-text); }
+.support-row-text a { color: var(--c-brand-text); text-decoration: none; }
+.support-row-text a:hover { text-decoration: underline; }
+
+/* Вопросы: строки карточки. */
+.support-faq { display: grid; padding-block: 0; }
+.support-faq article { position: relative; padding: var(--row-pad) 0; }
+.support-faq article + article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--c-hairline);
+}
+.support-faq h2 { margin: 0 0 8px; color: var(--c-text); }
+.support-faq p {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: 22px;
+}
+.support-faq a {
+  color: var(--c-brand-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--gold-55);
+  text-underline-offset: 2px;
+}
+
+@media (min-width: 641px) {
+  .support-contact, .support-faq { --row-pad: 20px; }
+}

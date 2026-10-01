@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import StoreLinks from "./StoreLinks.astro";
 
 interface Props {
@@ -9,7 +10,10 @@ interface Props {
 const { title, text } = Astro.props;
 ---
 
-<div class="guide-cta">
-  <div><h3>{title}</h3><p>{text}</p></div>
+<div class="guide-cta card" data-appear>
+  <div class="guide-cta-head">
+    <span class="icon-badge icon-badge-large"><Icon name="device-mobile" /></span>
+    <div><h3>{title}</h3><p>{text}</p></div>
+  </div>
   <StoreLinks />
 </div>

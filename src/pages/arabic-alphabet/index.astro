@@ -116,8 +116,8 @@ const faq = [
       <p class="eyebrow">Основа чтения</p>
       <h1 class="page-title">Арабский алфавит для начинающих</h1>
       <p class="guide-lead">В арабском алфавите 28 букв. Текст читается справа налево, большинство букв соединяется с соседними, а короткие гласные показываются специальными знаками — огласовками.</p>
-      <div class="alphabet-line" lang="ar" dir="rtl" aria-label="Арабский алфавит">ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</div>
-      <div class="guide-answer"><strong>Коротко:</strong> 28 букв, письмо справа налево. У большинства букв по четыре формы, а шесть не соединяются со следующей. Короткие гласные «а», «и», «у» обозначаются огласовками над и под буквой.</div>
+      <div class="alphabet-line card" lang="ar" dir="rtl" aria-label="Арабский алфавит">ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</div>
+      <div class="guide-answer card"><strong>Коротко:</strong> 28 букв, письмо справа налево. У большинства букв по четыре формы, а шесть не соединяются со следующей. Короткие гласные «а», «и», «у» обозначаются огласовками над и под буквой.</div>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
@@ -126,18 +126,18 @@ const faq = [
       <article class="guide-content">
         <section id="principles">
           <h2>Четыре вещи, которые нужно понять в начале</h2>
-          <div class="principle-grid">
-            <div><strong>Справа налево</strong><p>Строка начинается справа, но цифры внутри текста сохраняют привычный порядок.</p></div>
-            <div><strong>Буквы соединяются</strong><p>Слово пишется почти слитно, как русская пропись, поэтому границы букв приходится учиться замечать.</p></div>
-            <div><strong>Форма меняется</strong><p>Одна и та же буква пишется по-разному: отдельно, в начале, в середине и в конце слова.</p></div>
-            <div><strong>Точки различают буквы</strong><p>Общий «скелет» может быть одинаковым, а число и положение точек меняют букву и звук.</p></div>
+          <div class="principle-grid" data-appear-group>
+            <div class="card card-plain"><strong>Справа налево</strong><p>Строка начинается справа, но цифры внутри текста сохраняют привычный порядок.</p></div>
+            <div class="card card-plain"><strong>Буквы соединяются</strong><p>Слово пишется почти слитно, как русская пропись, поэтому границы букв приходится учиться замечать.</p></div>
+            <div class="card card-plain"><strong>Форма меняется</strong><p>Одна и та же буква пишется по-разному: отдельно, в начале, в середине и в конце слова.</p></div>
+            <div class="card card-plain"><strong>Точки различают буквы</strong><p>Общий «скелет» может быть одинаковым, а число и положение точек меняют букву и звук.</p></div>
           </div>
         </section>
 
         <section id="table">
           <h2>Таблица арабского алфавита</h2>
           <p>Буквы идут в словарном порядке. Русские названия приблизительные: три разные буквы называются «ха», две — «та». Поэтому рядом указаны арабское написание названия и описание звука. Нажмите на букву, чтобы открыть её страницу: звук, формы в слове, слова с переводом и похожие буквы.</p>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <caption>Формы в слове записаны справа налево: в начале, в середине, в конце.</caption>
               <thead><tr><th scope="col">Буква</th><th scope="col">Название</th><th scope="col">Звук</th><th scope="col">Формы</th></tr></thead>
@@ -159,15 +159,15 @@ const faq = [
         <section id="forms">
           <h2>Почему у одной буквы несколько форм</h2>
           <p>Возьмём букву <span class="arabic-inline" lang="ar" dir="rtl">ب</span> — «ба». Её основа остаётся узнаваемой, но соединительные линии зависят от места в слове:</p>
-          <div class="arabic-example" lang="ar" dir="rtl"><span>ب</span><span>بـ</span><span>ـبـ</span><span>ـب</span></div>
+          <div class="arabic-example" lang="ar" dir="rtl" data-appear-group><span class="tile tile-gold">ب</span><span class="tile tile-gold">بـ</span><span class="tile tile-gold">ـبـ</span><span class="tile tile-gold">ـب</span></div>
           <p>Не зубрите каждую форму как отдельную букву. Запомните отличительный признак (здесь это одна точка снизу) и ищите букву в коротких словах: так глаз быстрее привыкает узнавать её без подсказки.</p>
-          <div class="guide-note"><strong>Не путайте разрыв с пробелом.</strong> Шесть букв не соединяются со следующей буквой слева, и внутри слова иногда остаётся промежуток. В слове <span class="arabic-inline" lang="ar" dir="rtl">دَرْسٌ</span> («урок») ни <span class="arabic-inline" lang="ar" dir="rtl">د</span>, ни <span class="arabic-inline" lang="ar" dir="rtl">ر</span> не тянут линию к следующей букве.</div>
+          <div class="guide-note card card-neutral card-warm"><strong>Не путайте разрыв с пробелом.</strong> Шесть букв не соединяются со следующей буквой слева, и внутри слова иногда остаётся промежуток. В слове <span class="arabic-inline" lang="ar" dir="rtl">دَرْسٌ</span> («урок») ни <span class="arabic-inline" lang="ar" dir="rtl">د</span>, ни <span class="arabic-inline" lang="ar" dir="rtl">ر</span> не тянут линию к следующей букве.</div>
         </section>
 
         <section id="lookalikes">
           <h2>Похожие буквы: различайте по точкам</h2>
           <p>Многие буквы построены на одной основе и отличаются только точками. Если учить их группами, путаница исчезает быстрее, чем при заучивании по одной.</p>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">Буквы</th><th scope="col">Чем отличаются</th></tr></thead>
               <tbody>
@@ -193,11 +193,11 @@ const faq = [
         <section id="vowels">
           <h2>Что такое огласовки</h2>
           <p>Короткие гласные записывают небольшими знаками над или под буквой. В учебниках они нужны, чтобы точно прочитать новое слово. Во многих повседневных текстах часть огласовок не пишут: знакомое слово читатель узнаёт по контексту.</p>
-          <div class="vowel-row" aria-label="Примеры огласовок">
-            <div><span lang="ar" dir="rtl">بَ</span><strong>ба</strong><small>фатха</small></div>
-            <div><span lang="ar" dir="rtl">بِ</span><strong>би</strong><small>касра</small></div>
-            <div><span lang="ar" dir="rtl">بُ</span><strong>бу</strong><small>дамма</small></div>
-            <div><span lang="ar" dir="rtl">بْ</span><strong>б</strong><small>сукун</small></div>
+          <div class="vowel-row" aria-label="Примеры огласовок" data-appear-group>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">بَ</span><strong>ба</strong><small>фатха</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">بِ</span><strong>би</strong><small>касра</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">بُ</span><strong>бу</strong><small>дамма</small></div>
+            <div class="tile tile-gold"><span lang="ar" dir="rtl">بْ</span><strong>б</strong><small>сукун</small></div>
           </div>
           <p>Кроме этих четырёх знаков есть шадда (удвоение согласного) и танвин (окончания «ун», «ан», «ин»). Подробно, с примерами, их разбирает статья <a href="/arabic-vowels/">«Огласовки в арабском языке»</a>.</p>
           <p>Acrab показывает полную огласовку в словах, примерах и упражнениях, поэтому начинающему не приходится угадывать чтение.</p>
@@ -225,5 +225,5 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-vowels/"><span>Следующий шаг</span><strong>Огласовки в арабском →</strong></a><a href="/sun-moon-letters/"><span>Первое правило чтения</span><strong>Солнечные и лунные буквы →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-vowels/"><span>Следующий шаг</span><strong>Огласовки в арабском →</strong></a><a href="/sun-moon-letters/"><span>Первое правило чтения</span><strong>Солнечные и лунные буквы →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
 </GuideLayout>

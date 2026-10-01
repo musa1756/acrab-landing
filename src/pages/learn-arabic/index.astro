@@ -63,7 +63,7 @@ const faq = [
         <p class="eyebrow">Пошаговый план</p>
         <h1 class="page-title">Как выучить арабский язык с нуля</h1>
         <p class="guide-lead">Не пытайтесь сразу запомнить весь алфавит, сотни слов и таблицы грамматики. Идите по порядку: чтение → базовые фразы → простые конструкции → регулярное повторение → более длинные тексты.</p>
-        <div class="guide-answer"><strong>Короткий ответ:</strong> выберите литературный арабский, учите буквы в составе слов, занимайтесь понемногу почти каждый день и сразу применяйте новые слова в предложениях.</div>
+        <div class="guide-answer card"><strong>Короткий ответ:</strong> выберите литературный арабский, учите буквы в составе слов, занимайтесь понемногу почти каждый день и сразу применяйте новые слова в предложениях.</div>
         <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
       </div>
       <figure class="shot guide-hero-shot"><img src="/assets/about/program-path.webp" alt="Маршрут Acrab из последовательных модулей по литературному арабскому" width="620" height="1250" fetchpriority="high"></figure>
@@ -104,7 +104,7 @@ const faq = [
         <section id="roots">
           <h2>Система корней: почему слова запоминаются группами</h2>
           <p>Большинство арабских слов построено на корне из трёх согласных. Корень несёт общий смысл, а гласные, приставки и окончания превращают его в конкретное слово. Например, корень <span class="arabic-inline" lang="ar" dir="rtl">ك ت ب</span> связан с письмом:</p>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table">
               <thead><tr><th scope="col">Слово</th><th scope="col">Чтение</th><th scope="col">Значение</th></tr></thead>
               <tbody>
@@ -145,7 +145,7 @@ const faq = [
 
         <section id="mistakes">
           <h2>Что чаще всего тормозит прогресс</h2>
-          <div class="mistake-list">
+          <div class="mistake-list card card-plain" data-appear>
             <div><strong>Учить буквы только по таблице</strong><p>В таблице видна только отдельная форма буквы, а в слове она меняется. Узнавать букву нужно внутри слова.</p></div>
             <div><strong>Копить слова без предложений</strong><p>Перевод на карточке вы помните, а фразу построить не можете. Добавляйте короткий пример к каждому новому слову.</p></div>
             <div><strong>Перепрыгивать между курсами</strong><p>Разные программы дают правила в разном порядке. Выберите один основной маршрут, остальные материалы используйте как справочники.</p></div>
@@ -164,7 +164,7 @@ const faq = [
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие статьи">
+    <nav class="related-guides" data-appear-group aria-label="Другие статьи">
       <a href="/arabic-alphabet/"><span>Следующий шаг</span><strong>Арабский алфавит для начинающих →</strong></a>
       <a href="/fusha/"><span>Разобраться в основе</span><strong>Что такое фусха →</strong></a>
       <a href="/arabic-app/"><span>Выбрать инструмент</span><strong>Приложение для изучения арабского →</strong></a>

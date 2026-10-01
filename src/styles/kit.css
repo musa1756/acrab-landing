@@ -1,0 +1,267 @@
+/* Компоненты приложения на сайте. Каждый класс повторяет компонент из
+   mobile/src/components/acrab/ (файл указан у блока); значения — токены
+   tokens.css. Нового вида здесь не придумывают: если в приложении такого
+   элемента нет, страница собирает его из этих частей. */
+
+/* ── Кнопка действия: AcrabPrimaryButton (PrimaryButton.tsx) ───────────────
+   Под лицом лежит ребро 3 px темнее заливки; нажатие опускает лицо на ребро
+   (RaisedPressable + pressDepth). Тон — модификатор, размер — модификатор:
+   .btn                      brand · large
+   .btn-outline              белое лицо, песочная рамка 2, золотая надпись
+   .btn-outline-gold         рамка и ребро золотые, надпись — текст
+   .btn-outline-premium      тёмное золото: покупка Premium
+   .btn-plain / .btn-soft / .btn-quiet
+   .btn-dense / .btn-compact / .btn-small / .btn-circle / .btn-block        */
+
+.btn {
+  --btn-face: var(--c-brand);
+  --btn-edge: var(--c-brand-edge-fill);
+  --btn-label: var(--c-text-on-brand);
+  --btn-border: transparent;
+  --btn-bw: 0px;
+  --btn-pad-y: 14px;
+  --btn-pad-x: 20px;
+  --btn-radius: var(--r-control);
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  min-height: 0;
+  margin: 0 0 var(--press-depth);
+  padding: calc(var(--btn-pad-y) - var(--btn-bw)) var(--btn-pad-x);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: var(--btn-bw) solid var(--btn-border);
+  border-radius: var(--btn-radius);
+  background: var(--btn-face);
+  box-shadow: 0 var(--press-depth) 0 var(--btn-edge);
+  color: var(--btn-label);
+  font-family: var(--font-rounded);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform var(--press-out) var(--ease-press),
+    box-shadow var(--press-out) var(--ease-press),
+    background-color var(--fade) ease-out,
+    border-color var(--fade) ease-out,
+    color var(--fade) ease-out;
+}
+.btn svg { width: 18px; height: 18px; flex: 0 0 auto; fill: currentColor; }
+.btn:active:not(:disabled):not([aria-disabled="true"]),
+.btn.is-pressed {
+  transform: translateY(var(--press-depth));
+  box-shadow: 0 0 0 var(--btn-edge);
+  transition-duration: var(--press-in);
+}
+.btn:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+
+.btn-outline,
+.btn-outline-gold,
+.btn-outline-premium { --btn-face: var(--c-surface); --btn-bw: var(--b-emphasis); }
+.btn-outline { --btn-border: var(--c-line); --btn-edge: var(--c-edge-neutral); --btn-label: var(--c-brand); }
+.btn-outline-gold { --btn-border: var(--c-brand); --btn-edge: var(--c-brand); --btn-label: var(--c-text); }
+.btn-outline-premium { --btn-border: var(--c-brand-strong); --btn-edge: var(--c-brand-strong); --btn-label: var(--c-brand-strong); }
+.btn-outline[aria-pressed="true"],
+.btn-outline[aria-selected="true"],
+.btn-outline.is-selected {
+  --btn-face: var(--c-selected-face);
+  --btn-border: var(--c-brand-strong);
+  --btn-edge: var(--c-brand-strong);
+  --btn-label: var(--c-brand-strong);
+}
+.btn-plain { --btn-face: var(--c-surface-muted); --btn-edge: #dadade; --btn-label: var(--c-text-tertiary); }
+.btn-soft { --btn-face: var(--c-surface-warm); --btn-edge: var(--c-brand-edge); --btn-label: var(--c-brand-strong); }
+.btn-quiet,
+.btn:disabled:not(.btn-outline):not(.btn-outline-gold):not(.btn-outline-premium):not(.btn-plain):not(.btn-soft):not(.btn-compact):not(.btn-small) {
+  --btn-face: var(--c-surface-quiet);
+  --btn-edge: #bebdba;
+  --btn-label: var(--c-text-tertiary);
+}
+.btn:disabled,
+.btn[aria-disabled="true"] { cursor: not-allowed; }
+.btn-outline:disabled, .btn-outline-gold:disabled, .btn-outline-premium:disabled,
+.btn-plain:disabled, .btn-soft:disabled,
+.btn-compact:disabled, .btn-small:disabled { opacity: 0.45; }
+
+.btn-dense { --btn-pad-y: 10px; --btn-pad-x: 16px; font-size: 13px; font-weight: 700; line-height: 18px; }
+.btn-dense svg { width: 16px; height: 16px; }
+.btn-compact { --btn-pad-y: 12px; --btn-pad-x: 24px; --btn-radius: var(--r-pill); min-height: 44px; font-size: 15px; line-height: 20px; }
+.btn-compact svg { width: 16px; height: 16px; }
+.btn-small { --btn-pad-y: 8px; --btn-pad-x: 12px; --btn-radius: var(--r-pill); min-height: 34px; font-size: 13px; font-weight: 700; line-height: 18px; }
+.btn-small svg { width: 14px; height: 14px; }
+.btn-circle { --btn-radius: var(--r-pill); width: 44px; height: 44px; padding: 0; }
+.btn-circle.btn-small { width: 34px; height: 34px; min-height: 34px; }
+.btn-block { display: flex; width: 100%; }
+
+/* ── Круглая кнопка значка: HeaderIconButton ───────────────────────────────
+   Плоская, без ребра: нажатие — прозрачность .65 и масштаб .96. */
+.icon-btn {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-mid);
+  color: var(--c-brand-strong);
+  cursor: pointer;
+  transition: opacity var(--press-out) var(--ease-press), transform var(--press-out) var(--ease-press);
+}
+.icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.icon-btn:active { opacity: 0.65; transform: scale(0.96); transition-duration: var(--press-in); }
+.icon-btn-tint { background: var(--c-brand-face); box-shadow: none; }
+.icon-btn-small { width: 34px; height: 34px; }
+.icon-btn-small svg { width: 14px; height: 14px; }
+.icon-btn-large { width: 52px; height: 52px; }
+.icon-btn:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+
+/* ── Плитка с ребром: TileSurface (PremiumTileKit.tsx) ─────────────────────
+   Лицо с рамкой 2 и сплошное ребро 3 снизу. Ссылка или кнопка-плитка
+   опускается при нажатии так же, как кнопка. */
+.tile {
+  --tile-face: var(--c-surface);
+  --tile-border: var(--c-line-strong);
+  --tile-edge: var(--c-line-strong);
+  position: relative;
+  display: block;
+  margin: 0 0 var(--press-depth);
+  border: var(--b-emphasis) solid var(--tile-border);
+  border-radius: var(--r-tile);
+  background: var(--tile-face);
+  box-shadow: 0 var(--press-depth) 0 var(--tile-edge);
+  color: var(--c-text);
+  text-decoration: none;
+  transition:
+    transform var(--press-out) var(--ease-press),
+    box-shadow var(--press-out) var(--ease-press),
+    border-color var(--spring-micro-duration) var(--spring-micro),
+    background-color var(--spring-micro-duration) var(--spring-micro);
+}
+.tile-gold { --tile-border: var(--c-brand); --tile-edge: var(--c-brand); }
+.tile-neutral { --tile-border: var(--c-line); --tile-edge: var(--c-edge-neutral); }
+.tile-selected { --tile-face: var(--c-selected-face); --tile-border: var(--c-brand-strong); --tile-edge: var(--c-brand-strong); }
+a.tile, button.tile, label.tile { cursor: pointer; }
+a.tile:active, button.tile:active, label.tile:active, .tile.is-pressed {
+  transform: translateY(var(--press-depth));
+  box-shadow: 0 0 0 var(--tile-edge);
+  transition-duration: var(--press-in), var(--press-in), var(--spring-micro-duration), var(--spring-micro-duration);
+}
+a.tile:focus-visible, button.tile:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+
+/* ── Карточка-окно: RaisedTileSurface ──────────────────────────────────────
+   Плоская, рамка 2, скругление 20. Без рамки — белая карточка над фоном
+   экрана с тенью high (карточки Программы и Профиля). */
+.card {
+  border: var(--b-emphasis) solid var(--c-brand);
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+}
+.card-plain { border: 0; box-shadow: var(--shadow-high); }
+.card-neutral { border-color: var(--c-line); }
+.card-warm { background: var(--c-surface-warm); }
+
+/* ── Чип: AcrabChip ────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border: var(--b-line) solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--gold-12);
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+  text-decoration: none;
+  transition: opacity var(--press-out) var(--ease-press), border-color var(--fade) ease-out;
+}
+a.chip:active, button.chip:active { opacity: 0.65; }
+.chip[aria-current="page"], .chip.is-selected { border-color: var(--gold-55); }
+.chip-fill { background: var(--c-brand); color: var(--c-text-on-brand); }
+
+/* Метка выигрыша Premium («x10», «∞») и бейдж тарифа. */
+.gain {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--r-pill);
+  background: var(--gold-12);
+  color: var(--c-brand-text);
+  font-size: 11px;
+  line-height: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--c-brand-strong);
+  color: var(--c-text-on-brand);
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+/* Значок строки: квадрат 30 со скруглением 8 на золоте .12. */
+.icon-badge {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--r-sm);
+  background: var(--gold-12);
+  color: var(--c-brand-strong);
+}
+.icon-badge svg { width: 15px; height: 15px; fill: currentColor; }
+.icon-badge-large { width: 44px; height: 44px; border-radius: var(--r-control); }
+.icon-badge-large svg { width: 22px; height: 22px; }
+
+/* ── Заголовки и подписи шкалы acrabTokens.type ─────────────────────────── */
+.t-large-title { font-family: var(--font-rounded); font-size: var(--t-large-title); font-weight: 700; line-height: var(--lh-large-title); }
+.t-title { font-family: var(--font-rounded); font-size: var(--t-title); font-weight: 700; line-height: var(--lh-title); }
+.t-title-small { font-family: var(--font-rounded); font-size: var(--t-title-small); font-weight: 700; line-height: var(--lh-title-small); }
+.t-headline { font-family: var(--font-rounded); font-size: var(--t-headline); font-weight: 600; line-height: var(--lh-headline); }
+.t-group { color: var(--c-text-secondary); font-family: var(--font-rounded); font-size: var(--t-footnote); font-weight: 600; line-height: var(--lh-footnote); }
+
+/* ── Появление: Appear.tsx ─────────────────────────────────────────────────
+   Прозрачность, сдвиг 18 px и масштаб .95 пружиной snappy с задержкой
+   index × 60 мс. Скрипт appear.ts прячет только то, что ниже первого экрана,
+   поэтому без скрипта и на первом экране содержимое видно сразу. */
+.appear-pending {
+  opacity: 0;
+  transform: translateY(18px) scale(0.95);
+}
+.appear-in {
+  transition:
+    opacity var(--spring-appear-duration) var(--spring-appear),
+    transform var(--spring-appear-duration) var(--spring-appear);
+  transition-delay: calc(var(--appear-index, 0) * 60ms);
+}
+
+@media print {
+  .appear-pending { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Как в приложении: нажатие без сдвига, появление — только прозрачность. */
+  .btn:active, .btn.is-pressed { transform: none; box-shadow: 0 var(--press-depth) 0 var(--btn-edge); }
+  a.tile:active, button.tile:active, label.tile:active, .tile.is-pressed { transform: none; box-shadow: 0 var(--press-depth) 0 var(--tile-edge); }
+  .icon-btn:active { transform: none; }
+  .appear-pending { transform: none; }
+  .appear-in {
+    transition: opacity var(--fade) ease-out;
+    transition-delay: min(calc(var(--appear-index, 0) * 60ms), 80ms);
+  }
+}

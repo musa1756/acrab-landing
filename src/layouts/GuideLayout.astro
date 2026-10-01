@@ -2,6 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Icon from "../components/Icon.astro";
 import { articleSchema, breadcrumbSchema, type GuideMeta } from "../seo/schema";
 
 interface Props {
@@ -29,9 +30,9 @@ const crumbs = guide.crumbs;
   <main id="main" class="guide-page">
     <nav class="breadcrumbs" aria-label="Хлебные крошки">
       {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
-        <Fragment><a href={crumb.path}>{crumb.name}</a><span aria-hidden="true">/</span></Fragment>
+        <Fragment><a class="chip" href={crumb.path}>{crumb.name}</a><Icon name="caret-right" class="crumb-sep" /></Fragment>
       ) : (
-        <span>{crumb.name}</span>
+        <span class="chip" aria-current="page">{crumb.name}</span>
       ))}
     </nav>
     <slot />

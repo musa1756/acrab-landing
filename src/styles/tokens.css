@@ -1,35 +1,174 @@
+/* Токены сайта — значения дизайн-системы приложения:
+   mobile/src/components/acrab/tokens.ts и semanticTokens.ts (файл Figma Acrab_UI
+   собран из них же). Новое значение сначала ищется там; своё — только если в
+   приложении такой роли нет (ширина страницы, шапка, текст статей). */
+
+/* SF Pro Rounded приложения раздавать с сайта нельзя (лицензия Apple), поэтому:
+   на iPhone и Mac — системный ui-rounded (это он и есть), у кого установлен —
+   SF Pro Rounded, у остальных — Nunito (OFL, public/assets/fonts/OFL.txt). */
+@font-face {
+  font-family: "Acrab Rounded";
+  src: url("/assets/fonts/nunito-cyrillic.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Acrab Rounded";
+  src: url("/assets/fonts/nunito-latin-ext.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Acrab Rounded";
+  src: url("/assets/fonts/nunito-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --canvas: #ffffff;
-  --canvas-warm: #fdfaf4;
-  --surface: #ffffff;
-  --surface-soft: #faf6ee;
+  /* ── Цвет: acrabTokens.color ─────────────────────────────────────────── */
+  --c-brand: #d4a854;            /* brand — золото кнопки действия */
+  --c-brand-soft: #e8c987;       /* brandSoft */
+  --c-brand-strong: #cca642;     /* brandStrong — рамка и ребро выбранного, Premium */
+  --c-brand-edge-fill: #a58342;  /* pressEdgeColor(brand): ребро золотой кнопки */
+  --c-brand-text: #86691f;       /* brandText — золото для мелкого текста, 5,2 на белом */
+  --c-text: #242b38;             /* text */
+  --c-text-secondary: #636e80;   /* textSecondary */
+  --c-text-tertiary: #8e8e93;    /* textTertiary — подсказка; 3,3 на белом, не для мелкого текста по делу */
+  --c-text-disabled: #aeaeb2;
+  --c-icon-faint: #c7c7cc;
+  --c-text-on-brand: #ffffff;
+  --c-success: #33bd75;
+  --c-success-strong: #1f9957;
+  --c-success-surface: #e0f7eb;
+  --c-danger: #ff3b30;
+  --c-danger-text: #c9342b;      /* dangerText */
+  --c-danger-surface: #fce6e6;
+  --c-warning-text: #c37a24;
+  --c-streak: #f5b21f;
+  --c-streak-frozen: #479ed1;
 
-  --ink: #15120c;
-  --ink-body: #55504a;
-  --ink-muted: #6f695f;
-  --ink-faint: #7a746a;
+  --c-surface: #ffffff;
+  --c-surface-muted: #f2f2f7;    /* plain-кнопка, холодное выключенное */
+  --c-surface-screen: #f8f9fa;   /* холодный фон листа */
+  --c-surface-quiet: #f4f2ef;    /* выключенная кнопка действия */
+  --c-surface-warm: #fcf7ed;     /* тёплый фон экрана оплаты, лицо мягкой кнопки */
+  --c-selected-face: #fdf6e7;    /* state.selected.face */
+  --c-brand-face: #f5edd9;       /* лицо значков */
+  --c-brand-track: #ebdec6;
+  --c-brand-edge: #ecd8b2;       /* ребро мягкой кнопки */
+  --c-track: #ecebe7;            /* дорожка сегментов */
+  --c-line: #e6e3dc;             /* рамка второй кнопки и выбора */
+  --c-edge-neutral: #d9d5cc;     /* ребро белой объёмной кнопки */
+  --c-line-soft: #e5e5ea;
+  --c-line-strong: #d1d1d6;      /* невыбранный тариф, рамка Free */
+  --c-hairline: rgba(0, 0, 0, 0.08);
+  --c-hairline-strong: rgba(0, 0, 0, 0.12);
+  --c-scrim: rgba(0, 0, 0, 0.35);
+  --c-veil: rgba(255, 255, 255, 0.72);
+  --c-veil-strong: rgba(255, 255, 255, 0.96);
 
-  --gold: #d4a854;
-  --gold-text: #8a5a0e;
-  --gold-strong: #a06f16;
-  --gold-wash: rgba(212, 168, 84, 0.16);
-  --gold-wash-strong: rgba(212, 168, 84, 0.3);
+  /* Прозрачное золото: только 8 ступеней приложения (goldAlpha). */
+  --gold-06: rgba(212, 168, 84, 0.06);
+  --gold-12: rgba(212, 168, 84, 0.12);
+  --gold-16: rgba(212, 168, 84, 0.16);
+  --gold-24: rgba(212, 168, 84, 0.24);
+  --gold-32: rgba(212, 168, 84, 0.32);
+  --gold-40: rgba(212, 168, 84, 0.4);
+  --gold-55: rgba(212, 168, 84, 0.55);
+  --gold-70: rgba(212, 168, 84, 0.7);
 
-  --danger: #b3261e;
+  /* ── Форма: radius, border ───────────────────────────────────────────── */
+  --r-sm: 8px;
+  --r-control: 12px;
+  --r-tile: 16px;
+  --r-surface: 20px;
+  --r-pill: 999px;
+  --b-line: 1px;
+  --b-emphasis: 2px;
+  --b-heavy: 3px;
 
-  --line: rgba(21, 18, 12, 0.1);
-  --line-soft: rgba(21, 18, 12, 0.06);
+  /* ── Тени: acrabTokens.shadow ────────────────────────────────────────── */
+  --shadow-low: 0 1px 3px #00000014;
+  --shadow-mid: 0 2px 16px #00000014;
+  --shadow-high: 0 4px 20px #00000014;
+  --shadow-overlay: 0 8px 32px #00000029;
+  --shadow-glow: 0 3px 10px rgba(212, 168, 84, 0.32);
+  --shadow-card-glow: 0 6px 40px rgba(212, 168, 84, 0.12);
 
+  /* ── Текст ───────────────────────────────────────────────────────────── */
+  --font-rounded: ui-rounded, "SF Pro Rounded", "Acrab Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-arabic: "SF Arabic", "Geeza Pro", "Noto Naskh Arabic", "Al Bayan", serif;
+  /* Шкала acrabTokens.type (кегль/интерлиньяж). На сайте заголовки страницы и
+     разделов на широком экране крупнее largeTitle; на телефоне — ровно шкала. */
+  --t-large-title: 34px; --lh-large-title: 41px;
+  --t-title-large: 28px; --lh-title-large: 34px;
+  --t-title: 22px; --lh-title: 27px;
+  --t-title-small: 20px; --lh-title-small: 25px;
+  --t-headline: 17px; --lh-headline: 22px;
+  --t-body: 16px; --lh-body: 22px;
+  --t-callout: 15px; --lh-callout: 20px;
+  --t-subhead: 14px; --lh-subhead: 19px;
+  --t-footnote: 13px; --lh-footnote: 18px;
+  --t-caption: 12px; --lh-caption: 16px;
+  --t-caption-small: 11px; --lh-caption-small: 14px;
+  --t-display: clamp(34px, 4.4vw, 48px);
+  --t-section: clamp(28px, 3vw, 34px);
+
+  /* ── Движение ────────────────────────────────────────────────────────── */
+  /* Нажатие (pressDepthGeometry.ts): лицо опускается на ребро 3 px за 50 мс,
+     поднимается за 100 мс, кривая easeOut bezier(0, 0, .58, 1). */
+  --press-depth: 3px;
+  --press-in: 50ms;
+  --press-out: 100ms;
+  --ease-press: cubic-bezier(0, 0, 0.58, 1);
+  /* Пружины SwiftUI из motion.ts, посчитанные в linear(): Appear — snappy
+     (response .32, damping 1), выбор — micro (response .2, damping .8). */
+  --spring-appear: linear(0, 0.087, 0.258, 0.433, 0.584, 0.703, 0.793, 0.857, 0.903, 0.935, 0.956, 0.971, 0.981, 0.988, 0.992, 0.995, 0.997, 0.998, 0.999, 0.999, 1);
+  --spring-appear-duration: 500ms;
+  --spring-micro: linear(0, 0.086, 0.267, 0.464, 0.639, 0.776, 0.875, 0.941, 0.981, 1.003, 1.012, 1.015, 1.014, 1.011, 1.008, 1.006, 1.004, 1.002, 1.001, 1, 1);
+  --spring-micro-duration: 300ms;
+  --fade: 160ms;
+
+  /* ── Раскладка сайта (в приложении нет) ──────────────────────────────── */
   --page: min(1060px, calc(100% - 48px));
   --rail: 176px;
   --gap: clamp(32px, 6vw, 72px);
-  --header-h: 62px;
+  --header-h: 64px;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* ── Прежние имена: те же роли, значения приложения ──────────────────── */
+  --canvas: var(--c-surface);
+  --canvas-warm: var(--c-surface-warm);
+  --surface: var(--c-surface);
+  --surface-soft: var(--c-surface-warm);
+  --ink: var(--c-text);
+  --ink-body: var(--c-text-secondary);
+  --ink-muted: var(--c-text-secondary);
+  --ink-faint: var(--c-text-tertiary);
+  --gold: var(--c-brand);
+  --gold-text: var(--c-brand-text);
+  --gold-strong: var(--c-brand-strong);
+  --gold-wash: var(--gold-16);
+  --gold-wash-strong: var(--gold-32);
+  --danger: var(--c-danger-text);
+  --line: var(--c-hairline-strong);
+  --line-soft: var(--c-hairline);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-control);
+  --radius-lg: var(--r-tile);
+  --sans: var(--font-text);
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  --arabic: "Geeza Pro", "Noto Naskh Arabic", "Al Bayan", serif;
+  --arabic: var(--font-arabic);
+}
+
+/* Ступенчатая замена пружин для браузеров без linear(). */
+@supports not (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring-appear: cubic-bezier(0.22, 0.8, 0.3, 1);
+    --spring-micro: cubic-bezier(0.3, 1.25, 0.5, 1);
+  }
 }

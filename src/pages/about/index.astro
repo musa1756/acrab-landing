@@ -12,7 +12,7 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active="updates" />
   <main id="main">
-    <div class="page-head">
+    <div class="page-head page-head-centered">
       <div class="page-head-inner">
         <p class="eyebrow">Обновления</p>
         <h1 class="page-title">Что нового в Acrab</h1>
@@ -21,7 +21,7 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
     </div>
     <div class="changelog">
       {releases.map((release) => <Release release={release} />)}
-      <p class="changelog-note">Здесь собраны версии начиная с 2.2. Те же заметки есть в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
+      <p class="changelog-note" data-appear>Здесь собраны версии начиная с 2.2. Те же заметки есть в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
     </div>
   </main>
   <Footer />

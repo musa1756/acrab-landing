@@ -2,7 +2,27 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import Icon from "../../components/Icon.astro";
 import PaymentFlow from "../../features/payment/PaymentFlow";
+import type { PhosphorName } from "../../lib/phosphor";
+
+// Строки COMPARISON из mobile/src/features/profile/PremiumPaywall.tsx: порядок, названия и
+// значения те же. Значок — ближайший Phosphor к SF-символу строки; `gain` — метка выигрыша,
+// как её считает приложение (x — отношение лимитов, ∞ — у Premium лимита нет); `unlimited`
+// ставит у Premium «∞» вместо стрелки. Числа приложение берёт из ai_daily_quota_limits,
+// поэтому при правке лимитов на сервере правится и эта таблица, иначе сайт начнёт
+// обещать не то, что выдаёт приложение.
+const rows: { icon: PhosphorName; title: string; free: string; premium: string; gain: string; unlimited?: boolean }[] = [
+  { icon: "target", title: "Уроки фусхи", free: "35 уроков первых шести модулей", premium: "Все 240 уроков", gain: "+205 уроков" },
+  { icon: "sparkle", title: "AI-учитель", free: "10 запросов в день", premium: "100 запросов в день", gain: "x10" },
+  { icon: "snowflake", title: "Заморозки серии", free: "2 заморозки на старте", premium: "+1 заморозка каждую неделю", gain: "+1/нед." },
+  { icon: "list-bullets", title: "Словари", free: "5 запросов в день", premium: "Без лимита", gain: "∞", unlimited: true },
+  { icon: "globe", title: "Перевод", free: "1 000 симв. в день", premium: "30 000 симв. в день", gain: "x30" },
+  { icon: "text-aa", title: "Огласовки текста", free: "1 000 симв. в день", premium: "30 000 симв. в день", gain: "x30" },
+  { icon: "quotes", title: "Примеры", free: "5 запросов в день", premium: "Без лимита", gain: "∞", unlimited: true },
+  { icon: "waveform", title: "Озвучка", free: "175 симв. в день", premium: "500 симв. в день", gain: "x3" },
+  { icon: "images", title: "Готовые карточки", free: "5 карточек в день", premium: "База без лимита", gain: "∞", unlimited: true },
+];
 ---
 
 <BaseLayout title="Оплата Acrab Premium" description="Оплата Acrab Premium: подтвердите почту аккаунта, выберите тариф и оплатите через банк «Точка»." robots="noindex">
@@ -18,7 +38,7 @@ import PaymentFlow from "../../features/payment/PaymentFlow";
     </div>
 
     <div class="panel-main">
-      <section class="panel" aria-labelledby="buy-title">
+      <section class="panel buy-panel" aria-labelledby="buy-title">
         <h2 id="buy-title" class="auth-title">Выберите тариф</h2>
         <p class="auth-lead">Premium включится на аккаунте, с которым вы занимаетесь в приложении, сразу на всех ваших устройствах.</p>
 
@@ -27,71 +47,47 @@ import PaymentFlow from "../../features/payment/PaymentFlow";
         <p class="auth-footnote">Платёж проводит банк «Точка», его эквайринг соответствует стандарту PCI DSS Level&nbsp;1. Данные вашей карты мы не получаем и не храним. Оплата разовая, на выбранный срок, автосписаний нет. Услуга цифровая, доставлять нечего: Premium включится в приложении сам, обычно через несколько минут после того, как банк подтвердит оплату. Вопросы по оплате — на странице <a href="/support/">«Помощь»</a>.</p>
       </section>
 
-      <!-- Таблица повторяет COMPARISON из mobile/src/features/profile/PremiumPaywall.tsx:
-           те же строки, тот же порядок, те же формулировки. Числа приложение берёт из
-           ai_daily_quota_limits, поэтому при правке лимитов на сервере правится и эта
-           таблица, иначе сайт начнёт обещать не то, что выдаёт приложение. -->
       <section class="compare" aria-labelledby="compare-title">
         <h2 class="compare-title" id="compare-title">Что даёт Premium</h2>
         <p class="compare-lead">Бесплатная версия не ограничена по времени. Premium открывает всю программу и поднимает дневные лимиты инструментов.</p>
 
-        <div class="compare-scroll">
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th scope="col">Возможность</th>
-                <th scope="col">Free</th>
-                <th scope="col" class="is-premium">Premium</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">Уроки фусхи</th>
-                <td>35 уроков первых шести модулей</td>
-                <td class="is-premium">Все 240 уроков</td>
-              </tr>
-              <tr>
-                <th scope="row">AI-учитель</th>
-                <td>10 запросов в день</td>
-                <td class="is-premium">100 запросов в день</td>
-              </tr>
-              <tr>
-                <th scope="row">Заморозки серии</th>
-                <td>2 заморозки на старте</td>
-                <td class="is-premium">+1 заморозка каждую неделю</td>
-              </tr>
-              <tr>
-                <th scope="row">Словари</th>
-                <td>5 запросов в день</td>
-                <td class="is-premium">Без лимита</td>
-              </tr>
-              <tr>
-                <th scope="row">Перевод</th>
-                <td>1 000 симв. в день</td>
-                <td class="is-premium">30 000 симв. в день</td>
-              </tr>
-              <tr>
-                <th scope="row">Огласовки текста</th>
-                <td>1 000 симв. в день</td>
-                <td class="is-premium">30 000 симв. в день</td>
-              </tr>
-              <tr>
-                <th scope="row">Примеры</th>
-                <td>5 запросов в день</td>
-                <td class="is-premium">Без лимита</td>
-              </tr>
-              <tr>
-                <th scope="row">Озвучка</th>
-                <td>175 симв. в день</td>
-                <td class="is-premium">500 симв. в день</td>
-              </tr>
-              <tr>
-                <th scope="row">Готовые карточки</th>
-                <td>5 карточек в день</td>
-                <td class="is-premium">База без лимита</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- ComparisonTable приложения: карточка с золотой рамкой, две мини-плитки тарифов и
+             строки «значок · название · выигрыш» с парой плиток Free / Premium. Смысл таблицы
+             для чтения с экрана держат роли table / row / cell. -->
+        <div class="card compare-card">
+          <h3 class="t-title-small compare-card-title" id="compare-card-title">Преимущества Premium</h3>
+          <div class="compare-table" role="table" aria-labelledby="compare-card-title">
+            <div class="compare-head" role="row">
+              <span class="visually-hidden" role="columnheader">Возможность</span>
+              <div class="tile compare-mini" role="columnheader">
+                <span class="compare-mini-title">Бесплатно</span>
+                <span class="compare-mini-sub">старт</span>
+              </div>
+              <div class="tile tile-gold compare-mini is-premium" role="columnheader">
+                <span class="compare-mini-title">Premium</span>
+                <span class="compare-mini-sub">учиться без пауз</span>
+              </div>
+            </div>
+            <div class="compare-body" role="rowgroup" data-appear-group>
+              {rows.map((row) => (
+                <div class="compare-row" role="row">
+                  <div class="compare-row-head" role="rowheader">
+                    <span class="icon-badge"><Icon name={row.icon} /></span>
+                    <span class="compare-row-title">{row.title}</span>
+                    <span class="gain">{row.gain}</span>
+                  </div>
+                  <div class="tile compare-value" role="cell">
+                    <span class="compare-label">Free</span>
+                    <span class="compare-free">{row.free}</span>
+                  </div>
+                  <div class="tile tile-gold compare-value is-premium" role="cell">
+                    <span class="compare-label"><Icon name={row.unlimited ? "infinity-bold" : "arrow-up-right-bold"} />Premium</span>
+                    <span class="compare-premium">{row.premium}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <p class="compare-note">Таблица та же, что на экране «Преимущества Premium» в приложении. «Словари» — это инструмент «Слова по теме», «Готовые карточки» — инструмент «Картинка». Бесплатная часть программы заканчивается модулем «Место, направление и простые связки». Лимиты обновляются каждый день в 03:00 по Москве; когда лимит исчерпан, уроки работают как обычно. Огласовки по фото на iPhone и iPad, Анки, Спряжение и Семья слов работают без лимитов в обеих версиях.</p>

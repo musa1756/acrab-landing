@@ -13,7 +13,7 @@ const { items, title = "Частые вопросы" } = Astro.props;
 
 <section id="faq">
   <h2>{title}</h2>
-  <div class="guide-faq">
+  <div class="guide-faq card card-plain" data-appear>
     {items.map((item) => (
       <div><h3>{item.question}</h3><p>{item.answer}</p></div>
     ))}

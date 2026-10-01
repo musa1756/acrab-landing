@@ -91,10 +91,10 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
         <p class="eyebrow">{letterOrdinal(letter)[0]?.toUpperCase()}{letterOrdinal(letter).slice(1)} буква алфавита</p>
         <h1 class="page-title" set:html={richArabic(heading)} />
         <p class="guide-lead" set:html={richArabic(letter.lead)} />
-        <div class="guide-answer"><strong>Коротко:</strong> <span set:html={richArabic(`${letter.name} (${letter.char}) — ${letterOrdinal(letter)} буква из 28. Звук: ${letter.soundShort}. ${connects ? "Соединяется с обеих сторон, четыре формы." : "Не соединяется со следующей буквой, две формы."} ${sun ? "Солнечная" : "Лунная"} буква.`)} /></div>
+        <div class="guide-answer card"><strong>Коротко:</strong> <span set:html={richArabic(`${letter.name} (${letter.char}) — ${letterOrdinal(letter)} буква из 28. Звук: ${letter.soundShort}. ${connects ? "Соединяется с обеих сторон, четыре формы." : "Не соединяется со следующей буквой, две формы."} ${sun ? "Солнечная" : "Лунная"} буква.`)} /></div>
         <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
       </div>
-      <div class="letter-glyph-card">
+      <div class="letter-glyph-card tile tile-gold">
         <span class="letter-glyph" lang="ar" dir="rtl" role="img" aria-label={`Арабская буква ${letter.name}`}>{letter.char}</span>
         <div class="letter-glyph-name">
           <span lang="ar" dir="rtl">{letter.arabicName}</span>
@@ -110,9 +110,9 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
         <section id="sound">
           <h2>Как произносится буква {shortName}</h2>
           <p set:html={richArabic(letter.articulation)} />
-          <div class="vowel-row vowel-row-3 letter-syllables" aria-label="Слоги с короткими гласными">
+          <div class="vowel-row vowel-row-3 letter-syllables" aria-label="Слоги с короткими гласными" data-appear-group>
             {syllables.map((syllable, index) => (
-              <div>
+              <div class="tile tile-gold">
                 <span lang="ar" dir="rtl">{syllable}</span>
                 <strong>{readings[index]}</strong>
                 <small>{vowelNames[index]}</small>
@@ -130,9 +130,9 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
         <section id="forms">
           <h2>Как пишется буква {shortName}: {connects ? "четыре формы" : "две формы"}</h2>
           <p set:html={richArabic(letter.shape)} />
-          <div class="vowel-row letter-forms-grid" aria-label={`Формы буквы ${letter.name}`}>
+          <div class="vowel-row letter-forms-grid" aria-label={`Формы буквы ${letter.name}`} data-appear-group>
             {FORM_KEYS.map((key) => (
-              <div><span lang="ar" dir="rtl">{forms[key]}</span><small>{FORM_LABELS[key]}</small></div>
+              <div class="tile tile-gold"><span lang="ar" dir="rtl">{forms[key]}</span><small>{FORM_LABELS[key]}</small></div>
             ))}
           </div>
           <p set:html={richArabic(letter.connects)} />
@@ -144,7 +144,7 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
         <section id="words">
           <h2>Слова с буквой {shortName}</h2>
           <p>Слова с огласовками из уроков Acrab: буква стоит в разных местах слова, поэтому видно, как меняется её форма.</p>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table letter-words">
               <caption>Транскрипция русскими буквами приблизительная.</caption>
               <thead><tr><th scope="col">Слово</th><th scope="col">Читается</th><th scope="col">Перевод</th><th scope="col">Буква</th></tr></thead>
@@ -170,7 +170,7 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
 
         <section id="lookalikes">
           <h2>С чем не спутать букву {shortName}</h2>
-          <div class="guide-table-scroll">
+          <div class="guide-table-scroll card card-plain" data-appear>
             <table class="guide-table letter-lookalikes">
               <thead><tr><th scope="col">Буква</th><th scope="col">Чем отличается</th></tr></thead>
               <tbody>
@@ -209,14 +209,14 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
           <h2>Все буквы арабского алфавита</h2>
           <nav class="letter-strip" lang="ar" dir="rtl" aria-label="Буквы арабского алфавита">
             {LETTERS.map((item) => (
-              <a href={letterPath(item.slug)} aria-label={`Буква ${item.name}${item.qualifier ? `, ${item.qualifier}` : ""}`} aria-current={item.slug === letter.slug ? "page" : undefined}>{item.char}</a>
+              <a class:list={["tile", "tile-gold", { "tile-selected": item.slug === letter.slug }]} href={letterPath(item.slug)} aria-label={`Буква ${item.name}${item.qualifier ? `, ${item.qualifier}` : ""}`} aria-current={item.slug === letter.slug ? "page" : undefined}>{item.char}</a>
             ))}
           </nav>
         </section>
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Соседние буквы">
+    <nav class="related-guides" data-appear-group aria-label="Соседние буквы">
       {prev ? (
         <a href={letterPath(prev.slug)} rel="prev"><span>Предыдущая буква</span><strong>← {prev.name} {prev.char}{prev.qualifier ? ` (${prev.qualifier})` : ""}</strong></a>
       ) : (

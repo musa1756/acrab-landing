@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactElement } from "react";
 import { createPayment, loadPricing, loadSubscription, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
 import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "./payment-messages";
 import { DEFAULT_PRICING, formatRub, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, pendingCheckoutDeadline, planAmount, PLAN_ORDER, sessionExpiry, type PaymentStep, type PendingCheckout, type Plan, type Pricing, type SubscriptionRow } from "./payment-model";
+import { PHOSPHOR, type PhosphorName } from "../../lib/phosphor";
 import { clearCheckoutSession, clearPendingCheckout, readCheckoutSession, readPendingCheckout, writeCheckoutSession, writePendingCheckout } from "./payment-storage";
 
 // A meta CSP cannot express frame-ancestors. This guard runs as soon as the
@@ -16,8 +17,21 @@ const PLAN_TITLE: Record<Plan, string> = { annual: "Год", monthly: "Меся�
 const PLAN_NOTE: Record<Plan, string> = { annual: "за год", monthly: "в месяц", lifetime: "разовый платёж" };
 const PLAN_ACCUSATIVE: Record<Plan, string> = { annual: "«Год»", monthly: "«Месяц»", lifetime: "«Навсегда»" };
 
+// Значок Phosphor (тот же набор, что у Icon.astro): остров рисует его сам, в приложении
+// такие значки стоят в плашках и на кнопках. Декоративный, для чтения с экрана скрыт.
+function Icon({ name }: { name: PhosphorName }): ReactElement {
+  return <svg viewBox="0 0 256 256" fill="currentColor" focusable="false" aria-hidden="true" dangerouslySetInnerHTML={{ __html: PHOSPHOR[name] }} />;
+}
+
+// StatusBanner приложения: карточка с рамкой, значок слева и текст. Ошибка — плашка,
+// пустая скрыта; role="alert" остаётся на самом тексте ошибки.
 function ErrorMessage({ message }: { message: string }): ReactElement {
-  return <p className="auth-error" role="alert" hidden={!message}>{message}</p>;
+  return (
+    <div className="banner" hidden={!message}>
+      <span className="banner-icon"><Icon name="warning" /></span>
+      <p className="banner-title" role="alert">{message}</p>
+    </div>
+  );
 }
 
 function formatDeadline(pending: PendingCheckout): string {
@@ -207,13 +221,15 @@ export default function PaymentFlow(): ReactElement {
   const picker = lifetimeActive ? null : (
     <div className="plan-picker" role="group" aria-label="Выбор тарифа">
       {PLAN_ORDER.map((option) => (
-        <button key={option} className={`plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
-          <span className="plan-option-top">
-            <span>{PLAN_TITLE[option]}</span>
-            {option === "annual" ? <span className="plan-option-badge">Выгоднее</span> : null}
+        <button key={option} className={`tile plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
+          <span className="plan-crown"><Icon name="crown" /></span>
+          <span className="plan-copy">
+            <span className="plan-title">{PLAN_TITLE[option]}</span>
+            {option === "annual" ? <span className="badge plan-badge">Выгоднее</span> : null}
+            <span className="plan-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
+            <span className="plan-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
+            {option === "annual" ? <span className="plan-note">{`≈ ${formatRub(planAmount(option, pricing, subscription) / 12)}/мес`}</span> : null}
           </span>
-          <span className="plan-option-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
-          <span className="plan-option-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
         </button>
       ))}
     </div>
@@ -231,7 +247,7 @@ export default function PaymentFlow(): ReactElement {
           <input id="personal-data-consent" type="checkbox" checked={personalDataConsent} onChange={(event) => setPersonalDataConsent(event.currentTarget.checked)} />
           <span>Даю <a href="/consent/" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span>
         </label>
-        <button id="send-code-btn" className="button button-primary auth-submit" type="button" disabled={busy} onClick={handleSendCode}>Получить код</button>
+        <button id="send-code-btn" className="btn btn-block" type="button" disabled={busy} onClick={handleSendCode}>Получить код</button>
         <ErrorMessage message={emailError} />
       </div>
 
@@ -239,7 +255,7 @@ export default function PaymentFlow(): ReactElement {
         <p className="auth-hint">Код отправлен на <strong>{email}</strong>.</p>
         <label className="auth-label" htmlFor="code-input">Код из письма</label>
         <input ref={codeInputRef} id="code-input" className="auth-input" type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6} autoComplete="one-time-code" placeholder="000000" required />
-        <button id="verify-code-btn" className="button button-primary auth-submit" type="button" disabled={busy} onClick={handleVerifyCode}>Подтвердить</button>
+        <button id="verify-code-btn" className="btn btn-block" type="button" disabled={busy} onClick={handleVerifyCode}>Подтвердить</button>
         <button id="change-email-btn" className="auth-linklike" type="button" onClick={resetAccount}>Изменить почту</button>
         <ErrorMessage message={codeError} />
       </div>
@@ -247,20 +263,24 @@ export default function PaymentFlow(): ReactElement {
       <div id="step-plan" className="auth-step" data-step="plan" hidden={step !== "plan"}>
         <p className="auth-hint">Вы вошли как <strong>{email}</strong>. <button id="change-account-btn" className="auth-linklike auth-linklike-inline" type="button" onClick={resetAccount}>Другая почта</button></p>
         {lifetimeActive
-          ? <p className="auth-hint" id="lifetime-active-note">Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p>
+          ? <div className="banner"><span className="banner-icon"><Icon name="check-circle" /></span><p className="banner-title" id="lifetime-active-note">Premium «Навсегда» уже активирован для этого аккаунта. Оплачивать ничего не нужно.</p></div>
           : (
             <>
-              {lifetimeUpgrade ? <p className="auth-hint" id="lifetime-upgrade-note">У вас действует годовой Premium: переход на «Навсегда» стоит {formatRub(planAmount("lifetime", pricing, subscription))} вместо {formatRub(pricing.prices.lifetime)}.</p> : null}
+              {lifetimeUpgrade ? <div className="banner"><span className="banner-icon"><Icon name="info" /></span><p className="banner-title" id="lifetime-upgrade-note">У вас действует годовой Premium: переход на «Навсегда» стоит {formatRub(planAmount("lifetime", pricing, subscription))} вместо {formatRub(pricing.prices.lifetime)}.</p></div> : null}
               {plan ? null : <p className="auth-hint" id="plan-required-note">Выберите тариф выше, чтобы оплатить.</p>}
               {pending
                 ? (
-                  <div id="pending-checkout" className="pending-checkout">
-                    <p className="auth-hint">Ссылка на оплату {PLAN_ACCUSATIVE[pending.plan]} создана и действует до {formatDeadline(pending)}. Если вы закрыли страницу банка, Premium ещё не активирован: можно вернуться к той же ссылке или создать новую.</p>
-                    <button id="open-pending-btn" className="auth-linklike" type="button" disabled={busy} onClick={handleOpenPending}>Открыть страницу оплаты снова</button>
+                  <div id="pending-checkout" className="banner pending-checkout">
+                    <span className="banner-icon"><Icon name="info" /></span>
+                    <div className="banner-copy">
+                      <p className="banner-message">Ссылка на оплату {PLAN_ACCUSATIVE[pending.plan]} создана и действует до {formatDeadline(pending)}. Если вы закрыли страницу банка, Premium ещё не активирован: можно вернуться к той же ссылке или создать новую.</p>
+                      <button id="open-pending-btn" className="auth-linklike" type="button" disabled={busy} onClick={handleOpenPending}>Открыть страницу оплаты снова</button>
+                    </div>
                   </div>
                 )
                 : null}
-              <button id="pay-btn" className="button button-primary auth-submit" type="button" disabled={plan === null || busy} onClick={handlePayment}>
+              <button id="pay-btn" className="btn btn-outline-premium btn-block" type="button" disabled={plan === null || busy} onClick={handlePayment}>
+                <Icon name="crown" />
                 {pendingAction === "create-payment" ? "Создаём оплату…" : pendingAction === "open-checkout" ? "Открываем страницу банка…" : "Оплатить"}
               </button>
               <p className="checkout-legal-note">Нажимая «Оплатить», вы принимаете условия <a href="/offer/" target="_blank" rel="noopener">Публичной оферты</a>, подтверждаете, что ознакомились с <a href="/privacy/" target="_blank" rel="noopener">Политикой конфиденциальности</a>, и даёте <a href="/consent/" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</p>

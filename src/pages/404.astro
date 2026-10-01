@@ -1,19 +1,23 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Icon from "../components/Icon.astro";
 ---
 
 <BaseLayout title="Страница не найдена — Acrab" robots="noindex, follow">
-  <main id="main" class="not-found">
-<a class="brand" href="/" aria-label="Acrab, на главную">
+  <main id="main" class="page-missing">
+    <a class="brand" href="/" aria-label="Acrab, на главную">
       <img src="/assets/acrab-icon-64.png" alt="" width="32" height="32">
       <span>Acrab</span>
     </a>
-    <p class="eyebrow">Ошибка 404</p>
-    <h1 class="page-title">Такой страницы нет</h1>
-    <p class="page-lead">Возможно, в адресе опечатка или страница переехала. Начните с главной или выберите статью.</p>
-    <div class="not-found-actions">
-      <a class="button button-primary" href="/">На главную</a>
-      <a class="button button-secondary" href="/articles/">Все статьи</a>
+    <div class="empty-state empty-state-page">
+      <span class="empty-state-icon"><Icon name="magnifying-glass" /></span>
+      <p class="eyebrow">Ошибка 404</p>
+      <h1 class="empty-state-title">Такой страницы нет</h1>
+      <p class="empty-state-text">Возможно, в адресе опечатка или страница переехала. Начните с главной или выберите статью.</p>
+      <div class="empty-state-actions">
+        <a class="btn" href="/">На главную</a>
+        <a class="btn btn-outline" href="/articles/">Все статьи</a>
+      </div>
     </div>
   </main>
 </BaseLayout>

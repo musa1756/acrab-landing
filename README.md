@@ -11,8 +11,8 @@ Bun на production не требуются. С 24 сентября 2026 рук�
 - Astro 7 в режиме SSG
 - TypeScript со строгой проверкой
 - Vite
-- Tailwind CSS 4 без Preflight; существующая визуальная система сохранена в
-  глобальном CSS
+- Tailwind CSS 4 без Preflight; оформление — дизайн-система приложения в
+  собственном CSS (`DESIGN.md`)
 - React 19 только для интерактивного payment island `/buy`
 - небольшой клиентский TypeScript-модуль для platform redirect `/get`
 
@@ -56,7 +56,8 @@ bun run test:browser
 - `src/features/payment/` — чистые модели, сообщения и API платежей.
 - `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
 - `src/scripts/store-redirect.ts` — платформенный redirect `/get`.
-- `src/styles/global.css` — сохранённая визуальная система и Tailwind utilities.
+- `src/styles/` — дизайн-система приложения на сайте (описание — `DESIGN.md`): `tokens.css` — токены из `mobile/src/components/acrab/tokens.ts` и `semanticTokens.ts`, `kit.css` — компоненты приложения (кнопка с ребром `.btn`, плитка `.tile`, карточка `.card`, чип, метки, появление), `base.css` — фон, шапка, подвал, ссылки на магазины; остальные файлы — разделы сайта. `global.css` только импортирует их, порядок импорта — порядок каскада. Классы разделов не должны совпадать между файлами: CSS глобальный.
+- `src/components/Icon.astro` и `src/lib/phosphor.ts` — значки Phosphor (MIT) вместо SF Symbols приложения; `src/scripts/appear.ts` — появление блоков при прокрутке (`data-appear`, `data-appear-group`). Шрифт Nunito (OFL) для устройств без SF Pro Rounded — `public/assets/fonts/`, фон страниц — `public/assets/mesh-lesson.webp` из сетчатого градиента приложения.
 - `src/seo/schema.ts` — разметка schema.org: организация и сайт на главной, `Article` и `BreadcrumbList` статей (`GuideLayout` строит их из объекта `guide`), `FAQPage` вопросов.
 - `src/components/GuideFaq.astro` и `GuideCta.astro` — блок «Частые вопросы» статьи (видимый текст и `FAQPage` из одного списка) и призыв скачать с тремя магазинами.
 - `src/components/AudioButton.astro` и `src/scripts/phrase-audio.ts` — кнопка «Слушать» в статьях с фразами (`/arabic-hello/`, `/arabic-thank-you/`): `<button hidden>` с `data-audio`, скрипт показывает её и играет файл из `public/assets/audio/`. Файлы — копии озвучки приложения, найденной по тексту фразы в `mobile/src/features/fusha/recordings.ts`; у фразы без записи в приложении кнопки нет, новую озвучку для сайта не генерируют. Голос синтезированный: в тексте его не называют записью диктора или носителя. `tools/check_site.py` проверяет, что каждый `data-audio` указывает на файл сборки.

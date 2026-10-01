@@ -58,13 +58,13 @@ const width = (d: number, m: number) => ({
   </div>
 
   <div class="kbd-actions">
-    <button type="button" class="button button-primary" data-kbd-copy>Копировать</button>
-    <button type="button" class="button button-secondary" data-kbd-clear>Очистить</button>
+    <button type="button" class="btn" data-kbd-copy>Копировать</button>
+    <button type="button" class="btn btn-outline" data-kbd-clear>Очистить</button>
     <p class="kbd-status" role="status" aria-live="polite" data-kbd-status></p>
   </div>
 
   <a class="kbd-skip" href="#usage">Пропустить клавиатуру</a>
-  <div class="kbd-board" role="group" aria-label="Экранная клавиатура" dir="ltr" data-kbd-board>
+  <div class="kbd-board" role="group" aria-label="Экранная клавиатура" dir="ltr" data-kbd-board data-appear-group>
     {rows.map((row) => (
       <div class="kbd-row">
         {row.map((cell) => {

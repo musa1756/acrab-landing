@@ -1,188 +1,145 @@
 ---
 name: Acrab
-description: Светлая учебная система для последовательного изучения литературного арабского.
+description: Сайт в дизайн-системе приложения Акраб — те же цвета, шрифт, кнопки с ребром, плитки и движения.
+source: mobile/src/components/acrab/ (tokens.ts, semanticTokens.ts, PrimaryButton.tsx, PremiumTileKit.tsx, motion.ts); файл Figma Acrab_UI собран из того же кода
 colors:
-  canvas: "#ffffff"
-  surface-soft: "#faf6ee"
-  ink: "#15120c"
-  ink-body: "#55504a"
-  ink-muted: "#6f695f"
-  ink-faint: "#7a746a"
-  gold: "#d4a854"
-  gold-text: "#8a5a0e"
-  gold-strong: "#a06f16"
-  line: "rgba(21, 18, 12, 0.1)"
-  line-soft: "rgba(21, 18, 12, 0.06)"
+  brand: "#d4a854"
+  brand-strong: "#cca642"
+  brand-text: "#86691f"
+  text: "#242b38"
+  text-secondary: "#636e80"
+  text-tertiary: "#8e8e93"
+  surface: "#ffffff"
+  surface-warm: "#fcf7ed"
+  selected-face: "#fdf6e7"
+  line: "#e6e3dc"
+  edge-neutral: "#d9d5cc"
+  line-strong: "#d1d1d6"
+  hairline: "rgba(0, 0, 0, 0.08)"
 typography:
-  display:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif"
-    fontSize: "clamp(2.3rem, 5.4vw, 3.4rem)"
-    fontWeight: 700
-    lineHeight: 1.04
-    letterSpacing: "-0.035em"
-  body:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif"
-    fontSize: "17px"
-    fontWeight: 400
-    lineHeight: 1.6
-  label:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif"
-    fontSize: "12px"
-    fontWeight: 800
-    letterSpacing: "0.1em"
+  rounded:
+    fontFamily: "ui-rounded, SF Pro Rounded, Acrab Rounded (Nunito), system sans-serif"
+    use: "заголовки, надписи кнопок, чипы, цены"
+  text:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI, Roboto, sans-serif"
+    use: "основной текст"
   arabic:
-    fontFamily: "Geeza Pro, Noto Naskh Arabic, Al Bayan, serif"
+    fontFamily: "SF Arabic, Geeza Pro, Noto Naskh Arabic, Al Bayan, serif"
+  scale: "34/41 · 28/34 · 22/27 · 20/25 · 17/22 · 16/22 · 15/20 · 14/19 · 13/18 · 12/16 · 11/14; жирности 400 · 600 · 700"
 rounded:
   sm: "8px"
-  md: "12px"
-  lg: "16px"
-  screenshot: "20px"
-spacing:
-  xs: "8px"
-  sm: "12px"
-  md: "16px"
-  lg: "24px"
-  xl: "32px"
-components:
-  button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.canvas}"
-    rounded: "{rounded.md}"
-    padding: "10px 17px"
-    height: "46px"
-  button-secondary:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: "10px 17px"
-    height: "46px"
-  surface-card:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-    padding: "20px"
+  control: "12px"
+  tile: "16px"
+  surface: "20px"
+  pill: "999px"
+shadows:
+  low: "0 1px 3px #00000014"
+  mid: "0 2px 16px #00000014"
+  high: "0 4px 20px #00000014"
+  overlay: "0 8px 32px #00000029"
+motion:
+  press: "лицо опускается на ребро 3 px: 50 мс вниз, 100 мс вверх, cubic-bezier(0, 0, .58, 1)"
+  appear: "прозрачность, сдвиг 18 px и масштаб .95, пружина response .32 / damping 1, лесенка 60 мс"
+  select: "пружина response .2 / damping .8"
 ---
 
-# Design System: Acrab
+# Дизайн сайта: система приложения
 
-## Overview
+С 1 октября 2026 года сайт оформлен дизайн-системой приложения Акраб. Владелец
+попросил перенести её «один в один»: те же кнопки, шрифты, анимации, таблица
+сравнения Free и Premium как на экране оплаты. Источник значений — код
+приложения в `mobile/src/components/acrab/`; файл Figma «Acrab_UI» собран из
+того же кода плагином `packages/figma-design-system`.
 
-**Creative North Star: "The Guided Margin"**
+## Где что лежит
 
-Acrab feels like a carefully annotated study path: quiet white space, precise dark type, sparse gold markers and real lesson screens. The interface does not imitate a textbook or decorate itself with Arabic motifs. Its identity comes from sequencing, legible Arabic text and evidence from the product.
+- `src/styles/tokens.css` — токены приложения один к одному: цвета ролей
+  (`--c-*`), восемь ступеней прозрачного золота (`--gold-06…--gold-70`),
+  скругления, рамки, тени, шкала текста, движение. Внизу — прежние имена сайта
+  (`--ink`, `--gold-text`…) как синонимы новых значений.
+- `src/styles/kit.css` — компоненты приложения: кнопка действия, круглая кнопка
+  значка, плитка с ребром, карточка, чип, метки, значок строки, появление.
+- `src/styles/base.css` — фон, шапка, заголовки, подвал, ссылки на магазины.
+- Файлы разделов: `changelog.css`, `panels.css`, `buy.css`, `support.css`,
+  `home.css`, `guides.css`, `keyboard.css`. Порядок импорта в `global.css` —
+  порядок каскада.
+- `src/components/Icon.astro` и `src/lib/phosphor.ts` — значки.
+- `src/scripts/appear.ts` — появление блоков при прокрутке.
 
-The product tour may persuade, while guides remain comfortable to read. Both share the same restrained palette and direct language.
+## Шрифт
 
-**Key Characteristics:**
+Приложение пишет заголовки и надписи кнопок SF Pro Rounded, текст — SF Pro
+Text, арабский — SF Arabic. Раздавать шрифты Apple с сайта лицензия не
+разрешает, поэтому круглый шрифт подключён цепочкой: `ui-rounded` (на iPhone,
+iPad и Mac в Safari это и есть SF Pro Rounded), затем установленный SF Pro
+Rounded, затем «Acrab Rounded» — свободный Nunito (OFL, файлы и лицензия в
+`public/assets/fonts/`). Текст — системный шрифт (на устройствах Apple это
+SF Pro Text). Арабский — SF Arabic там, где он есть, иначе прежние запасные.
 
-- White canvas with one warm gold voice.
-- Large, dense sans-serif headlines paired with measured body copy.
-- Real app screens used as proof, never generic illustrations.
-- Thin dividers and tonal surfaces before shadows.
-- Responsive layouts collapse to one readable column without horizontal scroll.
+## Значки
 
-## Colors
+Приложение рисует SF Symbols. Их лицензия запрещает показ вне платформ Apple,
+поэтому сайт берёт ближайший рисунок Phosphor Icons в начертании Fill (MIT) —
+тот же набор приложение использует для инструментов. Добавить значок —
+инструкция в шапке `src/lib/phosphor.ts`.
 
-Gold marks progress, focus and action; neutral ink carries almost all reading. Secondary text must remain WCAG AA compliant on white.
+## Компоненты
 
-### Primary
+### Кнопка действия — `.btn` (`AcrabPrimaryButton`)
 
-- **Learning Gold:** used for progress markers, active navigation, small labels and instructional emphasis.
-- **Deep Gold:** used where gold must carry small text or a focus outline.
+Лицо, под ним ребро 3 px темнее заливки на 22 %. Нажатие опускает лицо на
+ребро; при уменьшении движения кнопка не двигается. Тоны: `.btn` — золотая
+кнопка действия; `.btn-outline` — вторая кнопка: белое лицо, песочная рамка 2,
+золотая надпись; `.btn-outline-gold`; `.btn-outline-premium` — покупка Premium
+тёмным золотом; `.btn-plain`, `.btn-soft`, `.btn-quiet`. Размеры: обычный
+(скругление 12, лицо 50 px, надпись 17/600), `.btn-dense`, `.btn-compact` и
+`.btn-small` — пилюли 44 и 34, `.btn-circle`. Выбранная — `.is-selected` или
+`aria-pressed="true"`.
 
-### Neutral
+Ссылки на магазины (`.store-link`) — та же вторая кнопка с ребром и нажатием.
 
-- **Clear Canvas:** the default page and component background.
-- **Warm Study Surface:** a quiet background for answers, notes and selected states.
-- **Primary Ink:** headlines, strong labels and high-emphasis controls.
-- **Reading Ink:** paragraphs and explanatory copy.
-- **Muted Ink:** breadcrumbs, captions and metadata; it is deliberately dark enough for small text.
-- **Hairline Ink:** subtle borders and section dividers.
+### Плитки и карточки
 
-**The One Gold Voice Rule.** Gold identifies learning progress or an actionable state; it does not become a large decorative field.
+- `.tile` — `TileSurface`: лицо, рамка 2, ребро 3, скругление 16. Ссылка или
+  кнопка-плитка нажимается как кнопка. Варианты `.tile-gold`, `.tile-neutral`,
+  `.tile-selected`.
+- `.card` — `RaisedTileSurface`: рамка 2 (золото), скругление 20, без ребра.
+  `.card-plain` — белая карточка с тенью high, как карточки Программы.
+- `.panel` — белая карточка страниц оплаты и помощи.
 
-## Typography
+### Мелкие элементы
 
-**Display Font:** the native system sans-serif stack.
-**Body Font:** the same native system sans-serif stack.
-**Arabic Font:** Geeza Pro with Noto Naskh Arabic, Al Bayan and serif fallbacks.
+`.chip` (`AcrabChip`), `.gain` (метки «x10», «∞»), `.badge` (бейдж тарифа),
+`.icon-badge` (значок строки 30×30 на золоте .12), `.icon-btn`
+(`HeaderIconButton`). Надзаголовок страницы `.eyebrow` — чип.
 
-**Character:** compact, modern and immediately legible. Hierarchy comes from size and weight rather than switching type families.
+### Шапка
 
-### Hierarchy
+Полупрозрачная панель с размытием, разделы — чипы, текущий раздел —
+выбранный чип. На телефоне пять разделов помещаются в 343 px.
 
-- **Display** (700, responsive 2.3–3.4rem, 1.04): one decisive page promise.
-- **Headline** (700, responsive 1.65–2.3rem, about 1.15): article and feature sections.
-- **Title** (650–700, 15–19px): component and navigation labels.
-- **Body** (400, 17px, 1.6): reading copy, normally constrained to roughly 65–72 characters.
-- **Label** (800, 12px, 0.1em, uppercase): rare section or learning-stage markers.
+## Движение
 
-**The Arabic Is Content Rule.** Arabic examples use the dedicated script stack, correct language and direction attributes, and enough line height for marks above and below the baseline.
+- Нажатие: 50 мс вниз, 100 мс вверх, `cubic-bezier(0, 0, .58, 1)` —
+  `pressDepthGeometry.ts`.
+- Появление (`Appear`): `data-appear` на блоке или `data-appear-group` на
+  контейнере. Пружина snappy (response .32, damping 1) посчитана в CSS
+  `linear()`; лесенка 60 мс. Скрипт прячет только то, что ниже первого
+  экрана, поэтому без скрипта страница видна целиком.
+- Выбор (тариф, вариант): пружина micro (response .2, damping .8).
+- `prefers-reduced-motion`: без сдвигов, появление — прозрачность за 160 мс,
+  как в приложении.
 
-## Layout
+## Правила
 
-The shared container is at most 1060px wide with 24px desktop gutters and 16px phone gutters. Product sections use asymmetric text-and-screen grids; long guides use a 180px sticky contents rail beside a reading column capped near 720px. At 860px these become one column, and at 640px navigation, grids, calls to action and related links reflow for phone widths.
-
-Vertical rhythm is generous between ideas and tighter inside a single explanation. Headings always have more space above than below.
-
-## Elevation & Depth
-
-The system is flat by default. Borders, warm tonal surfaces and crop boundaries establish most depth. Soft shadows are reserved for real screenshots, panels and a small number of hover states.
-
-### Shadow Vocabulary
-
-- **Screenshot lift:** a 1px neutral contact shadow plus a wide, low-opacity warm shadow beneath product captures.
-- **Panel lift:** a very soft neutral contact shadow and a shallow ambient shadow for payment or support panels.
-
-**The Evidence Floats Rule.** Product screenshots may lift from the page because they are proof; ordinary text containers remain flat.
-
-## Shapes
-
-Corners progress from 8px labels to 12px controls, 16px sections and 20px screenshot frames. Thin neutral borders define edges. Fully round shapes are limited to counts, status marks and icon treatments whose meaning depends on being circular.
-
-## Components
-
-### Buttons
-
-- **Shape:** compact rounded rectangle (12px), at least 46px high.
-- **Primary:** primary ink with white text; inside dark callouts the relationship reverses.
-- **Secondary:** white or transparent surface with a subtle neutral border.
-- **Hover / Focus:** a one-pixel upward response on hover and a 2px deep-gold focus outline.
-
-### Cards / Containers
-
-- **Corner Style:** 16px for article and feature surfaces; 20px for screenshots.
-- **Background:** white or warm study surface.
-- **Shadow Strategy:** flat unless the container is an app screenshot or task panel.
-- **Border:** one-pixel neutral line.
-- **Internal Padding:** normally 16–24px, increasing for primary callouts.
-
-### Navigation
-
-The desktop header is sticky, white and separated by a hairline. Labels are muted at rest, primary ink on hover, and the current page receives a thin gold underline. On phones the brand sits above the four compact product routes; the row never wraps.
-
-### Guide Contents
-
-Desktop guides use a sticky, text-only contents rail. On phones it becomes a wrapping row with a divider; it never turns into a drawer or hides the article structure.
-
-### Store Links
-
-Store actions pair a platform mark with a two-line label inside a 46px control. They may become two equal columns on phones, with the full control remaining tappable.
-
-## Do's and Don'ts
-
-### Do:
-
-- **Do** use real app screens and specific lesson examples as the primary proof.
-- **Do** keep one clear action near the product promise and repeat it only at a natural decision point.
-- **Do** use thin dividers and whitespace to organize long reading pages.
-- **Do** preserve correct Arabic direction, font fallback and generous vertical metrics.
-- **Do** keep secondary copy at 4.5:1 contrast or better on white.
-
-### Don't:
-
-- **Don't** invent ratings, testimonials, student counts or learning-speed claims.
-- **Don't** replace useful educational copy with keyword repetition.
-- **Don't** introduce ornamental Arabic patterns, glass effects or gradient text.
-- **Don't** put ordinary article paragraphs into nested cards.
-- **Don't** add a fifth compact header tab; link guides contextually and through the footer.
+- Значение берётся из токена. Новый цвет допустим только как контентная
+  палитра, которая и в приложении своя (цвета инструментов и тренировок).
+- У элемента страницы есть аналог в приложении; если нет — он собирается из
+  компонентов kit.css, а не придумывается.
+- Не использовать: нумерацию разделов «01 / 02», моноширинные подписи,
+  капитель как надзаголовок, тёмные блоки-призывы, градиентный текст, стекло
+  вне шапки, обводку 1 px там, где у приложения рамка 2 и ребро.
+- Мелкий текст по делу — не светлее `--c-text-secondary` на белом.
+- Атрибут `style` в разметке запрещён CSP — только классы.
+- Реальные снимки экранов остаются доказательством: рамка — скругление 20 и
+  тень high.
