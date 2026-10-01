@@ -36,8 +36,11 @@ REQUIRED_ROUTES = {
     "/arabic-alphabet": "arabic-alphabet/index.html",
     "/fusha": "fusha/index.html",
     "/arabic-app": "arabic-app/index.html",
+    "/arabic-keyboard": "arabic-keyboard/index.html",
     "/arabic-vowels": "arabic-vowels/index.html",
     "/sun-moon-letters": "sun-moon-letters/index.html",
+    "/arabic-hello": "arabic-hello/index.html",
+    "/arabic-thank-you": "arabic-thank-you/index.html",
     "/buy": "buy/index.html",
     "/support": "support/index.html",
     "/privacy": "privacy/index.html",
@@ -45,6 +48,15 @@ REQUIRED_ROUTES = {
     "/consent": "consent/index.html",
     "/get": "get/index.html",
 }
+
+# Страницы букв: /arabic-alphabet/<slug>/, по одной на каждую из 28 букв. Те же
+# slug, что в src/seo/letters.ts; tests/site.test.ts сверяет списки.
+LETTER_SLUGS = (
+    "alif", "ba", "ta", "tha", "jim", "hah", "kha", "dal", "dhal", "ra", "zay", "sin", "shin", "sad",
+    "dad", "tah", "zah", "ayn", "ghayn", "fa", "qaf", "kaf", "lam", "mim", "nun", "ha", "waw", "ya",
+)
+LETTER_ROUTES = tuple(f"/arabic-alphabet/{slug}" for slug in LETTER_SLUGS)
+REQUIRED_ROUTES.update({route: f"{route.lstrip('/')}/index.html" for route in LETTER_ROUTES})
 
 NOINDEX_ROUTES = {"/buy", "/offer", "/consent", "/get"}
 INDEXABLE_ROUTES = {
@@ -67,9 +79,15 @@ GUIDE_ROUTES = (
     "/arabic-alphabet",
     "/arabic-vowels",
     "/sun-moon-letters",
+    "/arabic-hello",
+    "/arabic-thank-you",
     "/fusha",
     "/arabic-app",
+    "/arabic-keyboard",
 )
+
+# Страницы букв — тоже статьи: Article, BreadcrumbList и FAQPage в разметке.
+GUIDE_ROUTES = GUIDE_ROUTES + LETTER_ROUTES
 
 # These are links that do not identify a file in the generated site.
 EXTERNAL_PREFIXES = (
@@ -86,6 +104,8 @@ EXTERNAL_PREFIXES = (
 RETIRED_URLS = ("musa1756.github.io/Acrab-privacy",)
 HTML_ATTRIBUTE_RE = re.compile(r"(?:href|src)\s*=\s*([\"'])(.*?)\1", re.IGNORECASE)
 SRCSET_ATTRIBUTE_RE = re.compile(r"srcset\s*=\s*([\"'])(.*?)\1", re.IGNORECASE)
+# Кнопки «Слушать» хранят путь к озвучке в data-audio, а не в src.
+DATA_AUDIO_RE = re.compile(r"data-audio\s*=\s*([\"'])(.*?)\1", re.IGNORECASE)
 CSS_URL_RE = re.compile(r"url\(\s*([\"']?)(.*?)\1\s*\)", re.IGNORECASE)
 TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 DESCRIPTION_RE = re.compile(
@@ -200,6 +220,8 @@ class SiteChecker:
         for path in self.html_files():
             text = path.read_text(encoding="utf-8")
             for _, target in HTML_ATTRIBUTE_RE.findall(text):
+                self.check_target(path, target)
+            for _, target in DATA_AUDIO_RE.findall(text):
                 self.check_target(path, target)
             for _, srcset in SRCSET_ATTRIBUTE_RE.findall(text):
                 for candidate in srcset.split(","):
@@ -426,6 +448,44 @@ class SiteChecker:
             if not re.search(r"connect-src\s+[^;]*https://api\.acrab\.ru(?:\s|;|$)", policy):
                 self.fail("buy/index.html: CSP должна разрешать connect-src https://api.acrab.ru")
 
+    def check_keyboard_smoke(self) -> None:
+        """Онлайн-клавиатура: хуки для скрипта, собранный модуль, WebApplication и нет встроенных стилей.
+
+        Страница ограничена CSP без unsafe-inline, поэтому style="" и обработчики
+        on*="" в её разметке не должны появляться.
+        """
+
+        path = self.site_root / REQUIRED_ROUTES["/arabic-keyboard"]
+        if not path.is_file():
+            return
+        text = path.read_text(encoding="utf-8")
+        for hook in (
+            "data-arabic-keyboard",
+            "data-kbd-text",
+            "data-kbd-board",
+            "data-kbd-physical",
+            "data-kbd-copy",
+            "data-kbd-clear",
+        ):
+            if hook not in text:
+                self.fail(f"arabic-keyboard/index.html: отсутствует {hook}")
+        if not re.search(
+            r'<script\b[^>]*\btype\s*=\s*["\']module["\'][^>]*\bsrc\s*=\s*["\']/_astro/ArabicKeyboard[^"\']*\.js["\']',
+            text,
+            re.IGNORECASE,
+        ):
+            self.fail("arabic-keyboard/index.html: отсутствует собранный скрипт клавиатуры")
+        if re.search(r'\sstyle\s*=\s*["\']', text) or re.search(r'\son[a-z]+\s*=\s*["\']', text, re.IGNORECASE):
+            self.fail("arabic-keyboard/index.html: встроенный style или обработчик on* нарушает CSP")
+        types = set()
+        for block in SCRIPT_JSONLD_RE.findall(text):
+            try:
+                types.add(str(json.loads(block).get("@type")))
+            except json.JSONDecodeError:
+                continue
+        if "WebApplication" not in types:
+            self.fail("arabic-keyboard/index.html: нет JSON-LD WebApplication")
+
     def check_build_id(self) -> None:
         """Every page carries the build id that /build.txt serves (fresh-page.ts)."""
         build_path = self.site_root / "build.txt"
@@ -444,6 +504,45 @@ class SiteChecker:
         for path in self.site_root.rglob(".DS_Store"):
             self.fail(f"в сборке лежит {path.relative_to(self.site_root)}")
 
+    def check_letter_pages(self) -> None:
+        """Страницы букв: все блоки, озвучка, соседние буквы, крошки и ссылка с хаба алфавита."""
+
+        hub_path = self.site_root / REQUIRED_ROUTES["/arabic-alphabet"]
+        hub = hub_path.read_text(encoding="utf-8") if hub_path.is_file() else ""
+        sections = ('id="sound"', 'id="forms"', 'id="words"', 'id="lookalikes"', 'id="article"', 'id="faq"')
+        for index, route in enumerate(LETTER_ROUTES):
+            relative_path = REQUIRED_ROUTES[route]
+            path = self.site_root / relative_path
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8")
+            if f'href="{route}/"' not in hub:
+                self.fail(f"arabic-alphabet/index.html: нет ссылки на {route}/")
+            if len(re.findall(r"<h1\b", text)) != 1:
+                self.fail(f"{relative_path}: должен быть ровно один h1")
+            for section in sections:
+                if section not in text:
+                    self.fail(f"{relative_path}: нет блока {section}")
+            # буква, три слога и слова-примеры: каждая кнопка «Слушать» ведёт на файл
+            if len(DATA_AUDIO_RE.findall(text)) < 8:
+                self.fail(f"{relative_path}: меньше восьми кнопок озвучки")
+            if 'href="/sun-moon-letters/"' not in text:
+                self.fail(f"{relative_path}: нет ссылки на статью о солнечных и лунных буквах")
+            if index > 0 and f'href="{LETTER_ROUTES[index - 1]}/" rel="prev"' not in text:
+                self.fail(f"{relative_path}: нет ссылки на предыдущую букву")
+            if index < len(LETTER_ROUTES) - 1 and f'href="{LETTER_ROUTES[index + 1]}/" rel="next"' not in text:
+                self.fail(f"{relative_path}: нет ссылки на следующую букву")
+            crumbs = 0
+            for block in SCRIPT_JSONLD_RE.findall(text):
+                try:
+                    data = json.loads(block)
+                except json.JSONDecodeError:
+                    continue
+                if data.get("@type") == "BreadcrumbList":
+                    crumbs = len(data.get("itemListElement", []))
+            if crumbs != 4:
+                self.fail(f"{relative_path}: в BreadcrumbList должно быть четыре пункта (Acrab, Статьи, алфавит, буква)")
+
     def run(self) -> int:
         if not self.site_root.is_dir():
             self.fail(f"каталог сборки не найден: {self.site_root}")
@@ -456,6 +555,8 @@ class SiteChecker:
             self.check_structured_data()
             self.check_crawling_files()
             self.check_buy_smoke()
+            self.check_keyboard_smoke()
+            self.check_letter_pages()
             self.check_build_id()
             self.check_junk()
 

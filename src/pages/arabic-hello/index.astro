@@ -1,0 +1,169 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import AudioButton from "../../components/AudioButton.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Привет на арабском: как поздороваться и ответить | Acrab",
+  "description": "Как сказать «привет» на арабском: مَرْحَبًا (мархабан), أَهْلًا, السَّلَامُ عَلَيْكُمْ, «доброе утро» и «как дела». Ответы, огласовки, транскрипция и озвучка.",
+  "canonical": "https://acrab.ru/arabic-hello/",
+  "robots": "index, follow, max-image-preview:large",
+  "ogTitle": "Привет на арабском",
+  "ogDescription": "Мархабан, ахлян, ас-саляму алайкум и ответы на них — с огласовками, транскрипцией и озвучкой.",
+  "ogType": "article",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Урок теории по арабскому языку в Acrab",
+  "twitterCard": "summary_large_image"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Привет на арабском языке",
+  description: seo.description,
+  path: "/arabic-hello/",
+  image: seo.ogImage,
+  datePublished: "2026-10-01",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Привет на арабском", path: "/arabic-hello/" },
+  ],
+};
+
+// Озвучка есть только у фраз, которые записаны в приложении; у остальных кнопки нет.
+const phrases = [
+  { ar: "مَرْحَبًا", reading: "мархабан", meaning: "привет", note: "на каждый день", audio: "/assets/audio/marhaban.mp3" },
+  { ar: "أَهْلًا", reading: "ахлян", meaning: "здравствуйте, привет", note: "тёплая встреча; ответ на «мархабан»" },
+  { ar: "أَهْلًا بِكَ", reading: "ахлян бика", meaning: "добро пожаловать", note: "мужчине; женщине — «ахлян бики», нескольким людям — «ахлян бикум»" },
+  { ar: "أَهْلًا وَسَهْلًا", reading: "ахлян ва сахлян", meaning: "добро пожаловать", note: "гостю у порога", audio: "/assets/audio/ahlan-wa-sahlan.mp3" },
+  { ar: "السَّلَامُ عَلَيْكُمْ", reading: "ас-саляму алайкум", meaning: "мир вам", note: "приветствие мусульман", audio: "/assets/audio/as-salamu-alaykum.mp3" },
+  { ar: "وَعَلَيْكُمُ السَّلَامُ", reading: "ва алайкуму-с-салям", meaning: "и вам мир", note: "ответ на «ас-саляму алайкум»" },
+  { ar: "صَبَاحُ الْخَيْرِ", reading: "сабаху-ль-хайр", meaning: "доброе утро", note: "утром", audio: "/assets/audio/sabah-al-khayr.mp3" },
+  { ar: "صَبَاحُ النُّورِ", reading: "сабаху-н-нур", meaning: "утро света", note: "ответ на «доброе утро»" },
+  { ar: "مَسَاءُ الْخَيْرِ", reading: "масау-ль-хайр", meaning: "добрый вечер", note: "вечером", audio: "/assets/audio/masa-al-khayr.mp3" },
+  { ar: "مَسَاءُ النُّورِ", reading: "масау-н-нур", meaning: "вечер света", note: "ответ на «добрый вечер»" },
+  { ar: "كَيْفَ حَالُكَ؟", reading: "кайфа халюка", meaning: "как дела?", note: "мужчине; женщине — «кайфа халюки»", audio: "/assets/audio/kayfa-haluka.mp3" },
+  { ar: "أَنَا بِخَيْرٍ", reading: "ана би-хайр", meaning: "у меня всё хорошо", note: "ответ на вопрос о делах", audio: "/assets/audio/ana-bi-khayr.mp3" },
+  { ar: "الْحَمْدُ لِلَّهِ، أَنَا بِخَيْرٍ", reading: "аль-хамду ли-Ллаh, ана би-хайр", meaning: "хвала Аллаhу, у меня всё хорошо", note: "ответ на вопрос о делах", audio: "/assets/audio/alhamdulillah-ana-bi-khayr.mp3" },
+];
+
+const faq = [
+  {
+    question: "Как сказать «привет» на арабском?",
+    answer: "Самый универсальный вариант — مَرْحَبًا («мархабан»). Теплее звучит أَهْلًا («ахлян»), мусульмане здороваются словами السَّلَامُ عَلَيْكُمْ («ас-саляму алайкум»), а утром и вечером говорят صَبَاحُ الْخَيْرِ («доброе утро») и مَسَاءُ الْخَيْرِ («добрый вечер»).",
+  },
+  {
+    question: "Как ответить на «ас-саляму алайкум»?",
+    answer: "وَعَلَيْكُمُ السَّلَامُ («ва алайкуму-с-салям») — «и вам мир». Порядок слов в ответе обратный, а в начале добавляется وَ — «и».",
+  },
+  {
+    question: "Чем «мархабан» отличается от «ахлян»?",
+    answer: "مَرْحَبًا — нейтральное «привет» на каждый день. أَهْلًا буквально значит «свои, родные»: им встречают человека как своего. С окончанием оно превращается в «добро пожаловать»: أَهْلًا بِكَ. Слова взаимозаменяемы: на «мархабан» можно ответить «ахлян» и наоборот.",
+  },
+  {
+    question: "Меняются ли приветствия для мужчины и женщины?",
+    answer: "Сами слова مَرْحَبًا, أَهْلًا и السَّلَامُ عَلَيْكُمْ одинаковы для всех. Меняются окончания: أَهْلًا بِكَ — мужчине, أَهْلًا بِكِ — женщине; كَيْفَ حَالُكَ؟ — мужчине, كَيْفَ حَالُكِ؟ — женщине.",
+  },
+  {
+    question: "Как спросить «как дела» по-арабски?",
+    answer: "كَيْفَ حَالُكَ؟ («кайфа халюка?») — мужчине, كَيْفَ حَالُكِ؟ («кайфа халюки?») — женщине. Ответ: أَنَا بِخَيْرٍ («ана би-хайр») — «у меня всё хорошо».",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+    <header class="guide-hero">
+      <p class="eyebrow">Первые слова разговора</p>
+      <h1 class="page-title">Привет на арабском</h1>
+      <p class="guide-lead">Самое простое «привет» по-арабски — <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> («мархабан»). Оно подходит любому собеседнику и в любое время суток. Для тёплой встречи есть <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا</span> («ахлян»), а мусульмане здороваются словами <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> («ас-саляму алайкум»).</p>
+      <div class="phrase-hero">
+        <span class="phrase-hero-ar" lang="ar" dir="rtl">مَرْحَبًا</span>
+        <div class="phrase-hero-meta"><strong>мархабан</strong><small>«привет»</small></div>
+        <AudioButton src="/assets/audio/marhaban.mp3" label="мархабан" />
+      </div>
+      <div class="guide-answer"><strong>Коротко:</strong> <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> — «привет», <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا</span> — «добро пожаловать», <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> — «мир вам», в ответ <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> — «и вам мир». Утром говорят <span class="arabic-inline" lang="ar" dir="rtl">صَبَاحُ الْخَيْرِ</span>, вечером — <span class="arabic-inline" lang="ar" dir="rtl">مَسَاءُ الْخَيْرِ</span>, о делах спрашивают <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ حَالُكَ؟</span></div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#marhaban">Мархабан</a><a href="#ahlan">Ахлян и добро пожаловать</a><a href="#salam">Ас-саляму алайкум</a><a href="#time">Утро и вечер</a><a href="#how">Как дела</a><a href="#dialects">Диалекты</a><a href="#table">Все фразы в таблице</a><a href="#faq">Частые вопросы</a></aside>
+      <article class="guide-content">
+        <section id="marhaban">
+          <h2>Мархабан: «привет» на каждый день</h2>
+          <p><span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> («мархабан») — нейтральное приветствие. Его говорят знакомым и незнакомым, мужчинам и женщинам, днём и вечером, и понимают во всех арабских странах. Если не уверены, как поздороваться, начните с него.<AudioButton src="/assets/audio/marhaban.mp3" label="мархабан" /></p>
+          <p>Отвечают на него тем же словом или словом <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا</span> («ахлян»). Звук <span class="arabic-inline" lang="ar" dir="rtl">ح</span> в слове произносится глубже русского «х», в горле: о нём подробнее в статье <a href="/arabic-alphabet/">«Арабский алфавит»</a>. Как читать знаки над буквами, написано в статье <a href="/arabic-vowels/">«Огласовки в арабском языке»</a>.</p>
+        </section>
+
+        <section id="ahlan">
+          <h2>Ахлян и «добро пожаловать»</h2>
+          <p><span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا</span> («ахлян») — «здравствуйте, привет». Буквально слово значит «свои, родные»: так встречают человека как своего. Чтобы обратиться к конкретному человеку, после него ставят окончание:</p>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы приветствия">
+            <div><span lang="ar" dir="rtl">أَهْلًا بِكَ</span><strong>ахлян бика</strong><small>мужчине</small></div>
+            <div><span lang="ar" dir="rtl">أَهْلًا بِكِ</span><strong>ахлян бики</strong><small>женщине</small></div>
+            <div><span lang="ar" dir="rtl">أَهْلًا بِكُمْ</span><strong>ахлян бикум</strong><small>нескольким людям</small></div>
+          </div>
+          <p>Полная формула приёма гостя — <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا</span> («ахлян ва сахлян»), «добро пожаловать».<AudioButton src="/assets/audio/ahlan-wa-sahlan.mp3" label="ахлян ва сахлян" /> Гостю у порога говорят: <span class="arabic-inline" lang="ar" dir="rtl">أَهْلًا وَسَهْلًا، تَفَضَّلْ!</span> («ахлян ва сахлян, тафаддаль») — «Добро пожаловать, проходи!».</p>
+        </section>
+
+        <section id="salam">
+          <h2>Ас-саляму алайкум: «мир вам»</h2>
+          <p><span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span> («ас-саляму алайкум») — «мир вам». Так здороваются мусульмане: при встрече, при входе в дом, в письмах и сообщениях. В русском это приветствие чаще пишут «ассаляму алейкум».<AudioButton src="/assets/audio/as-salamu-alaykum.mp3" label="ас-саляму алайкум" /></p>
+          <p>Правильный ответ — <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> («ва алайкуму-с-салям»), «и вам мир». Слова в ответе идут в обратном порядке, а в начале добавляется <span class="arabic-inline" lang="ar" dir="rtl">وَ</span> — «и».</p>
+          <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">س</span> в слове <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ</span> солнечная, поэтому «л» артикля сливается с ней: «ас-салям», а не «аль-салям». Это правило разобрано в статье про <a href="/sun-moon-letters/">солнечные и лунные буквы</a>.</p>
+          <div class="guide-note"><strong>Подсказка:</strong> если не знаете, мусульманин ли собеседник, начните с <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span>: оно подходит всем.</div>
+        </section>
+
+        <section id="time">
+          <h2>Доброе утро и добрый вечер</h2>
+          <ul class="guide-checklist">
+            <li><span class="arabic-inline" lang="ar" dir="rtl">صَبَاحُ الْخَيْرِ</span> («сабаху-ль-хайр») — «доброе утро».<AudioButton src="/assets/audio/sabah-al-khayr.mp3" label="сабаху-ль-хайр" /></li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">مَسَاءُ الْخَيْرِ</span> («масау-ль-хайр») — «добрый вечер».<AudioButton src="/assets/audio/masa-al-khayr.mp3" label="масау-ль-хайр" /></li>
+          </ul>
+          <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">خ</span> лунная, поэтому «л» артикля слышно.</p>
+          <p>В ответ повторяют фразу целиком или говорят <span class="arabic-inline" lang="ar" dir="rtl">صَبَاحُ النُّورِ</span> («сабаху-н-нур») и <span class="arabic-inline" lang="ar" dir="rtl">مَسَاءُ النُّورِ</span> («масау-н-нур») — буквально «утро света» и «вечер света». Здесь <span class="arabic-inline" lang="ar" dir="rtl">ن</span> солнечная, поэтому «л» пропадает.</p>
+        </section>
+
+        <section id="how">
+          <h2>Как дела и что ответить</h2>
+          <p>После приветствия обычно спрашивают о делах: <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ حَالُكَ؟</span> («кайфа халюка?») — мужчине, <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ حَالُكِ؟</span> («кайфа халюки?») — женщине. Меняется только последняя гласная: «ка» и «ки».<AudioButton src="/assets/audio/kayfa-haluka.mp3" label="кайфа халюка" /></p>
+          <p>Ответить можно так:</p>
+          <ul class="guide-checklist">
+            <li><span class="arabic-inline" lang="ar" dir="rtl">أَنَا بِخَيْرٍ</span> («ана би-хайр») — «у меня всё хорошо».<AudioButton src="/assets/audio/ana-bi-khayr.mp3" label="ана би-хайр" /></li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ، أَنَا بِخَيْرٍ</span> («аль-хамду ли-Ллаh, ана би-хайр») — «хвала Аллаhу, у меня всё хорошо». К ответу часто добавляют <span class="arabic-inline" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ</span>.<AudioButton src="/assets/audio/alhamdulillah-ana-bi-khayr.mp3" label="аль-хамду ли-Ллаh, ана би-хайр" /></li>
+          </ul>
+          <p>Встречный вопрос — <span class="arabic-inline" lang="ar" dir="rtl">وَأَنْتَ؟</span> («ва анта?») мужчине и <span class="arabic-inline" lang="ar" dir="rtl">وَأَنْتِ؟</span> («ва анти?») женщине: «а у тебя?». К ответу часто добавляют «спасибо»: как оно звучит по-арабски, написано в статье <a href="/arabic-thank-you/">«Спасибо на арабском»</a>.</p>
+        </section>
+
+        <section id="dialects">
+          <h2>Приветствия в диалектах</h2>
+          <p>Формы выше литературные: их понимают везде, и именно их разбирает приложение. В разговорных диалектах приветствия и вопрос о делах звучат иначе. В Египте спрашивают <span class="arabic-inline" lang="ar" dir="rtl">إزيك</span> («иззайяк»), в странах Залива говорят <span class="arabic-inline" lang="ar" dir="rtl">هلا</span> («хала»), а в Леванте спрашивают <span class="arabic-inline" lang="ar" dir="rtl">كيفك</span> («кифак»). Такие слова обычно пишут без огласовок. Чем диалекты отличаются от литературного языка и что учить первым, — в статье <a href="/fusha/">«Что такое фусха»</a>.</p>
+        </section>
+
+        <section id="table">
+          <h2>Все приветствия в одной таблице</h2>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Фраза</th><th scope="col">Чтение</th><th scope="col">Значение</th></tr></thead>
+              <tbody>
+                {phrases.map((phrase) => (
+                  <tr>
+                    <th scope="row" class:list={["ar", { "ar-small": phrase.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{phrase.ar}</th>
+                    <td><strong>{phrase.reading}</strong>{phrase.audio && <AudioButton src={phrase.audio} label={phrase.reading} />}</td>
+                    <td>{phrase.meaning}<br /><small>{phrase.note}</small></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
+          <GuideCta title="Потренируйте это в приложении" text="Приветствия, «Как дела?» и вежливые фразы — второй модуль программы Acrab, он входит в бесплатную часть. Фразы озвучены, а упражнения учат узнавать их на слух и отвечать." />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-thank-you/"><span>Следующая фраза</span><strong>Спасибо на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+</GuideLayout>

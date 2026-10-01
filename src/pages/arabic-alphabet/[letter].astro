@@ -1,0 +1,232 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import AudioButton from "../../components/AudioButton.astro";
+import { richArabic } from "../../lib/rich-arabic";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import {
+  FORM_KEYS,
+  FORM_LABELS,
+  LETTERS,
+  LETTER_MODIFIED,
+  LETTER_PUBLISHED,
+  LETTER_SECTION_PATH,
+  WORDS,
+  appLessonOf,
+  isConnecting,
+  isSun,
+  letterAudioPath,
+  letterBySlug,
+  letterCrumb,
+  letterDescription,
+  letterForms,
+  letterHeading,
+  letterNeighbours,
+  letterOrdinal,
+  letterPath,
+  letterSyllableReadings,
+  letterSyllables,
+  letterTitle,
+  syllableAudioPath,
+  wordAudioPath,
+  wordPositions,
+} from "../../seo/letters";
+
+// Одна страница на букву: адреса и содержимое берутся из src/seo/letters.ts.
+export function getStaticPaths() {
+  return LETTERS.map((letter) => ({ params: { letter: letter.slug }, props: { letter } }));
+}
+
+const { letter } = Astro.props;
+const path = letterPath(letter.slug);
+const heading = letterHeading(letter);
+const connects = isConnecting(letter);
+const sun = isSun(letter);
+const forms = letterForms(letter);
+const syllables = letterSyllables(letter);
+const readings = letterSyllableReadings(letter);
+const vowelNames = ["фатха", "касра", "дамма"] as const;
+const { prev, next } = letterNeighbours(letter);
+const appLesson = appLessonOf(letter);
+const shortName = `${letter.name}${letter.qualifier ? ` (${letter.qualifier})` : ""}`;
+
+const seo = {
+  title: letterTitle(letter),
+  description: letterDescription(letter),
+  canonical: `https://acrab.ru${path}`,
+  robots: "index, follow, max-image-preview:large",
+  ogTitle: heading,
+  ogDescription: `${letter.soundShort.charAt(0).toUpperCase()}${letter.soundShort.slice(1)}. Звук, формы в слове, слова с переводом и похожие буквы.`,
+  ogType: "article",
+  ogImage: "https://acrab.ru/assets/about/lesson-theory.webp",
+  ogImageAlt: "Урок теории по арабскому языку в Acrab",
+  twitterCard: "summary_large_image",
+} as const;
+
+const guide: GuideMeta = {
+  headline: heading,
+  description: seo.description,
+  path,
+  image: seo.ogImage,
+  datePublished: LETTER_PUBLISHED,
+  dateModified: LETTER_MODIFIED,
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Арабский алфавит", path: LETTER_SECTION_PATH },
+    { name: letterCrumb(letter), path },
+  ],
+};
+
+const lookalikes = letter.lookalikes.flatMap((item) => {
+  const other = letterBySlug(item.slug);
+  return other ? [{ other, note: item.note }] : [];
+});
+---
+
+<GuideLayout {...seo} guide={guide}>
+    <header class="guide-hero letter-hero">
+      <div class="letter-hero-main">
+        <p class="eyebrow">{letterOrdinal(letter)[0]?.toUpperCase()}{letterOrdinal(letter).slice(1)} буква алфавита</p>
+        <h1 class="page-title" set:html={richArabic(heading)} />
+        <p class="guide-lead" set:html={richArabic(letter.lead)} />
+        <div class="guide-answer"><strong>Коротко:</strong> <span set:html={richArabic(`${letter.name} (${letter.char}) — ${letterOrdinal(letter)} буква из 28. Звук: ${letter.soundShort}. ${connects ? "Соединяется с обеих сторон, четыре формы." : "Не соединяется со следующей буквой, две формы."} ${sun ? "Солнечная" : "Лунная"} буква.`)} /></div>
+        <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+      </div>
+      <div class="letter-glyph-card">
+        <span class="letter-glyph" lang="ar" dir="rtl" role="img" aria-label={`Арабская буква ${letter.name}`}>{letter.char}</span>
+        <div class="letter-glyph-name">
+          <span lang="ar" dir="rtl">{letter.arabicName}</span>
+          <AudioButton src={letterAudioPath(letter)} label={`буква ${letter.name}`} />
+        </div>
+        <span class="letter-glyph-ipa">{letter.ipa}</span>
+      </div>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание страницы"><strong>На этой странице</strong><a href="#sound">Как произносится</a><a href="#forms">Как пишется</a><a href="#words">Слова с буквой</a><a href="#lookalikes">Похожие буквы</a><a href="#article">Артикль</a><a href="#app">В приложении</a><a href="#faq">Частые вопросы</a></aside>
+      <article class="guide-content">
+        <section id="sound">
+          <h2>Как произносится буква {shortName}</h2>
+          <p set:html={richArabic(letter.articulation)} />
+          <div class="vowel-row vowel-row-3 letter-syllables" aria-label="Слоги с короткими гласными">
+            {syllables.map((syllable, index) => (
+              <div>
+                <span lang="ar" dir="rtl">{syllable}</span>
+                <strong>{readings[index]}</strong>
+                <small>{vowelNames[index]}</small>
+                <AudioButton src={syllableAudioPath(letter, index as 0 | 1 | 2)} label={`слог ${readings[index]}`} />
+              </div>
+            ))}
+          </div>
+          <p class="letter-caption">Озвучка синтезированная, та же, что в уроках приложения.</p>
+          <h3>Частые ошибки русскоязычных</h3>
+          <ul class="letter-mistakes">
+            {letter.mistakes.map((mistake) => <li set:html={richArabic(mistake)} />)}
+          </ul>
+        </section>
+
+        <section id="forms">
+          <h2>Как пишется буква {shortName}: {connects ? "четыре формы" : "две формы"}</h2>
+          <p set:html={richArabic(letter.shape)} />
+          <div class="vowel-row letter-forms-grid" aria-label={`Формы буквы ${letter.name}`}>
+            {FORM_KEYS.map((key) => (
+              <div><span lang="ar" dir="rtl">{forms[key]}</span><small>{FORM_LABELS[key]}</small></div>
+            ))}
+          </div>
+          <p set:html={richArabic(letter.connects)} />
+          {!connects && (
+            <p>Эта буква входит в шестёрку <span class="arabic-inline" lang="ar" dir="rtl">ا د ذ ر ز و</span>: после неё слово обрывается, а следующая буква начинается заново. Подробнее об этом — в <a href="/arabic-alphabet/">таблице алфавита</a>.</p>
+          )}
+        </section>
+
+        <section id="words">
+          <h2>Слова с буквой {shortName}</h2>
+          <p>Слова с огласовками из уроков Acrab: буква стоит в разных местах слова, поэтому видно, как меняется её форма.</p>
+          <div class="guide-table-scroll">
+            <table class="guide-table letter-words">
+              <caption>Транскрипция русскими буквами приблизительная.</caption>
+              <thead><tr><th scope="col">Слово</th><th scope="col">Читается</th><th scope="col">Перевод</th><th scope="col">Буква</th></tr></thead>
+              <tbody>
+                {letter.words.map((id) => {
+                  const word = WORDS[id];
+                  const where = wordPositions(word.ar, letter.char);
+                  const note: string | undefined = letter.wordNotes?.[id];
+                  return (
+                    <tr>
+                      <th scope="row" class="ar" lang="ar" dir="rtl">{word.ar}</th>
+                      <td class="letter-reading"><strong>{word.tr}</strong><AudioButton src={wordAudioPath(id)} label={word.tr} /></td>
+                      <td>{word.ru}</td>
+                      <td>{where.join(" и ")}{note && <small class="letter-word-note" set:html={richArabic(note)} />}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {letter.trNote && <p class="letter-caption" set:html={richArabic(letter.trNote)} />}
+        </section>
+
+        <section id="lookalikes">
+          <h2>С чем не спутать букву {shortName}</h2>
+          <div class="guide-table-scroll">
+            <table class="guide-table letter-lookalikes">
+              <thead><tr><th scope="col">Буква</th><th scope="col">Чем отличается</th></tr></thead>
+              <tbody>
+                {lookalikes.map(({ other, note }) => (
+                  <tr>
+                    <th scope="row" class="ar" lang="ar" dir="rtl"><a href={letterPath(other.slug)} aria-label={`Буква ${other.name}${other.qualifier ? `, ${other.qualifier}` : ""}`}>{other.char}</a></th>
+                    <td><a href={letterPath(other.slug)}>{other.name}{other.qualifier ? ` (${other.qualifier})` : ""}</a>. <span set:html={richArabic(note)} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="article">
+          <h2>{shortName[0]?.toUpperCase()}{shortName.slice(1)}: {sun ? "солнечная" : "лунная"} буква</h2>
+          {sun ? (
+            <p set:html={richArabic(`Перед солнечной буквой лям артикля не читается: он сливается с ${letter.char} и звук удваивается. Например, ${letter.article.ar} — «${letter.article.tr}», ${letter.article.ru}.${letter.articleExtra ? ` ${letter.articleExtra}` : ""}`)} />
+          ) : (
+            <p set:html={richArabic(`Перед лунной буквой артикль читается полностью: «аль». Например, ${letter.article.ar} — «${letter.article.tr}», ${letter.article.ru}.${letter.articleExtra ? ` ${letter.articleExtra}` : ""}`)} />
+          )}
+          <p>Все 14 солнечных и 14 лунных букв перечислены в статье <a href="/sun-moon-letters/">«Солнечные и лунные буквы»</a>.</p>
+        </section>
+
+        {appLesson && (
+          <section id="app">
+            <h2>Буква {shortName} в Acrab</h2>
+            <p set:html={richArabic(`Букву ${letter.char} в Acrab вводит ${appLesson.order} урок алфавита — «${appLesson.title}»${appLesson.others ? `, вместе с ${appLesson.others}` : ""}. ${appLesson.listening ? "Урок построен на слушании и различении звуков." : "В уроке вы читаете слова с огласовками."}`)} />
+            <GuideCta title={`Выучите букву ${letter.name} в уроке`} text="Алфавит в Acrab — первый из шести бесплатных модулей: 15 уроков, где к каждой букве даны звук, чтение и упражнения." />
+          </section>
+        )}
+
+        <GuideFaq items={letter.faq} />
+
+        <section id="all-letters">
+          <h2>Все буквы арабского алфавита</h2>
+          <nav class="letter-strip" lang="ar" dir="rtl" aria-label="Буквы арабского алфавита">
+            {LETTERS.map((item) => (
+              <a href={letterPath(item.slug)} aria-label={`Буква ${item.name}${item.qualifier ? `, ${item.qualifier}` : ""}`} aria-current={item.slug === letter.slug ? "page" : undefined}>{item.char}</a>
+            ))}
+          </nav>
+        </section>
+      </article>
+    </div>
+
+    <nav class="related-guides" aria-label="Соседние буквы">
+      {prev ? (
+        <a href={letterPath(prev.slug)} rel="prev"><span>Предыдущая буква</span><strong>← {prev.name} {prev.char}{prev.qualifier ? ` (${prev.qualifier})` : ""}</strong></a>
+      ) : (
+        <a href="/learn-arabic/"><span>Полный маршрут</span><strong>← Как учить арабский с нуля</strong></a>
+      )}
+      <a href={LETTER_SECTION_PATH}><span>Все 28 букв</span><strong>Арабский алфавит</strong></a>
+      {next ? (
+        <a href={letterPath(next.slug)} rel="next"><span>Следующая буква</span><strong>{next.name} {next.char}{next.qualifier ? ` (${next.qualifier})` : ""} →</strong></a>
+      ) : (
+        <a href="/arabic-vowels/"><span>Следующий шаг</span><strong>Огласовки в арабском →</strong></a>
+      )}
+    </nav>
+</GuideLayout>

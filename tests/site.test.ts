@@ -7,6 +7,8 @@ import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage
 import { DEFAULT_PRICING, decodeCheckoutSession, decodePendingCheckout, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, planAmount, PLAN_ORDER, sessionExpiry } from "../src/features/payment/payment-model";
 import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 import { appSchema, RUSTORE_URL } from "../src/seo/schema";
+import { statSync } from "node:fs";
+import { LETTERS, NON_CONNECTING_CHARS, SUN_CHARS, WORDS, baseLetters, letterAudioFiles, letterDescription, letterTitle, wordPositions } from "../src/seo/letters";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -19,8 +21,11 @@ const sourceRoutes = {
   "/arabic-alphabet": "src/pages/arabic-alphabet/index.astro",
   "/fusha": "src/pages/fusha/index.astro",
   "/arabic-app": "src/pages/arabic-app/index.astro",
+  "/arabic-keyboard": "src/pages/arabic-keyboard/index.astro",
   "/arabic-vowels": "src/pages/arabic-vowels/index.astro",
   "/sun-moon-letters": "src/pages/sun-moon-letters/index.astro",
+  "/arabic-hello": "src/pages/arabic-hello/index.astro",
+  "/arabic-thank-you": "src/pages/arabic-thank-you/index.astro",
   "/buy": "src/pages/buy/index.astro",
   "/support": "src/pages/support/index.astro",
   "/privacy": "src/pages/privacy/index.astro",
@@ -29,8 +34,8 @@ const sourceRoutes = {
   "/get": "src/pages/get/index.astro",
 } as const;
 
-const indexableRoutes = ["/", "/about", "/articles", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app", "/support", "/privacy"] as const;
-const guideRoutes = ["/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app"] as const;
+const indexableRoutes = ["/", "/about", "/articles", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/arabic-hello", "/arabic-thank-you", "/fusha", "/arabic-app", "/arabic-keyboard", "/support", "/privacy"] as const;
+const guideRoutes = ["/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/arabic-hello", "/arabic-thank-you", "/fusha", "/arabic-app", "/arabic-keyboard"] as const;
 const noindexRoutes = ["/buy", "/offer", "/consent", "/get"] as const;
 
 describe("generated site", () => {
@@ -77,6 +82,16 @@ describe("generated site", () => {
       expect(source, route).toMatch(/datePublished: "\d{4}-\d{2}-\d{2}"/);
       expect(source, route).toMatch(/dateModified: "\d{4}-\d{2}-\d{2}"/);
       expect(source, route).toContain("<GuideFaq items={faq} />");
+    }
+  });
+
+  test("points every «Слушать» button of the phrase guides at a bundled recording", () => {
+    for (const route of ["/arabic-hello", "/arabic-thank-you"] as const) {
+      const files = [...readSource(sourceRoutes[route]).matchAll(/(?:AudioButton src=|audio: )"(\/assets\/audio\/[a-z-]+\.mp3)"/g)].map((match) => match[1]!);
+      expect(files.length, route).toBeGreaterThan(0);
+      for (const file of files) {
+        expect(readFileSync(resolve(root, `public${file}`)).byteLength, `${route} ${file}`).toBeGreaterThan(1000);
+      }
     }
   });
 
@@ -129,6 +144,96 @@ describe("generated site", () => {
     expect(source).toContain('offerVersion: LEGAL_DOCUMENT_VERSION');
     expect(source.replace(/\/\/.*$/gm, "")).not.toContain('service_role');
     expect(source).not.toMatch(/action:\s*["']confirm/);
+  });
+});
+
+describe("letter pages", () => {
+  const slugs = LETTERS.map((letter) => letter.slug);
+  const hub = readSource("src/pages/arabic-alphabet/index.astro");
+  const sunMoon = readSource("src/pages/sun-moon-letters/index.astro");
+  const pageTexts = (letter: (typeof LETTERS)[number]) => [
+    letter.lead,
+    letter.articulation,
+    letter.shape,
+    letter.connects,
+    ...letter.mistakes,
+    ...letter.faq.flatMap((item) => [item.question, item.answer]),
+  ];
+
+  test("covers the 28 letters once, in alphabet order, with readable slugs", () => {
+    expect(LETTERS.map((letter) => letter.char).join(" ")).toBe("ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي");
+    expect(new Set(slugs).size).toBe(28);
+    for (const slug of slugs) expect(slug, slug).toMatch(/^[a-z]+$/);
+    // схема из src/seo/letters.ts: имена с одинаковым русским названием различаются на конце
+    expect(["ta", "tah", "ha", "hah", "zay", "zah"].every((slug) => slugs.includes(slug))).toBe(true);
+  });
+
+  test("builds them from one dynamic route and registers them in the sitemap, llms.txt and the site checker", () => {
+    expect(readSource("src/pages/arabic-alphabet/[letter].astro")).toContain("getStaticPaths");
+    const sitemap = readSource("public/sitemap.xml");
+    for (const slug of slugs) expect(sitemap, slug).toContain(`<loc>https://acrab.ru/arabic-alphabet/${slug}/</loc>`);
+    expect(readSource("public/llms.txt")).toContain("https://acrab.ru/arabic-alphabet/ayn/");
+    const listed = readSource("tools/check_site.py").match(/LETTER_SLUGS = \(([\s\S]*?)\)/)?.[1]?.match(/"([a-z]+)"/g)?.map((item) => item.slice(1, -1));
+    expect(listed).toEqual(slugs);
+  });
+
+  test("keeps the hub table and the letter data in agreement", () => {
+    const rows = [...hub.matchAll(/^\s*\["(.)", "([^"]+)", "([^"]+)", "/gm)].map((match) => [match[1], match[2], match[3]]);
+    expect(rows).toHaveLength(28);
+    rows.forEach(([char, arabicName, name], index) => {
+      expect([char, arabicName, name], slugs[index]).toEqual([LETTERS[index]!.char, LETTERS[index]!.arabicName, LETTERS[index]!.name]);
+    });
+    expect(hub).toContain("letterHref(letter)");
+  });
+
+  test("agrees with the articles on connecting and sun letters", () => {
+    const sun = sunMoon.match(/Солнечные: ([^.]+)\./)?.[1]?.split(" ");
+    expect([...SUN_CHARS].sort()).toEqual([...(sun ?? [])].sort());
+    const six = hub.match(/Шесть букв: ([^.]+)\./)?.[1]?.split(" ");
+    expect([...NON_CONNECTING_CHARS].sort()).toEqual([...(six ?? [])].sort());
+  });
+
+  test("gives every page its own text and metadata", () => {
+    const seen = new Map<string, string>();
+    for (const letter of LETTERS) {
+      for (const text of pageTexts(letter)) {
+        expect(seen.get(text), `«${text.slice(0, 40)}» повторяется`).toBeUndefined();
+        seen.set(text, letter.slug);
+        expect(text, letter.slug).not.toMatch(/носител/i);
+      }
+      expect(letter.mistakes.length, letter.slug).toBeGreaterThanOrEqual(2);
+      expect(letter.faq.length, letter.slug).toBeGreaterThanOrEqual(2);
+      expect(letter.faq.length, letter.slug).toBeLessThanOrEqual(3);
+    }
+    const titles = LETTERS.map(letterTitle);
+    const descriptions = LETTERS.map(letterDescription);
+    expect(new Set(titles).size).toBe(28);
+    expect(new Set(descriptions).size).toBe(28);
+    for (const title of titles) expect(title.length, title).toBeLessThanOrEqual(70);
+    for (const description of descriptions) expect(description.length, description).toBeLessThanOrEqual(200);
+  });
+
+  test("shows 3–4 real words with the letter in them and a recording for each file", () => {
+    for (const letter of LETTERS) {
+      expect(letter.words.length, letter.slug).toBeGreaterThanOrEqual(3);
+      expect(letter.words.length, letter.slug).toBeLessThanOrEqual(4);
+      for (const id of letter.words) {
+        expect(baseLetters(WORDS[id].ar), `${letter.slug}/${id}`).toContain(letter.char);
+        expect(wordPositions(WORDS[id].ar, letter.char).length, `${letter.slug}/${id}`).toBeGreaterThan(0);
+      }
+      for (const { path } of letterAudioFiles(letter)) {
+        expect(statSync(resolve(root, `public${path}`)).size, path).toBeGreaterThan(1000);
+      }
+      for (const link of letter.lookalikes) {
+        expect(slugs, `${letter.slug} → ${link.slug}`).toContain(link.slug);
+        expect(link.slug).not.toBe(letter.slug);
+      }
+    }
+  });
+
+  test("uses no program numbers other than the 15 alphabet lessons", () => {
+    const text = `${readSource("src/seo/letters.ts")}${readSource("src/pages/arabic-alphabet/[letter].astro")}`;
+    for (const match of text.matchAll(/(\d+)\s+(глав|модул|урок)[а-я]*/g)) expect(match[1], match[0]).toBe("15");
   });
 });
 

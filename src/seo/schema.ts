@@ -132,6 +132,31 @@ export function faqSchema(items: FaqItem[]): Schema {
   };
 }
 
+export interface WebToolMeta {
+  name: string;
+  description: string;
+  /** Абсолютный путь страницы с инструментом. */
+  path: string;
+}
+
+/** Бесплатный инструмент в браузере (онлайн-клавиатура): WebApplication без рейтингов и отзывов. */
+export function webApplicationSchema(meta: WebToolMeta): Schema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: meta.name,
+    description: meta.description,
+    url: absolute(meta.path),
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    inLanguage: "ru",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "RUB" },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
 const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
 
 /** «2026-10-01» → «1 октября 2026». */

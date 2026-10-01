@@ -1,0 +1,166 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import AudioButton from "../../components/AudioButton.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Спасибо на арабском: шукран, ответ и другие фразы | Acrab",
+  "description": "Как сказать «спасибо» на арабском: شُكْرًا (шукран), «большое спасибо», формы для мужчины, женщины и нескольких людей, ответ «не за что». С огласовками и озвучкой.",
+  "canonical": "https://acrab.ru/arabic-thank-you/",
+  "robots": "index, follow, max-image-preview:large",
+  "ogTitle": "Спасибо на арабском",
+  "ogDescription": "Шукран, «большое спасибо» и ответ «не за что» — с огласовками, транскрипцией и озвучкой.",
+  "ogType": "article",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Урок теории по арабскому языку в Acrab",
+  "twitterCard": "summary_large_image"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Спасибо на арабском языке",
+  description: seo.description,
+  path: "/arabic-thank-you/",
+  image: seo.ogImage,
+  datePublished: "2026-10-01",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Спасибо на арабском", path: "/arabic-thank-you/" },
+  ],
+};
+
+// Озвучка есть только у фраз, которые записаны в приложении; у остальных кнопки нет.
+const phrases = [
+  { ar: "شُكْرًا", reading: "шукран", meaning: "спасибо", note: "подходит в любой ситуации", audio: "/assets/audio/shukran.mp3" },
+  { ar: "شُكْرًا جَزِيلًا", reading: "шукран джазилян", meaning: "большое спасибо", note: "за помощь или подарок", audio: "/assets/audio/shukran-jazilan.mp3" },
+  { ar: "أَلْفُ شُكْرٍ", reading: "альфу шукр", meaning: "тысяча благодарностей", note: "усиленное «спасибо»" },
+  { ar: "شُكْرًا لَكَ", reading: "шукран лака", meaning: "спасибо тебе", note: "мужчине" },
+  { ar: "شُكْرًا لَكِ", reading: "шукран лаки", meaning: "спасибо тебе", note: "женщине" },
+  { ar: "شُكْرًا لَكُمْ", reading: "шукран лакум", meaning: "спасибо вам", note: "нескольким людям" },
+  { ar: "شُكْرًا عَلَى الْهَدِيَّةِ", reading: "шукран аля-ль-хадийя", meaning: "спасибо за подарок", note: "после «аля» называют, за что благодарят" },
+  { ar: "جَزَاكَ اللَّهُ خَيْرًا", reading: "джазака-Ллаhу хайран", meaning: "да воздаст тебе Аллаh добром", note: "религиозная формула верующих", audio: "/assets/audio/jazaka-llahu-khayran.mp3" },
+  { ar: "وَإِيَّاكَ", reading: "ва-иййака", meaning: "и тебе тоже", note: "ответ на «джазака-Ллаhу хайран»" },
+  { ar: "عَفْوًا", reading: "афван", meaning: "не за что; извините", note: "ответ на «спасибо» или слово перед вопросом", audio: "/assets/audio/afwan.mp3" },
+  { ar: "لَا شُكْرَ عَلَى وَاجِبٍ", reading: "ля шукра аля ваджиб", meaning: "не стоит благодарности", note: "ответ, когда помощь — обычное дело" },
+  { ar: "بِكُلِّ سُرُورٍ", reading: "би-кулли сурур", meaning: "с удовольствием", note: "ответ на просьбу или благодарность" },
+];
+
+const faq = [
+  {
+    question: "Как будет «спасибо» по-арабски?",
+    answer: "شُكْرًا — «шукран». Это универсальное слово: его говорят продавцу, коллеге, другу и незнакомому человеку, и понимают во всех арабских странах. Без огласовок оно пишется شكرا.",
+  },
+  {
+    question: "Меняется ли «шукран» для мужчины и женщины?",
+    answer: "Нет, само слово одинаково для всех. Меняется только окончание после него: شُكْرًا لَكَ («шукран лака») — мужчине, شُكْرًا لَكِ («шукран лаки») — женщине, شُكْرًا لَكُمْ («шукран лакум») — нескольким людям.",
+  },
+  {
+    question: "Как ответить на «шукран»?",
+    answer: "Нейтральный ответ — عَفْوًا («афван»), «не за что». Другие варианты: لَا شُكْرَ عَلَى وَاجِبٍ («ля шукра аля ваджиб»), «не стоит благодарности», и بِكُلِّ سُرُورٍ («би-кулли сурур»), «с удовольствием».",
+  },
+  {
+    question: "Почему «афван» значит и «не за что», и «извините»?",
+    answer: "Слово عَفْوًا буквально значит «прощение». Поэтому его говорят и в ответ на благодарность, и перед вопросом, когда просят прощения за беспокойство: عَفْوًا، مَا اسْمُكَ؟ — «Извините, как вас зовут?». Значение понятно по ситуации.",
+  },
+  {
+    question: "Чем «шукран» отличается от «джазака Ллаhу хайран»?",
+    answer: "شُكْرًا — нейтральное «спасибо» на любой случай. جَزَاكَ اللَّهُ خَيْرًا — религиозная формула, буквально «да воздаст тебе Аллаh добром»: так благодарят друг друга верующие. В магазине или такси достаточно شُكْرًا.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+    <header class="guide-hero">
+      <p class="eyebrow">Первая вежливая фраза</p>
+      <h1 class="page-title">Спасибо на арабском</h1>
+      <p class="guide-lead">Чтобы поблагодарить по-арабски, скажите <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> («шукран»). Слово подходит всем: продавцу, таксисту, коллеге и другу. Его понимают в любой арабской стране.</p>
+      <div class="phrase-hero">
+        <span class="phrase-hero-ar" lang="ar" dir="rtl">شُكْرًا</span>
+        <div class="phrase-hero-meta"><strong>шукран</strong><small>«спасибо»</small></div>
+        <AudioButton src="/assets/audio/shukran.mp3" label="шукран" />
+      </div>
+      <div class="guide-answer"><strong>Коротко:</strong> «спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> (шукран), «большое спасибо» — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا جَزِيلًا</span> (шукран джазилян). В ответ говорят <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> (афван) — «не за что».</div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#say">Как прочитать «шукран»</a><a href="#big">Большое спасибо</a><a href="#forms">Мужчине, женщине, нескольким</a><a href="#religious">Религиозная форма</a><a href="#reply">Как ответить</a><a href="#table">Все фразы в таблице</a><a href="#faq">Частые вопросы</a></aside>
+      <article class="guide-content">
+        <section id="say">
+          <h2>Как сказать и прочитать «шукран»</h2>
+          <p>Основное слово — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span>. Оно образовано от корня <span class="arabic-inline" lang="ar" dir="rtl">ش ك ر</span>, связанного с благодарностью, и буквально значит «благодарность».</p>
+          <p>Читается слово по слогам: «шук-ран», ударение на первом слоге. Дамма на <span class="arabic-inline" lang="ar" dir="rtl">ش</span> даёт «шу», сукун на <span class="arabic-inline" lang="ar" dir="rtl">ك</span> означает, что после «к» гласного нет, а танвин фатхи в конце читается как «ан». Алиф после <span class="arabic-inline" lang="ar" dir="rtl">ر</span> нужен только для записи танвина и отдельным звуком не читается.</p>
+          <p>Подробнее об этих знаках — в статье <a href="/arabic-vowels/">«Огласовки в арабском языке»</a>, о самих буквах — в статье <a href="/arabic-alphabet/">«Арабский алфавит»</a>. В переписке и на вывесках огласовок обычно нет, и слово выглядит так: <span class="arabic-inline" lang="ar" dir="rtl">شكرا</span>.</p>
+        </section>
+
+        <section id="big">
+          <h2>«Большое спасибо» и «спасибо за…»</h2>
+          <p>Чтобы усилить благодарность, к слову <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> добавляют ещё одно слово или называют, за что благодарите.</p>
+          <ul class="guide-checklist">
+            <li><span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا جَزِيلًا</span> («шукран джазилян») — «большое спасибо»; <span class="arabic-inline" lang="ar" dir="rtl">جَزِيلًا</span> значит «обильный, щедрый».<AudioButton src="/assets/audio/shukran-jazilan.mp3" label="шукран джазилян" /></li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">أَلْفُ شُكْرٍ</span> («альфу шукр») — буквально «тысяча благодарностей».</li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا عَلَى الْهَدِيَّةِ</span> («шукран аля-ль-хадийя») — «спасибо за подарок». Что именно благодарите, называют после <span class="arabic-inline" lang="ar" dir="rtl">عَلَى</span> («за»).</li>
+          </ul>
+        </section>
+
+        <section id="forms">
+          <h2>Спасибо мужчине, женщине и нескольким людям</h2>
+          <p>Само слово <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> одинаково для всех. Чтобы сказать «спасибо тебе» или «спасибо вам», после него ставят окончание, которое зависит от того, к кому вы обращаетесь:</p>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Три формы благодарности">
+            <div><span lang="ar" dir="rtl">شُكْرًا لَكَ</span><strong>шукран лака</strong><small>мужчине</small></div>
+            <div><span lang="ar" dir="rtl">شُكْرًا لَكِ</span><strong>шукран лаки</strong><small>женщине</small></div>
+            <div><span lang="ar" dir="rtl">شُكْرًا لَكُمْ</span><strong>шукран лакум</strong><small>нескольким людям</small></div>
+          </div>
+          <p>Двоим говорят <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُمَا</span> («шукран лакума»), группе женщин — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُنَّ</span> («шукран лакунна»).</p>
+        </section>
+
+        <section id="religious">
+          <h2>Религиозная форма благодарности</h2>
+          <p>Мусульмане благодарят друг друга формулой <span class="arabic-inline" lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span> («джазака-Ллаhу хайран») — «да воздаст тебе Аллаh добром».<AudioButton src="/assets/audio/jazaka-llahu-khayran.mp3" label="джазака-Ллаhу хайран" /> Её говорят за помощь, подарок или доброе слово. В обычной ситуации, например в магазине или такси, достаточно <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span>.</p>
+          <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Формула для мужчины, женщины и нескольких людей">
+            <div><span lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span><strong>джазака-Ллаhу хайран</strong><small>мужчине</small></div>
+            <div><span lang="ar" dir="rtl">جَزَاكِ اللَّهُ خَيْرًا</span><strong>джазаки-Ллаhу хайран</strong><small>женщине</small></div>
+            <div><span lang="ar" dir="rtl">جَزَاكُمُ اللَّهُ خَيْرًا</span><strong>джазакуму-Ллаhу хайран</strong><small>нескольким людям</small></div>
+          </div>
+          <p>В ответ говорят <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكَ</span> («ва-иййака») — «и тебе тоже»; женщине — <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكِ</span> («ва-иййаки»), нескольким людям — <span class="arabic-inline" lang="ar" dir="rtl">وَإِيَّاكُمْ</span> («ва-иййакум»).</p>
+        </section>
+
+        <section id="reply">
+          <h2>Как ответить на «спасибо»</h2>
+          <ul class="guide-checklist">
+            <li><span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> («афван») — «не за что». Нейтральный ответ, подходит всем.<AudioButton src="/assets/audio/afwan.mp3" label="афван" /></li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">لَا شُكْرَ عَلَى وَاجِبٍ</span> («ля шукра аля ваджиб») — буквально «за долг не благодарят»: так отвечают, когда помощь — само собой разумеющееся.</li>
+            <li><span class="arabic-inline" lang="ar" dir="rtl">بِكُلِّ سُرُورٍ</span> («би-кулли сурур») — «с удовольствием».</li>
+          </ul>
+          <div class="guide-note"><strong>Не путайте:</strong> перед вопросом <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> значит «извините»: <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا، مَا اسْمُكَ؟</span> («афван, ма-смука?») — «Извините, как вас зовут?». После «спасибо» то же слово значит «не за что».</div>
+        </section>
+
+        <section id="table">
+          <h2>Все фразы в одной таблице</h2>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Фраза</th><th scope="col">Чтение</th><th scope="col">Значение</th></tr></thead>
+              <tbody>
+                {phrases.map((phrase) => (
+                  <tr>
+                    <th scope="row" class:list={["ar", { "ar-small": phrase.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{phrase.ar}</th>
+                    <td><strong>{phrase.reading}</strong>{phrase.audio && <AudioButton src={phrase.audio} label={phrase.reading} />}</td>
+                    <td>{phrase.meaning}<br /><small>{phrase.note}</small></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
+          <GuideCta title="Потренируйте это в приложении" text="Приветствия и вежливые фразы — второй модуль программы Acrab, он входит в бесплатную часть. Фразы озвучены, а упражнения учат узнавать их на слух и собирать самому." />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" aria-label="Другие статьи"><a href="/arabic-hello/"><span>Следующая фраза</span><strong>Привет на арабском →</strong></a><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+</GuideLayout>

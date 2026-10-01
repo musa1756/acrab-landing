@@ -1,0 +1,115 @@
+---
+import { ARABIC_KEYS_BY_CODE, EXTRA_KEYS, KEY_ROWS, keyCaption } from "../scripts/arabic-keyboard-model";
+import "../styles/keyboard.css";
+
+// Раскладка и подписи берутся из модели: та же таблица работает в браузере.
+// d и m — ширина в колонках сетки на компьютере (30) и на телефоне (25);
+// m = 0 — на телефоне элемента нет.
+type Cell =
+  | { kind: "key"; code: string; d: number; m: number }
+  | { kind: "gap"; d: number; m: number }
+  | { kind: "action"; action: "backspace" | "enter" | "shift" | "space"; text: string; label?: string; d: number; m: number }
+  | { kind: "extra"; char: string; name: string; m: number };
+
+const keys = (row: number): Cell[] =>
+  KEY_ROWS[row]!.map((code) => {
+    const symbolOnly = code === "Minus" || code === "Equal" || code === "Backslash";
+    return { kind: "key", code, d: code === "Backslash" ? 3 : 2, m: symbolOnly ? 0 : 2 };
+  });
+
+const extra = (char: string, m: number): Cell => ({ kind: "extra", char, name: EXTRA_KEYS.find((item) => item.char === char)!.name, m });
+
+const rows: Cell[][] = [
+  [...keys(0), { kind: "action", action: "backspace", text: "⌫", label: "Стереть символ", d: 4, m: 3 }],
+  [{ kind: "gap", d: 3, m: 1 }, ...keys(1)],
+  [{ kind: "gap", d: 4, m: 0 }, ...keys(2), { kind: "action", action: "enter", text: "↵", label: "Новая строка", d: 4, m: 3 }],
+  [{ kind: "action", action: "shift", text: "Shift", label: "Shift: огласовки, хамза и знаки на одно нажатие", d: 6, m: 5 }, ...keys(3), { kind: "gap", d: 4, m: 0 }],
+  [extra("،", 3), extra("؛", 0), extra("؟", 3), { kind: "action", action: "space", text: "Пробел", d: 20, m: 16 }, extra(".", 3), extra(":", 0)],
+];
+
+const width = (d: number, m: number) => ({
+  [`kbd-d${d}`]: d !== 2,
+  [`kbd-m${m}`]: m !== 2 && m !== 0,
+  "kbd-hide-m": m === 0,
+});
+---
+
+<section class="kbd-app" id="keyboard" aria-labelledby="kbd-heading" data-arabic-keyboard>
+  <h2 class="kbd-visually-hidden" id="kbd-heading">Арабская клавиатура</h2>
+  <label class="kbd-visually-hidden" for="kbd-text">Текст на арабском</label>
+  <!-- ym-*: Вебвизор Метрики не записывает набранный текст. -->
+  <textarea
+    id="kbd-text"
+    class="kbd-text ym-disable-keys ym-hide-content"
+    data-kbd-text
+    dir="rtl"
+    lang="ar"
+    rows="2"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+    autocorrect="off"
+    placeholder="اكتب هنا"
+  ></textarea>
+
+  <div class="kbd-translit" data-kbd-translit hidden>
+    <p class="kbd-translit-label">Транслитерация, приблизительно</p>
+    <p class="kbd-translit-out ym-hide-content" data-kbd-translit-out lang="ru"></p>
+  </div>
+
+  <div class="kbd-actions">
+    <button type="button" class="button button-primary" data-kbd-copy>Копировать</button>
+    <button type="button" class="button button-secondary" data-kbd-clear>Очистить</button>
+    <p class="kbd-status" role="status" aria-live="polite" data-kbd-status></p>
+  </div>
+
+  <a class="kbd-skip" href="#usage">Пропустить клавиатуру</a>
+  <div class="kbd-board" role="group" aria-label="Экранная клавиатура" dir="ltr" data-kbd-board>
+    {rows.map((row) => (
+      <div class="kbd-row">
+        {row.map((cell) => {
+          if (cell.kind === "gap") return <span class:list={["kbd-gap", width(cell.d, cell.m)]} aria-hidden="true"></span>;
+          if (cell.kind === "key") {
+            const key = ARABIC_KEYS_BY_CODE[cell.code]!;
+            return (
+              <button type="button" class:list={["kbd-key", width(cell.d, cell.m)]} data-code={cell.code} aria-label={key.baseName}>
+                <span class="kbd-main" lang="ar">{keyCaption(key.base)}</span>
+                <span class="kbd-alt" lang="ar" aria-hidden="true">{keyCaption(key.shift)}</span>
+                <span class="kbd-latin" aria-hidden="true">{key.latin}</span>
+              </button>
+            );
+          }
+          if (cell.kind === "extra") {
+            return (
+              <button type="button" class:list={["kbd-key", width(2, cell.m)]} data-char={cell.char} aria-label={cell.name}>
+                <span class="kbd-main" lang="ar">{cell.char}</span>
+              </button>
+            );
+          }
+          return (
+            <button
+              type="button"
+              class:list={["kbd-key", "kbd-fn", cell.action === "space" && "kbd-space", width(cell.d, cell.m)]}
+              data-action={cell.action}
+              aria-label={cell.label}
+              aria-pressed={cell.action === "shift" ? "false" : undefined}
+            >
+              <span class="kbd-main">{cell.text}</span>
+            </button>
+          );
+        })}
+      </div>
+    ))}
+  </div>
+
+  <div class="kbd-options">
+    <label class="kbd-toggle"><input type="checkbox" data-kbd-physical aria-describedby="kbd-hint" /><span>Печатать с клавиатуры компьютера</span></label>
+    <label class="kbd-toggle"><input type="checkbox" data-kbd-translit-toggle /><span>Транслитерация</span></label>
+  </div>
+  <p class="kbd-hint" id="kbd-hint">
+    Включённый переключатель превращает клавиши в арабские буквы по их физическому положению, при любой раскладке системы: Q даёт <span class="arabic-inline" lang="ar" dir="rtl">ض</span>, A — <span class="arabic-inline" lang="ar" dir="rtl">ش</span>, Shift + Q — фатху. Цифры верхнего ряда дают восточные арабские цифры <span class="arabic-inline" lang="ar" dir="ltr">٠١٢٣٤٥٦٧٨٩</span>, цифровой блок остаётся обычным.
+  </p>
+  <noscript><p class="kbd-noscript">Для работы клавиатуры нужен включённый JavaScript.</p></noscript>
+</section>
+
+<script src="../scripts/arabic-keyboard.ts"></script>

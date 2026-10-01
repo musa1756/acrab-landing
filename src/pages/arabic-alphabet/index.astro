@@ -3,6 +3,7 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import { letterByChar, letterPath } from "../../seo/letters";
 
 const seo = {
   "title": "Арабский алфавит: все 28 букв с формами и звуками | Acrab",
@@ -63,6 +64,16 @@ const letters = [
   ["و", "وَاو", "вав", "«в», ближе к английскому w, или долгий «у»", "و ـو ـو"],
   ["ي", "يَاء", "йа", "«й» или долгий «и»", "يـ ـيـ ـي"],
 ] as const;
+
+// Каждая буква таблицы ведёт на свою страницу (src/seo/letters.ts).
+const letterHref = (char: string) => {
+  const page = letterByChar(char);
+  return page ? letterPath(page.slug) : undefined;
+};
+const letterLabel = (char: string) => {
+  const page = letterByChar(char);
+  return page ? `Буква ${page.name}${page.qualifier ? `, ${page.qualifier}` : ""}` : undefined;
+};
 
 const lookalikes = [
   ["ب ت ث", "Зубчик: у ب одна точка снизу, у ت две сверху, у ث три сверху. В начале и середине слова так же выглядят ن (одна сверху) и ي (две снизу)."],
@@ -125,7 +136,7 @@ const faq = [
 
         <section id="table">
           <h2>Таблица арабского алфавита</h2>
-          <p>Буквы идут в словарном порядке. Русские названия приблизительные: три разные буквы называются «ха», две — «та». Поэтому рядом указаны арабское написание названия и описание звука.</p>
+          <p>Буквы идут в словарном порядке. Русские названия приблизительные: три разные буквы называются «ха», две — «та». Поэтому рядом указаны арабское написание названия и описание звука. Нажмите на букву, чтобы открыть её страницу: звук, формы в слове, слова с переводом и похожие буквы.</p>
           <div class="guide-table-scroll">
             <table class="guide-table">
               <caption>Формы в слове записаны справа налево: в начале, в середине, в конце.</caption>
@@ -133,8 +144,8 @@ const faq = [
               <tbody>
                 {letters.map(([letter, arabicName, name, sound, forms]) => (
                   <tr>
-                    <th scope="row" class="ar" lang="ar" dir="rtl">{letter}</th>
-                    <td><strong>{name}</strong><br /><span class="arabic-inline" lang="ar" dir="rtl">{arabicName}</span></td>
+                    <th scope="row" class="ar" lang="ar" dir="rtl"><a href={letterHref(letter)} aria-label={letterLabel(letter)}>{letter}</a></th>
+                    <td><a href={letterHref(letter)}>{name}</a><br /><span class="arabic-inline" lang="ar" dir="rtl">{arabicName}</span></td>
                     <td>{sound}</td>
                     <td class="ar ar-small letter-forms" lang="ar" dir="rtl">{forms.split(" ").map((form) => <span>{form}</span>)}</td>
                   </tr>

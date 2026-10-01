@@ -1,0 +1,15 @@
+---
+interface Props {
+  /** Абсолютный путь к файлу в public/assets/audio/. */
+  src: string;
+  /** Что звучит, например «шукран»: попадает в подпись кнопки для скринридера. */
+  label: string;
+}
+
+const { src, label } = Astro.props;
+---
+
+<button type="button" class="audio-btn" data-audio={src} aria-label={`Слушать: ${label}`} title="Слушать" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5v5h3.5l4.5 3.5v-12L7.5 9.5H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
+</button>
+<script src="../scripts/phrase-audio.ts"></script>
