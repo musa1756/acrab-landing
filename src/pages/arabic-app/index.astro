@@ -1,5 +1,9 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
 const seo = {
   "title": "Приложение для изучения арабского языка с нуля | Acrab",
   "description": "Как выбрать приложение для изучения арабского языка: программа, теория, огласовки, аудирование и повторение. Возможности Acrab на русском.",
@@ -12,10 +16,45 @@ const seo = {
   "ogImageAlt": "Главный экран приложения Acrab для изучения арабского языка",
   "twitterCard": "summary_large_image"
 } as const;
+
+const guide: GuideMeta = {
+  headline: "Приложение для изучения арабского языка с нуля",
+  description: seo.description,
+  path: "/arabic-app/",
+  image: seo.ogImage,
+  datePublished: "2026-08-08",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Приложение для арабского", path: "/arabic-app/" },
+  ],
+};
+
+const faq = [
+  {
+    question: "Есть ли у Acrab бесплатная версия?",
+    answer: "Да. Первые шесть глав программы доступны бесплатно и без ограничения по сроку: теория, все типы упражнений, озвучка, быстрые тренировки и синхронизация. Инструменты и ассистент в бесплатной версии работают с дневными лимитами.",
+  },
+  {
+    question: "На каких устройствах работает Acrab?",
+    answer: "На iPhone, iPad и Android. Приложение есть в App Store, Google Play и RuStore. Прогресс, огонёк и карточки синхронизируются между устройствами через один аккаунт.",
+  },
+  {
+    question: "Нужно ли заранее знать арабский алфавит?",
+    answer: "Нет. Программа начинается с первой буквы. Если алфавит уже знаком, тест уровня поможет начать с подходящей главы.",
+  },
+  {
+    question: "Чему учит Acrab: литературному арабскому или диалекту?",
+    answer: "Литературному арабскому, фусхе. Это общая письменная и официальная форма языка, которую понимают образованные носители во всех арабских странах.",
+  },
+  {
+    question: "Как оформить Premium?",
+    answer: "Premium открывает все 44 главы и повышает дневные лимиты инструментов и ассистента. Его можно оформить на месяц, на год или навсегда — в приложении или на странице оплаты сайта.",
+  },
+];
 ---
 
-<GuideLayout {...seo}>
-<nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Acrab</a><span aria-hidden="true">/</span><span>Приложение для арабского</span></nav>
+<GuideLayout {...seo} guide={guide}>
     <header class="guide-hero guide-hero-with-media product-guide-hero">
       <div>
         <p class="eyebrow">Acrab для iPhone, iPad и Android</p>
@@ -23,12 +62,13 @@ const seo = {
         <p class="guide-lead">Acrab обучает литературному арабскому по-русски: от алфавита до чтения текста с полной огласовкой. Теория, упражнения, аудирование, повторение и учебные инструменты находятся в одном маршруте.</p>
         <div class="hero-downloads"><a class="button button-primary" href="https://apps.apple.com/ru/app/id6763663680" target="_blank" rel="noopener">Скачать в App Store</a><a class="button button-secondary" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener">Скачать в RuStore</a><a class="button button-secondary" href="https://play.google.com/store/apps/details?id=com.acrab.arabic" target="_blank" rel="noopener">Скачать в Google Play</a></div>
         <p class="hero-fineprint">Первые 6 из 44 глав доступны бесплатно и без срока.</p>
+        <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
       </div>
       <figure class="shot guide-hero-shot"><img src="/assets/about/program-home.webp" alt="Главный экран Acrab с программой и быстрыми тренировками" width="620" height="892" fetchpriority="high"></figure>
     </header>
 
     <div class="guide-layout">
-      <aside class="guide-toc" aria-label="Содержание статьи"><strong>На этой странице</strong><a href="#criteria">Как выбрать приложение</a><a href="#program">Программа Acrab</a><a href="#practice">Как проходит урок</a><a href="#tools">Инструменты</a><a href="#free">Что бесплатно</a></aside>
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>На этой странице</strong><a href="#criteria">Как выбрать приложение</a><a href="#program">Программа Acrab</a><a href="#practice">Как проходит урок</a><a href="#tools">Инструменты</a><a href="#free">Что бесплатно</a><a href="#faq">Частые вопросы</a></aside>
       <article class="guide-content">
         <section id="criteria">
           <h2>На что смотреть при выборе приложения</h2>
@@ -56,8 +96,10 @@ const seo = {
         <section id="free">
           <h2>Что можно попробовать бесплатно</h2>
           <p>Free — не временная демоверсия. Первые шесть глав, теория, упражнения, озвучка, быстрые тренировки, огонёк и синхронизация между устройствами доступны без ограничения по сроку. У инструментов и ассистента в бесплатной версии есть дневные лимиты.</p>
-          <div class="guide-cta"><div><h3>Начните с подходящего уровня</h3><p>Если уже читаете по-арабски, пройдите тест. Если нет — начните с первой буквы.</p></div><div class="guide-cta-actions"><a class="button button-primary" href="https://apps.apple.com/ru/app/id6763663680" target="_blank" rel="noopener">App Store</a><a class="button button-secondary" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener">RuStore</a><a class="button button-secondary" href="https://play.google.com/store/apps/details?id=com.acrab.arabic" target="_blank" rel="noopener">Google Play</a></div></div>
+          <GuideCta title="Начните с подходящего уровня" text="Если уже читаете по-арабски, пройдите тест. Если нет — начните с первой буквы." />
         </section>
+
+        <GuideFaq items={faq} />
       </article>
     </div>
 

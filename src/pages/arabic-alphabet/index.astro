@@ -1,30 +1,117 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
 const seo = {
-  "title": "Арабский алфавит для начинающих: буквы и чтение | Acrab",
-  "description": "Как начать учить арабский алфавит: 28 букв, соединение справа налево, формы букв, огласовки и понятный порядок занятий для начинающих.",
+  "title": "Арабский алфавит: все 28 букв с формами и звуками | Acrab",
+  "description": "Арабский алфавит для начинающих: таблица 28 букв с названиями, звуками и формами в слове, буквы без соединения, огласовки и порядок изучения.",
   "canonical": "https://acrab.ru/arabic-alphabet/",
   "robots": "index, follow, max-image-preview:large",
   "ogTitle": "Арабский алфавит для начинающих",
-  "ogDescription": "28 букв, соединение, огласовки и первые шаги в чтении по-арабски.",
+  "ogDescription": "Таблица 28 букв, формы в слове, похожие буквы, огласовки и первые шаги в чтении.",
   "ogType": "article",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab",
   "twitterCard": "summary_large_image"
 } as const;
+
+const guide: GuideMeta = {
+  headline: "Арабский алфавит для начинающих",
+  description: seo.description,
+  path: "/arabic-alphabet/",
+  image: seo.ogImage,
+  datePublished: "2026-08-08",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Как учить арабский", path: "/learn-arabic/" },
+    { name: "Алфавит", path: "/arabic-alphabet/" },
+  ],
+};
+
+// Формы перечислены в порядке «в начале, в середине, в конце слова»;
+// в ячейке с dir="rtl" первая из них стоит справа.
+const letters = [
+  ["ا", "أَلِف", "алиф", "своего звука нет: тянет «а» и служит опорой для хамзы", "ا ـا ـا"],
+  ["ب", "بَاء", "ба", "«б»", "بـ ـبـ ـب"],
+  ["ت", "تَاء", "та", "«т»", "تـ ـتـ ـت"],
+  ["ث", "ثَاء", "са", "глухой межзубный, как th в английском think", "ثـ ـثـ ـث"],
+  ["ج", "جِيم", "джим", "«дж»", "جـ ـجـ ـج"],
+  ["ح", "حَاء", "ха", "гортанный глухой «х», в русском аналога нет", "حـ ـحـ ـح"],
+  ["خ", "خَاء", "ха", "глубокий хрипящий «х»", "خـ ـخـ ـخ"],
+  ["د", "دَال", "даль", "«д»", "د ـد ـد"],
+  ["ذ", "ذَال", "заль", "звонкий межзубный, как th в английском this", "ذ ـذ ـذ"],
+  ["ر", "رَاء", "ра", "раскатистый «р»", "ر ـر ـر"],
+  ["ز", "زَاي", "зай", "звонкий «з»", "ز ـز ـز"],
+  ["س", "سِين", "син", "«с»", "سـ ـسـ ـس"],
+  ["ش", "شِين", "шин", "«ш»", "شـ ـشـ ـش"],
+  ["ص", "صَاد", "сад", "эмфатическое, «тяжёлое» «с»", "صـ ـصـ ـص"],
+  ["ض", "ضَاد", "дад", "эмфатическое «д»", "ضـ ـضـ ـض"],
+  ["ط", "طَاء", "та", "твёрдый «т» с тяжёлым нажимом", "طـ ـطـ ـط"],
+  ["ظ", "ظَاء", "за", "эмфатический звонкий межзубный", "ظـ ـظـ ـظ"],
+  ["ع", "عَيْن", "айн", "гортанный звонкий звук, в русском аналога нет", "عـ ـعـ ـع"],
+  ["غ", "غَيْن", "гайн", "звонкий звук, похожий на картавое «р»", "غـ ـغـ ـغ"],
+  ["ف", "فَاء", "фа", "«ф»", "فـ ـفـ ـف"],
+  ["ق", "قَاف", "каф", "глубокий «к» из задней части нёба", "قـ ـقـ ـق"],
+  ["ك", "كَاف", "кяф", "обычный «к»", "كـ ـكـ ـك"],
+  ["ل", "لَام", "лям", "«л»", "لـ ـلـ ـل"],
+  ["م", "مِيم", "мим", "«м»", "مـ ـمـ ـم"],
+  ["ن", "نُون", "нун", "«н»", "نـ ـنـ ـن"],
+  ["ه", "هَاء", "ха", "лёгкое придыхание, как английское h", "هـ ـهـ ـه"],
+  ["و", "وَاو", "вав", "«в», ближе к английскому w, или долгий «у»", "و ـو ـو"],
+  ["ي", "يَاء", "йа", "«й» или долгий «и»", "يـ ـيـ ـي"],
+] as const;
+
+const lookalikes = [
+  ["ب ت ث", "Зубчик: у ب одна точка снизу, у ت две сверху, у ث три сверху. В начале и середине слова так же выглядят ن (одна сверху) и ي (две снизу)."],
+  ["ج ح خ", "Петля: у ج точка внутри снизу, у ح точки нет, у خ точка сверху."],
+  ["د ذ", "Уголок: ذ отличается одной точкой сверху."],
+  ["ر ز", "Хвост вниз: ز отличается одной точкой сверху."],
+  ["س ش", "Три зубчика: у ش три точки сверху."],
+  ["ص ض", "Вытянутая петля: у ض одна точка сверху."],
+  ["ط ظ", "Петля с вертикальной чертой: у ظ одна точка сверху."],
+  ["ع غ", "Открытый крючок: у غ одна точка сверху."],
+  ["ف ق", "Круглая головка: у ف одна точка сверху, у ق две; в конце слова хвост ق глубже."],
+] as const;
+
+const faq = [
+  {
+    question: "Сколько букв в арабском алфавите?",
+    answer: "В арабском алфавите 28 букв. Хамзу ء иногда называют 29-й буквой, но в основной список её обычно не включают. Короткие гласные «а», «и», «у» буквами не пишутся: их показывают огласовки.",
+  },
+  {
+    question: "Есть ли в арабском заглавные буквы?",
+    answer: "Нет. Заглавных и строчных букв нет, предложения и имена начинаются с той же буквы, что и любое слово. Меняется только форма буквы: она зависит от места в слове и от того, соединяется ли буква с соседними.",
+  },
+  {
+    question: "Сколько времени нужно, чтобы выучить арабский алфавит?",
+    answer: "Точного срока нет: всё зависит от регулярности занятий. Полезнее ориентироваться на результат. Алфавит освоен, когда вы узнаёте каждую букву в начале, середине и конце слова и без спешки читаете незнакомые слова с огласовками.",
+  },
+  {
+    question: "Какие буквы не соединяются со следующей?",
+    answer: "Шесть букв: ا د ذ ر ز و. Они соединяются с предыдущей буквой, но не со следующей, поэтому после них внутри слова появляется разрыв, и следующая буква пишется в начальной форме.",
+  },
+  {
+    question: "Нужно ли учиться писать арабские буквы от руки?",
+    answer: "Для чтения достаточно уверенно узнавать буквы. Короткая практика письма всё же помогает: рука запоминает соединения и положение точек, и похожие буквы реже путаются при чтении.",
+  },
+];
 ---
 
-<GuideLayout {...seo}>
-<nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Acrab</a><span aria-hidden="true">/</span><a href="/learn-arabic/">Как учить арабский</a><span aria-hidden="true">/</span><span>Алфавит</span></nav>
+<GuideLayout {...seo} guide={guide}>
     <header class="guide-hero">
       <p class="eyebrow">Основа чтения</p>
       <h1 class="page-title">Арабский алфавит для начинающих</h1>
       <p class="guide-lead">В арабском алфавите 28 букв. Текст читается справа налево, большинство букв соединяется с соседними, а короткие гласные показываются специальными знаками — огласовками.</p>
-      <div class="alphabet-line" lang="ar" dir="rtl" aria-label="Примеры арабских букв">ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</div>
+      <div class="alphabet-line" lang="ar" dir="rtl" aria-label="Арабский алфавит">ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</div>
+      <div class="guide-answer"><strong>Коротко:</strong> 28 букв, письмо справа налево, у большинства букв по четыре формы, шесть букв не соединяются со следующей, а гласные «а», «и», «у» обозначаются огласовками над и под буквой.</div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
 
     <div class="guide-layout">
-      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#principles">Как устроено письмо</a><a href="#forms">Формы букв</a><a href="#vowels">Огласовки</a><a href="#plan">Порядок изучения</a><a href="#practice">Как тренироваться</a></aside>
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#principles">Как устроено письмо</a><a href="#table">Таблица 28 букв</a><a href="#forms">Формы букв</a><a href="#lookalikes">Похожие буквы</a><a href="#extra">Хамза и та марбута</a><a href="#vowels">Огласовки</a><a href="#plan">Порядок изучения</a><a href="#practice">Как тренироваться</a><a href="#faq">Частые вопросы</a></aside>
       <article class="guide-content">
         <section id="principles">
           <h2>Четыре вещи, которые нужно понять в начале</h2>
@@ -36,12 +123,60 @@ const seo = {
           </div>
         </section>
 
+        <section id="table">
+          <h2>Таблица арабского алфавита</h2>
+          <p>Буквы идут в привычном словарном порядке. Русские названия приблизительные: у трёх разных букв название звучит как «ха», у двух — как «та», поэтому рядом указано арабское написание названия и описание звука.</p>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <caption>Формы в слове записаны справа налево: в начале, в середине, в конце.</caption>
+              <thead><tr><th scope="col">Буква</th><th scope="col">Название</th><th scope="col">Звук</th><th scope="col">Формы</th></tr></thead>
+              <tbody>
+                {letters.map(([letter, arabicName, name, sound, forms]) => (
+                  <tr>
+                    <th scope="row" class="ar" lang="ar" dir="rtl">{letter}</th>
+                    <td><strong>{name}</strong><br /><span class="arabic-inline" lang="ar" dir="rtl">{arabicName}</span></td>
+                    <td>{sound}</td>
+                    <td class="ar ar-small letter-forms" lang="ar" dir="rtl">{forms.split(" ").map((form) => <span>{form}</span>)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>Шесть букв — <span class="arabic-inline" lang="ar" dir="rtl">ا د ذ ر ز و</span> — соединяются только с предыдущей буквой. Поэтому у них две формы вместо четырёх, а следующая за ними буква снова пишется как в начале слова.</p>
+        </section>
+
         <section id="forms">
           <h2>Почему у одной буквы несколько форм</h2>
           <p>Возьмём букву <span class="arabic-inline" lang="ar" dir="rtl">ب</span> — «ба». Её основа остаётся узнаваемой, но соединительные линии зависят от места в слове:</p>
           <div class="arabic-example" lang="ar" dir="rtl"><span>ب</span><span>بـ</span><span>ـبـ</span><span>ـب</span></div>
           <p>Не нужно зубрить каждую форму как новую букву. Сначала запомните отличительный признак — здесь это одна точка снизу, — затем найдите букву в коротких словах. Так зрение быстрее начинает узнавать её автоматически.</p>
-          <div class="guide-note"><strong>Важно:</strong> шесть букв не соединяются со следующей буквой слева. Поэтому внутри одного слова иногда появляется визуальный разрыв — это не пробел.</div>
+          <div class="guide-note"><strong>Важно:</strong> шесть букв не соединяются со следующей буквой слева. Поэтому внутри одного слова иногда появляется визуальный разрыв — это не пробел. В слове <span class="arabic-inline" lang="ar" dir="rtl">دَرْسٌ</span> («урок») ни <span class="arabic-inline" lang="ar" dir="rtl">د</span>, ни <span class="arabic-inline" lang="ar" dir="rtl">ر</span> не тянут линию к следующей букве.</div>
+        </section>
+
+        <section id="lookalikes">
+          <h2>Похожие буквы: различайте по точкам</h2>
+          <p>Многие буквы построены на одной основе и отличаются только точками. Если учить их группами, путаница исчезает быстрее, чем при заучивании по одной.</p>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Буквы</th><th scope="col">Чем отличаются</th></tr></thead>
+              <tbody>
+                {lookalikes.map(([group, hint]) => (
+                  <tr><th scope="row" class="ar" lang="ar" dir="rtl">{group}</th><td>{hint}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="extra">
+          <h2>Хамза, та марбута и другие знаки вне списка</h2>
+          <p>В текстах встречаются знаки, которых нет среди 28 букв. Без них нельзя прочитать даже простые слова, поэтому их учат вместе с алфавитом.</p>
+          <ul class="guide-checklist">
+            <li><strong>Хамза <span class="arabic-inline" lang="ar" dir="rtl">ء</span></strong> — короткая смычка голоса, как пауза в русском «не-а». Пишется отдельно или на подставке: <span class="arabic-inline" lang="ar" dir="rtl">أ إ ؤ ئ</span>. Например, <span class="arabic-inline" lang="ar" dir="rtl">أَبٌ</span> — «отец».</li>
+            <li><strong>Та марбута <span class="arabic-inline" lang="ar" dir="rtl">ة</span></strong> — окончание, чаще всего женского рода. На паузе звучит как «а», в слитной речи — как «т»: <span class="arabic-inline" lang="ar" dir="rtl">غُرْفَةٌ</span> — «комната».</li>
+            <li><strong>Алиф максура <span class="arabic-inline" lang="ar" dir="rtl">ى</span></strong> — долгий «а» в конце слова, пишется как <span class="arabic-inline" lang="ar" dir="rtl">ي</span> без точек: <span class="arabic-inline" lang="ar" dir="rtl">عَلَى</span> — «на».</li>
+            <li><strong>Лям-алиф <span class="arabic-inline" lang="ar" dir="rtl">لا</span></strong> — когда после <span class="arabic-inline" lang="ar" dir="rtl">ل</span> идёт алиф, они сплетаются в один знак. Это не новая буква, а две знакомые вместе.</li>
+          </ul>
         </section>
 
         <section id="vowels">
@@ -53,26 +188,31 @@ const seo = {
             <div><span lang="ar" dir="rtl">بُ</span><strong>бу</strong><small>дамма</small></div>
             <div><span lang="ar" dir="rtl">بْ</span><strong>б</strong><small>сукун</small></div>
           </div>
+          <p>Кроме этих четырёх знаков есть шадда (удвоение согласного) и танвин (окончания «ун», «ан», «ин»). Все они с примерами разобраны в статье <a href="/arabic-vowels/">«Огласовки в арабском языке»</a>.</p>
           <p>Acrab показывает полную огласовку в словах, примерах и упражнениях, поэтому начинающему не приходится угадывать чтение.</p>
         </section>
 
         <section id="plan">
           <h2>В каком порядке учить буквы</h2>
+          <p>Словарный порядок удобен для поиска, но не для запоминания. Легче идти от простых и частых букв к редким звукам, а похожие буквы брать парами.</p>
           <ol class="learning-steps compact-steps">
             <li><div><strong>Слушайте звук и смотрите на признак</strong><p>Форма, точки, место образования звука.</p></div></li>
             <li><div><strong>Найдите букву в трёх позициях</strong><p>В начале, середине и конце короткого слова.</p></div></li>
             <li><div><strong>Добавьте огласовки</strong><p>Прочитайте слоги с «а», «и», «у» и без короткой гласной.</p></div></li>
             <li><div><strong>Смешайте с уже знакомыми буквами</strong><p>Читайте новые слова, а не повторяйте одну строку по памяти.</p></div></li>
           </ol>
+          <p>В Acrab алфавит идёт именно так: сначала <span class="arabic-inline" lang="ar" dir="rtl">ب م ا</span>, затем <span class="arabic-inline" lang="ar" dir="rtl">ت ن ل</span>, первые слова с сукуном и танвином, долгие гласные с <span class="arabic-inline" lang="ar" dir="rtl">و</span> и <span class="arabic-inline" lang="ar" dir="rtl">ي</span>. Потом идут пары: <span class="arabic-inline" lang="ar" dir="rtl">د ر</span>, <span class="arabic-inline" lang="ar" dir="rtl">ك س</span>, гортанные <span class="arabic-inline" lang="ar" dir="rtl">ه ح</span> и <span class="arabic-inline" lang="ar" dir="rtl">ع غ</span>. Последними — эмфатические <span class="arabic-inline" lang="ar" dir="rtl">ص ض ط ظ</span> и чтение с шаддой.</p>
         </section>
 
         <section id="practice">
           <h2>Как тренироваться без перегрузки</h2>
           <ul class="guide-checklist"><li>Берите небольшую группу похожих букв и сравнивайте их точки.</li><li>Читайте вслух, затем сверяйтесь с озвучкой.</li><li>Пишите рукой хотя бы одну строку: движение помогает заметить соединения.</li><li>Возвращайтесь к трудным буквам внутри новых слов, а не отдельными карточками.</li></ul>
-          <div class="guide-cta"><div><h3>Пройдите алфавит по шагам</h3><p>В первых бесплатных главах Acrab буквы сразу соединяются со звуком, чтением и упражнениями.</p></div><div class="guide-cta-actions"><a class="button button-primary" href="https://apps.apple.com/ru/app/id6763663680" target="_blank" rel="noopener">App Store</a><a class="button button-secondary" href="https://www.rustore.ru/catalog/app/com.acrab" target="_blank" rel="noopener">RuStore</a><a class="button button-secondary" href="https://play.google.com/store/apps/details?id=com.acrab.arabic" target="_blank" rel="noopener">Google Play</a></div></div>
+          <GuideCta title="Пройдите алфавит по шагам" text="В первых бесплатных главах Acrab буквы сразу соединяются со звуком, чтением и упражнениями." />
         </section>
+
+        <GuideFaq items={faq} />
       </article>
     </div>
 
-    <nav class="related-guides" aria-label="Другие руководства"><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a><a href="/fusha/"><span>Следующий вопрос</span><strong>Что такое фусха →</strong></a><a href="/arabic-app/"><span>Практика</span><strong>Как выбрать приложение →</strong></a></nav>
+    <nav class="related-guides" aria-label="Другие руководства"><a href="/arabic-vowels/"><span>Следующий шаг</span><strong>Огласовки в арабском →</strong></a><a href="/sun-moon-letters/"><span>Первое правило чтения</span><strong>Солнечные и лунные буквы →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
 </GuideLayout>

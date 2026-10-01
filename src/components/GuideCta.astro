@@ -1,0 +1,20 @@
+---
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from "../scripts/store-redirect-model";
+import { RUSTORE_URL } from "../seo/schema";
+
+interface Props {
+  title: string;
+  text: string;
+}
+
+const { title, text } = Astro.props;
+---
+
+<div class="guide-cta">
+  <div><h3>{title}</h3><p>{text}</p></div>
+  <div class="guide-cta-actions">
+    <a class="button button-primary" href={APP_STORE_URL} target="_blank" rel="noopener">App Store</a>
+    <a class="button button-secondary" href={RUSTORE_URL} target="_blank" rel="noopener">RuStore</a>
+    <a class="button button-secondary" href={GOOGLE_PLAY_URL} target="_blank" rel="noopener">Google Play</a>
+  </div>
+</div>

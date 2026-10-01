@@ -15,6 +15,7 @@ Usage::
 from __future__ import annotations
 
 import html
+import json
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -34,6 +35,8 @@ REQUIRED_ROUTES = {
     "/arabic-alphabet": "arabic-alphabet/index.html",
     "/fusha": "fusha/index.html",
     "/arabic-app": "arabic-app/index.html",
+    "/arabic-vowels": "arabic-vowels/index.html",
+    "/sun-moon-letters": "sun-moon-letters/index.html",
     "/buy": "buy/index.html",
     "/support": "support/index.html",
     "/privacy": "privacy/index.html",
@@ -53,7 +56,18 @@ REQUIRED_FILES = (
     "robots.txt",
     "sitemap.xml",
     "404.html",
+    "llms.txt",
+    "favicon.ico",
     "assets/acrab-app-icon.png",
+)
+
+GUIDE_ROUTES = (
+    "/learn-arabic",
+    "/arabic-alphabet",
+    "/arabic-vowels",
+    "/sun-moon-letters",
+    "/fusha",
+    "/arabic-app",
 )
 
 # These are links that do not identify a file in the generated site.
@@ -283,6 +297,33 @@ class SiteChecker:
         if not any('"@type":"MobileApplication"' in script.replace(" ", "") for script in scripts):
             self.fail("index.html: нет структурированных данных MobileApplication")
 
+    def check_structured_data(self) -> None:
+        """Every JSON-LD block must parse; guides carry Article, crumbs and FAQ."""
+
+        for path in self.html_files():
+            for block in SCRIPT_JSONLD_RE.findall(path.read_text(encoding="utf-8")):
+                try:
+                    json.loads(block)
+                except json.JSONDecodeError as error:
+                    self.fail(f"{path.relative_to(self.site_root)}: невалидный JSON-LD ({error})")
+
+        for route in GUIDE_ROUTES:
+            path = self.site_root / REQUIRED_ROUTES[route]
+            if not path.is_file():
+                continue
+            types: set[str] = set()
+            for block in SCRIPT_JSONLD_RE.findall(path.read_text(encoding="utf-8")):
+                try:
+                    data = json.loads(block)
+                except json.JSONDecodeError:
+                    continue
+                types.add(str(data.get("@type")))
+                if data.get("@type") == "Article" and data.get("mainEntityOfPage") != self.canonical_url(route):
+                    self.fail(f"{REQUIRED_ROUTES[route]}: Article указывает не на свой canonical")
+            for required in ("Article", "BreadcrumbList", "FAQPage"):
+                if required not in types:
+                    self.fail(f"{REQUIRED_ROUTES[route]}: нет JSON-LD {required}")
+
     def check_crawling_files(self) -> None:
         robots_path = self.site_root / "robots.txt"
         sitemap_path = self.site_root / "sitemap.xml"
@@ -397,6 +438,7 @@ class SiteChecker:
             self.check_retired_urls()
             self.check_search_metadata()
             self.check_home_structured_data()
+            self.check_structured_data()
             self.check_crawling_files()
             self.check_buy_smoke()
             self.check_junk()

@@ -1,0 +1,150 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Солнечные и лунные буквы в арабском: как читать артикль | Acrab",
+  "description": "Солнечные и лунные буквы арабского алфавита: как читается артикль الـ, списки 14 и 14 букв, примеры «аш-шамсу» и «аль-камару», частые ошибки.",
+  "canonical": "https://acrab.ru/sun-moon-letters/",
+  "robots": "index, follow, max-image-preview:large",
+  "ogTitle": "Солнечные и лунные буквы",
+  "ogDescription": "Когда артикль звучит «аль», а когда «л» сливается со следующей буквой.",
+  "ogType": "article",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Урок теории по арабскому языку в Acrab",
+  "twitterCard": "summary_large_image"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Солнечные и лунные буквы в арабском языке",
+  description: seo.description,
+  path: "/sun-moon-letters/",
+  image: seo.ogImage,
+  datePublished: "2026-10-01",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Как учить арабский", path: "/learn-arabic/" },
+    { name: "Солнечные и лунные буквы", path: "/sun-moon-letters/" },
+  ],
+};
+
+const examples = [
+  ["الشَّمْسُ", "аш-шамсу", "солнце", "солнечная ش"],
+  ["الرَّجُلُ", "ар-раджулу", "мужчина", "солнечная ر"],
+  ["السَّمَاءُ", "ас-самау", "небо", "солнечная س"],
+  ["النَّهَارُ", "ан-нахару", "день", "солнечная ن"],
+  ["الْقَمَرُ", "аль-камару", "луна", "лунная ق"],
+  ["الْبَحْرُ", "аль-бахру", "море", "лунная ب"],
+  ["الْكَلْبُ", "аль-кальбу", "собака", "лунная ك"],
+  ["الْجَبَلُ", "аль-джабалу", "гора", "лунная ج"],
+] as const;
+
+const faq = [
+  {
+    question: "Сколько в арабском солнечных и лунных букв?",
+    answer: "Поровну: 14 солнечных и 14 лунных. Солнечные: ت ث د ذ ر ز س ش ص ض ط ظ ل ن. Лунные: ا ب ج ح خ ع غ ف ق ك م ه و ي.",
+  },
+  {
+    question: "Как быстро запомнить солнечные буквы?",
+    answer: "Почти все солнечные буквы произносятся передней частью языка у зубов или сразу за ними: т, д, с, з, ш, р, л, н и их пары. Если при звуке кончик языка работает у зубов, буква, скорее всего, солнечная. Главное исключение — ج: язык тоже впереди, но буква лунная.",
+  },
+  {
+    question: "Меняется ли написание артикля перед солнечной буквой?",
+    answer: "Нет. Буква ل пишется всегда, меняется только чтение. В тексте с огласовками это видно по знакам: перед лунной буквой на ل стоит сукун, перед солнечной на ل знака нет, а на следующей букве стоит шадда.",
+  },
+  {
+    question: "Почему в начале фразы «аль», а в середине «ль»?",
+    answer: "Алиф артикля — соединительная хамза. В начале фразы он звучит как «а», а в середине выпадает, и артикль сливается с предыдущим словом: فِي الْبَيْتِ читается «фи-ль-байти». На письме алиф при этом остаётся.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+    <header class="guide-hero">
+      <p class="eyebrow">Первое правило чтения</p>
+      <h1 class="page-title">Солнечные и лунные буквы</h1>
+      <p class="guide-lead">Определённый артикль <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> пишется одинаково, но звучит по-разному. Перед <strong>лунными</strong> буквами слышно «аль», а перед <strong>солнечными</strong> звук «л» пропадает, и первая буква слова удваивается.</p>
+      <div class="arabic-example" lang="ar" dir="rtl"><span>الشَّمْسُ</span><span>الْقَمَرُ</span></div>
+      <div class="guide-answer"><strong>Коротко:</strong> 14 солнечных букв «поглощают» звук «л» артикля — <span class="arabic-inline" lang="ar" dir="rtl">الشَّمْسُ</span> читается «аш-шамсу». Перед 14 лунными «л» звучит полностью — <span class="arabic-inline" lang="ar" dir="rtl">الْقَمَرُ</span> читается «аль-камару».</div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#article">Что такое артикль الـ</a><a href="#groups">Списки букв</a><a href="#examples">Примеры чтения</a><a href="#writing">Как это видно на письме</a><a href="#mistakes">Частые ошибки</a><a href="#faq">Частые вопросы</a></aside>
+      <article class="guide-content">
+        <section id="article">
+          <h2>Что такое артикль <span lang="ar" dir="rtl">الـ</span></h2>
+          <p>Артикль <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> работает как английское the или русское «тот самый»: он делает слово определённым, известным собеседнику. Пишется слитно со словом.</p>
+          <p>Отдельного неопределённого артикля в арабском нет. Неопределённость показывает танвин — окончание «ун», «ан», «ин». Поэтому артикль и танвин в одном слове не встречаются: <span class="arabic-inline" lang="ar" dir="rtl">بَحْرٌ</span> — «море, какое-то море», <span class="arabic-inline" lang="ar" dir="rtl">الْبَحْرُ</span> — «то самое море».</p>
+        </section>
+
+        <section id="groups">
+          <h2>Списки солнечных и лунных букв</h2>
+          <p>Буквы алфавита делятся пополам. Названия групп взяты из двух слов-образцов: <span class="arabic-inline" lang="ar" dir="rtl">شَمْسٌ</span> («солнце») начинается с солнечной буквы, <span class="arabic-inline" lang="ar" dir="rtl">قَمَرٌ</span> («луна») — с лунной.</p>
+          <div class="letter-groups">
+            <div>
+              <strong>Солнечные — «л» сливается</strong>
+              <p class="letters" lang="ar" dir="rtl">ت ث د ذ ر ز س ش ص ض ط ظ ل ن</p>
+              <p>Звук «л» артикля не произносится, первая буква слова звучит дважды.</p>
+            </div>
+            <div>
+              <strong>Лунные — «л» звучит</strong>
+              <p class="letters" lang="ar" dir="rtl">ا ب ج ح خ ع غ ف ق ك م ه و ي</p>
+              <p>Артикль читается полностью, «аль», первая буква слова не меняется.</p>
+            </div>
+          </div>
+          <div class="guide-note"><strong>Подсказка:</strong> почти все солнечные буквы произносятся кончиком языка у зубов. Исключение, которое стоит запомнить отдельно, — <span class="arabic-inline" lang="ar" dir="rtl">ج</span>: она лунная.</div>
+        </section>
+
+        <section id="examples">
+          <h2>Примеры чтения</h2>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Слово</th><th scope="col">Чтение</th><th scope="col">Перевод</th><th scope="col">Почему</th></tr></thead>
+              <tbody>
+                {examples.map(([word, reading, translation, reason]) => (
+                  <tr>
+                    <th scope="row" class="ar" lang="ar" dir="rtl">{word}</th>
+                    <td><strong>{reading}</strong></td>
+                    <td>{translation}</td>
+                    <td>{reason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">ل</span> тоже солнечная. Когда слово само начинается с <span class="arabic-inline" lang="ar" dir="rtl">ل</span>, две «л» сливаются в одну удвоенную: <span class="arabic-inline" lang="ar" dir="rtl">اللَّيْلُ</span> — «аль-лайлу», «ночь».</p>
+        </section>
+
+        <section id="writing">
+          <h2>Как это видно на письме</h2>
+          <p>Буквы артикля пишутся всегда, даже когда «л» не слышна. Подсказку дают огласовки:</p>
+          <ul class="guide-checklist">
+            <li>перед лунной буквой на <span class="arabic-inline" lang="ar" dir="rtl">ل</span> стоит сукун: <span class="arabic-inline" lang="ar" dir="rtl">الْقَمَرُ</span>;</li>
+            <li>перед солнечной буквой на <span class="arabic-inline" lang="ar" dir="rtl">ل</span> знака нет, а на следующей букве стоит шадда: <span class="arabic-inline" lang="ar" dir="rtl">الشَّمْسُ</span>.</li>
+          </ul>
+          <p>В начале фразы алиф артикля читается как «а». В середине фразы он выпадает, и артикль сливается с предыдущим словом: <span class="arabic-inline" lang="ar" dir="rtl">فِي الْبَيْتِ</span> — «фи-ль-байти», «в доме»; <span class="arabic-inline" lang="ar" dir="rtl">إِلَى السُّوقِ</span> — «илас-суки», «на рынок».</p>
+          <p>Про сукун, шадду и танвин подробно — в статье <a href="/arabic-vowels/">«Огласовки в арабском языке»</a>.</p>
+        </section>
+
+        <section id="mistakes">
+          <h2>Частые ошибки</h2>
+          <div class="mistake-list">
+            <div><strong>Читать «ал-шамс»</strong><p>Перед солнечной буквой «л» не произносится. Правильно — «аш-шамсу».</p></div>
+            <div><strong>Удваивать лунную букву</strong><p>После лунной буквы удвоения нет: <span class="arabic-inline" lang="ar" dir="rtl">الْبَحْرُ</span> — «аль-бахру», без двойного «б».</p></div>
+            <div><strong>Ставить артикль вместе с танвином</strong><p>Слово либо определённое, с <span class="arabic-inline" lang="ar" dir="rtl">الـ</span>, либо неопределённое, с танвином. Вместе — ошибка.</p></div>
+            <div><strong>Делать паузу перед артиклем</strong><p>В середине фразы слово с артиклем читается слитно с предыдущим, без «а» и без остановки.</p></div>
+          </div>
+          <p>В Acrab это правило разбирается в третьей главе программы, она входит в бесплатную часть. После теории по-русски идут упражнения со словами из обеих групп.</p>
+          <GuideCta title="Отработайте артикль на слух" text="Теория по-русски, озвучка слов и упражнения на чтение — в первых шести бесплатных главах." />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" aria-label="Другие руководства"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/arabic-vowels/"><span>Знаки чтения</span><strong>Огласовки в арабском →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+</GuideLayout>

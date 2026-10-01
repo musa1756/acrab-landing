@@ -2,6 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { articleSchema, breadcrumbSchema, type GuideMeta } from "../seo/schema";
 
 interface Props {
   title: string;
@@ -15,13 +16,25 @@ interface Props {
   ogImageAlt?: string;
   twitterCard?: "summary" | "summary_large_image";
   csp?: string;
+  /** Статья: крошки на странице и Article + BreadcrumbList в разметке. */
+  guide: GuideMeta;
 }
-const props = Astro.props;
+const { guide, ...props } = Astro.props;
+const crumbs = guide.crumbs;
 ---
 
-<BaseLayout {...props}>
+<BaseLayout {...props} jsonLd={[articleSchema(guide), breadcrumbSchema(crumbs)]}>
   <a class="skip-link" href="#main">К содержанию</a>
   <Header />
-  <main id="main" class="guide-page"><slot /></main>
+  <main id="main" class="guide-page">
+    <nav class="breadcrumbs" aria-label="Хлебные крошки">
+      {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
+        <Fragment><a href={crumb.path}>{crumb.name}</a><span aria-hidden="true">/</span></Fragment>
+      ) : (
+        <span>{crumb.name}</span>
+      ))}
+    </nav>
+    <slot />
+  </main>
   <Footer variant="guide" />
 </BaseLayout>

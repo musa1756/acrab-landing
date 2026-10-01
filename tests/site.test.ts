@@ -17,6 +17,8 @@ const sourceRoutes = {
   "/arabic-alphabet": "src/pages/arabic-alphabet/index.astro",
   "/fusha": "src/pages/fusha/index.astro",
   "/arabic-app": "src/pages/arabic-app/index.astro",
+  "/arabic-vowels": "src/pages/arabic-vowels/index.astro",
+  "/sun-moon-letters": "src/pages/sun-moon-letters/index.astro",
   "/buy": "src/pages/buy/index.astro",
   "/support": "src/pages/support/index.astro",
   "/privacy": "src/pages/privacy/index.astro",
@@ -25,7 +27,8 @@ const sourceRoutes = {
   "/get": "src/pages/get/index.astro",
 } as const;
 
-const indexableRoutes = ["/", "/about", "/learn-arabic", "/arabic-alphabet", "/fusha", "/arabic-app", "/support", "/privacy"] as const;
+const indexableRoutes = ["/", "/about", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app", "/support", "/privacy"] as const;
+const guideRoutes = ["/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/fusha", "/arabic-app"] as const;
 const noindexRoutes = ["/buy", "/offer", "/consent", "/get"] as const;
 
 describe("generated site", () => {
@@ -61,6 +64,27 @@ describe("generated site", () => {
     const home = readSource(sourceRoutes["/"]);
     expect(home).toContain('type="application/ld+json"');
     expect(home).toContain('"@type":"MobileApplication"');
+  });
+
+  test("gives every guide article metadata and the same canonical path", () => {
+    for (const route of guideRoutes) {
+      const source = readSource(sourceRoutes[route]);
+      expect(source, route).toContain("<GuideLayout {...seo} guide={guide}>");
+      expect(source, route).toContain(`path: "${route}/"`);
+      expect(source, route).toMatch(/datePublished: "\d{4}-\d{2}-\d{2}"/);
+      expect(source, route).toMatch(/dateModified: "\d{4}-\d{2}-\d{2}"/);
+      expect(source, route).toContain("<GuideFaq items={faq} />");
+    }
+  });
+
+  test("lists every indexable route in the sitemap and llms.txt", () => {
+    const sitemap = readSource("public/sitemap.xml");
+    const llms = readSource("public/llms.txt");
+    for (const route of indexableRoutes) {
+      const url = `https://acrab.ru${route === "/" ? "/" : `${route}/`}`;
+      expect(sitemap, route).toContain(`<loc>${url}</loc>`);
+      if (route !== "/privacy") expect(llms, route).toContain(url);
+    }
   });
 
   test("keeps payment shell controls for a browser smoke", () => {

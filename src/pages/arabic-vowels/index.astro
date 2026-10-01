@@ -1,0 +1,167 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Огласовки в арабском языке: фатха, касра, дамма, сукун | Acrab",
+  "description": "Что такое огласовки (харакаты) в арабском: фатха, касра, дамма, сукун, шадда и танвин с примерами чтения, долгие гласные и когда огласовки не пишут.",
+  "canonical": "https://acrab.ru/arabic-vowels/",
+  "robots": "index, follow, max-image-preview:large",
+  "ogTitle": "Огласовки в арабском языке",
+  "ogDescription": "Фатха, касра, дамма, сукун, шадда и танвин — с примерами и чтением по-русски.",
+  "ogType": "article",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Урок теории по арабскому языку в Acrab",
+  "twitterCard": "summary_large_image"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Огласовки в арабском языке",
+  description: seo.description,
+  path: "/arabic-vowels/",
+  image: seo.ogImage,
+  datePublished: "2026-10-01",
+  dateModified: "2026-10-01",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Как учить арабский", path: "/learn-arabic/" },
+    { name: "Огласовки", path: "/arabic-vowels/" },
+  ],
+};
+
+const marks = [
+  ["بَ", "Фатха", "косая чёрточка над буквой", "«а»", "كَتَبَ", "катаба — он написал"],
+  ["بِ", "Касра", "косая чёрточка под буквой", "«и»", "بِنْتٌ", "бинтун — девочка"],
+  ["بُ", "Дамма", "маленькая вав над буквой", "«у»", "هُوَ", "хуа — он"],
+  ["بْ", "Сукун", "маленький кружок над буквой", "гласного нет", "قَلْبٌ", "калбун — сердце"],
+  ["بّ", "Шадда", "знак, похожий на маленькую «w»", "согласный удваивается", "مُعَلِّمٌ", "муаллимун — учитель"],
+] as const;
+
+const faq = [
+  {
+    question: "Что такое харакат?",
+    answer: "Харакат — арабское название огласовок, буквально «движения». Так называют знаки фатха, касра и дамма, а вместе с ними в учебниках разбирают сукун, шадду и танвин. В русских материалах встречаются оба слова: «огласовки» и «харакаты».",
+  },
+  {
+    question: "Зачем нужны огласовки, если носители читают без них?",
+    answer: "Носитель знает слово и его грамматическую форму, поэтому восстанавливает гласные по контексту. Начинающему этих знаний ещё не хватает: без огласовок одно и то же написание можно прочитать по-разному. Огласовки показывают точное чтение, пока словарь и грамматика не станут привычными.",
+  },
+  {
+    question: "Как читать танвин в конце предложения?",
+    answer: "На паузе, то есть в конце фразы, окончания «ун» и «ин» не произносятся, а «ан» превращается в долгое «а». В слитной речи танвин читается полностью: كِتَابٌ — «китабун», но в конце фразы — «китаб».",
+  },
+  {
+    question: "Чем сукун отличается от шадды?",
+    answer: "Сукун говорит, что после согласного нет гласного. Шадда говорит, что согласный звучит дважды: первый раз без гласного, второй — с гласным, который стоит при шадде. По сути, шадда заменяет запись «буква с сукуном + та же буква».",
+  },
+  {
+    question: "Когда переходить к текстам без огласовок?",
+    answer: "Когда знакомые слова вы узнаёте сразу, а грамматические окончания понимаете из контекста. Удобно делать это постепенно: сначала убирать огласовки только у хорошо знакомых слов и оставлять их у новых.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+    <header class="guide-hero">
+      <p class="eyebrow">Чтение без угадывания</p>
+      <h1 class="page-title">Огласовки в арабском языке</h1>
+      <p class="guide-lead"><strong>Огласовки</strong> (харакаты) — маленькие знаки над и под буквами. Они показывают короткие гласные, их отсутствие и удвоение согласного. Буквы арабского алфавита передают в основном согласные, поэтому без огласовок новое слово можно прочитать по-разному.</p>
+      <div class="fusha-word" lang="ar" dir="rtl"><span>حَرَكَاتٌ</span><small><bdi lang="ru">харакатун — огласовки, буквально «движения»</bdi></small></div>
+      <div class="guide-answer"><strong>Коротко:</strong> фатха — «а», касра — «и», дамма — «у»; сукун означает, что гласного нет; шадда удваивает согласный; танвин даёт окончания «ан», «ин», «ун».</div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>В этой статье</strong><a href="#short">Три короткие гласные</a><a href="#marks">Все знаки в таблице</a><a href="#sukun">Сукун</a><a href="#shadda">Шадда</a><a href="#tanwin">Танвин</a><a href="#long">Долгие гласные</a><a href="#without">Тексты без огласовок</a><a href="#faq">Частые вопросы</a></aside>
+      <article class="guide-content">
+        <section id="short">
+          <h2>Три короткие гласные: фатха, касра, дамма</h2>
+          <p>В арабском всего три коротких гласных. Каждая пишется знаком при той букве, после которой звучит. Сначала произносится согласный, затем гласный: <span class="arabic-inline" lang="ar" dir="rtl">بَ</span> — «ба», а не «аб».</p>
+          <div class="vowel-row vowel-row-3" aria-label="Три короткие гласные">
+            <div><span lang="ar" dir="rtl">بَ</span><strong>ба</strong><small>фатха — над буквой</small></div>
+            <div><span lang="ar" dir="rtl">بِ</span><strong>би</strong><small>касра — под буквой</small></div>
+            <div><span lang="ar" dir="rtl">بُ</span><strong>бу</strong><small>дамма — над буквой</small></div>
+          </div>
+          <p>Фатха после некоторых букв звучит ближе к «а», после других — ближе к «э» или к глубокому «о». Начинающему не нужно заучивать эти оттенки: они приходят вместе с озвучкой слов.</p>
+        </section>
+
+        <section id="marks">
+          <h2>Все основные знаки в одной таблице</h2>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Знак</th><th scope="col">Название</th><th scope="col">Что значит</th><th scope="col">Пример</th></tr></thead>
+              <tbody>
+                {marks.map(([mark, name, shape, sound, example, reading]) => (
+                  <tr>
+                    <th scope="row" class="ar" lang="ar" dir="rtl">{mark}</th>
+                    <td><strong>{name}</strong><br /><small>{shape}</small></td>
+                    <td>{sound}</td>
+                    <td><span class="arabic-inline" lang="ar" dir="rtl">{example}</span><br /><small>{reading}</small></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="sukun">
+          <h2>Сукун: гласного нет</h2>
+          <p>Сукун — маленький кружок над буквой. Он означает, что после согласного гласного нет и звук сразу переходит к следующей букве. Именно сукун закрывает слог.</p>
+          <p>В слове <span class="arabic-inline" lang="ar" dir="rtl">بِنْتٌ</span> после <span class="arabic-inline" lang="ar" dir="rtl">نْ</span> сразу звучит <span class="arabic-inline" lang="ar" dir="rtl">ت</span>: «бин-тун». В <span class="arabic-inline" lang="ar" dir="rtl">قَلْبٌ</span> — «кал-бун», «сердце».</p>
+          <div class="guide-note"><strong>Подсказка:</strong> читайте слово по слогам справа налево. Буква с сукуном всегда заканчивает слог, а следующая буква начинает новый.</div>
+        </section>
+
+        <section id="shadda">
+          <h2>Шадда: удвоенный согласный</h2>
+          <p>Шадда похожа на маленькую латинскую «w» над буквой. Она означает, что согласный звучит дважды: первая половина закрывает слог, вторая начинает следующий. На удвоенном звуке нужно задержаться.</p>
+          <div class="arabic-example" lang="ar" dir="rtl"><span>مُعَلِّمٌ</span><span>أُمٌّ</span></div>
+          <p><span class="arabic-inline" lang="ar" dir="rtl">مُعَلِّمٌ</span> читается «му-аль-ли-мун» — «учитель». В <span class="arabic-inline" lang="ar" dir="rtl">أُمٌّ</span> («мать») слышны и удвоение, и танвин: «ум-мун».</p>
+          <p>Шадда стоит вместе с огласовкой: фатха и дамма пишутся над шаддой, касра — под буквой или прямо под шаддой. Гласный при шадде относится ко второй, «открывающей» половине удвоенного звука.</p>
+        </section>
+
+        <section id="tanwin">
+          <h2>Танвин: окончания «ун», «ан», «ин»</h2>
+          <p>Танвин — удвоенный знак гласной в конце слова. Он добавляет звук «н» и обычно показывает, что слово неопределённое. Это окончание, а не часть корня.</p>
+          <div class="vowel-row vowel-row-3" aria-label="Три вида танвина">
+            <div><span lang="ar" dir="rtl">كِتَابٌ</span><strong>китабун</strong><small>танвин даммы</small></div>
+            <div><span lang="ar" dir="rtl">كِتَابًا</span><strong>китабан</strong><small>танвин фатхи</small></div>
+            <div><span lang="ar" dir="rtl">كِتَابٍ</span><strong>китабин</strong><small>танвин касры</small></div>
+          </div>
+          <p>Танвин фатхи обычно пишется вместе с дополнительным алифом: <span class="arabic-inline" lang="ar" dir="rtl">كِتَابًا</span>. После та марбуты алиф не добавляют: <span class="arabic-inline" lang="ar" dir="rtl">غُرْفَةً</span>. Какой из трёх танвинов поставить, решает падеж — его разбирают позже, в грамматике.</p>
+          <p>Слово с артиклем <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> танвина не получает: <span class="arabic-inline" lang="ar" dir="rtl">كِتَابٌ</span> — «книга, какая-то книга», <span class="arabic-inline" lang="ar" dir="rtl">الْكِتَابُ</span> — «книга, о которой уже знаем». Подробнее об артикле — в статье про <a href="/sun-moon-letters/">солнечные и лунные буквы</a>.</p>
+        </section>
+
+        <section id="long">
+          <h2>Долгие гласные — это уже буквы</h2>
+          <p>Огласовки передают только короткие звуки. Долгие «а», «и», «у» пишутся буквами: огласовка задаёт гласный, а буква после неё его растягивает.</p>
+          <div class="guide-table-scroll">
+            <table class="guide-table">
+              <thead><tr><th scope="col">Сочетание</th><th scope="col">Звук</th><th scope="col">Пример</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="ar" lang="ar" dir="rtl">ـَا</th><td>долгий «а»: фатха и алиф</td><td><span class="arabic-inline" lang="ar" dir="rtl">بَابٌ</span> — «бабун», дверь</td></tr>
+                <tr><th scope="row" class="ar" lang="ar" dir="rtl">ـِي</th><td>долгий «и»: касра и йа</td><td><span class="arabic-inline" lang="ar" dir="rtl">كَبِيرٌ</span> — «кабирун», большой</td></tr>
+                <tr><th scope="row" class="ar" lang="ar" dir="rtl">ـُو</th><td>долгий «у»: дамма и вав</td><td><span class="arabic-inline" lang="ar" dir="rtl">نُورٌ</span> — «нурун», свет</td></tr>
+                <tr><th scope="row" class="ar" lang="ar" dir="rtl">ـَوْ</th><td>«ау»: фатха и вав с сукуном</td><td><span class="arabic-inline" lang="ar" dir="rtl">يَوْمٌ</span> — «яумун», день</td></tr>
+                <tr><th scope="row" class="ar" lang="ar" dir="rtl">ـَيْ</th><td>«ай»: фатха и йа с сукуном</td><td><span class="arabic-inline" lang="ar" dir="rtl">بَيْتٌ</span> — «байтун», дом</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Если у <span class="arabic-inline" lang="ar" dir="rtl">و</span> или <span class="arabic-inline" lang="ar" dir="rtl">ي</span> своя огласовка, они звучат как согласные: <span class="arabic-inline" lang="ar" dir="rtl">وَ</span> — как английское w, <span class="arabic-inline" lang="ar" dir="rtl">يَ</span> — как «я».</p>
+        </section>
+
+        <section id="without">
+          <h2>Где огласовки пишут, а где нет</h2>
+          <p>Полная огласовка стоит в учебниках, детских книгах, словарях и поэзии — везде, где важно точное чтение. В новостях, книгах для взрослых, на вывесках и в переписке огласовки обычно опускают, оставляя их только там, где без них легко ошибиться.</p>
+          <p>Поэтому начинающему лучше сначала читать тексты с полной огласовкой и запоминать слово сразу с правильным чтением. Чтение без огласовок — отдельный навык, он появляется вместе со словарём и грамматикой.</p>
+          <p>В Acrab слова, примеры и упражнения показаны с полной огласовкой. Если нужен текст не из урока, инструмент «Огласовки» расставит знаки в любой арабской фразе.</p>
+          <GuideCta title="Читайте с огласовками с первого урока" text="Первые шесть глав Acrab доступны бесплатно и без срока: алфавит, огласовки, озвучка и упражнения." />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" aria-label="Другие руководства"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/sun-moon-letters/"><span>Следующее правило</span><strong>Солнечные и лунные буквы →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
+</GuideLayout>

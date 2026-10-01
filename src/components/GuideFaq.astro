@@ -1,0 +1,22 @@
+---
+import { faqSchema, type FaqItem } from "../seo/schema";
+
+interface Props {
+  items: FaqItem[];
+  title?: string;
+}
+
+// Вопросы на странице и FAQPage в разметке строятся из одного списка,
+// поэтому разойтись не могут.
+const { items, title = "Частые вопросы" } = Astro.props;
+---
+
+<section id="faq">
+  <h2>{title}</h2>
+  <div class="guide-faq">
+    {items.map((item) => (
+      <div><h3>{item.question}</h3><p>{item.answer}</p></div>
+    ))}
+  </div>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema(items))} />
+</section>

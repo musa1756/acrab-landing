@@ -57,15 +57,17 @@ bun run test:browser
 - `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
 - `src/scripts/store-redirect.ts` — платформенный redirect `/get`.
 - `src/styles/global.css` — сохранённая визуальная система и Tailwind utilities.
-- `public/assets/`, `public/robots.txt` и `public/sitemap.xml` — файлы с неизменными публичными URL.
+- `src/seo/schema.ts` — разметка schema.org: организация и сайт на главной, `Article` и `BreadcrumbList` статей (`GuideLayout` строит их из объекта `guide`), `FAQPage` вопросов.
+- `src/components/GuideFaq.astro` и `GuideCta.astro` — блок «Частые вопросы» статьи (видимый текст и `FAQPage` из одного списка) и призыв скачать с тремя магазинами.
+- `public/assets/`, `public/robots.txt`, `public/sitemap.xml`, `public/llms.txt` и `public/favicon.ico` — файлы с неизменными публичными URL. Иконки страниц — уменьшенные копии `acrab-app-icon.png` (`acrab-icon-64/120/180.png`, `acrab-icon-512.jpg`); сам файл 1024 px на 1,5 МБ сохранён по прежнему адресу, но страницы его больше не грузят.
 - `site/` — результат `bun run build`, который публикует Timeweb; коммитится вместе с исходниками.
 - `tests/` и `tools/check_site.py` — проверки исходников и готового `site/`; `e2e/payment.smoke.ts` — браузерный smoke оплаты (`bun run test:browser`).
 
 ## Маршруты и SEO
 
 Сохраняются маршруты `/`, `/about`, `/learn-arabic`, `/arabic-alphabet`,
-`/fusha`, `/arabic-app`, `/buy`, `/support`, `/privacy`, `/offer`, `/consent`,
-`/get` и `/404.html`. Сборка использует directory-style output, поэтому
+`/arabic-vowels`, `/sun-moon-letters`, `/fusha`, `/arabic-app`, `/buy`,
+`/support`, `/privacy`, `/offer`, `/consent`, `/get` и `/404.html`. Сборка использует directory-style output, поэтому
 `/buy` остаётся совместим с directory redirect на `/buy/`.
 
 `/buy`, `/offer`, `/consent` и `/get` обязаны оставаться `noindex` и не входят
@@ -74,9 +76,14 @@ bun run test:browser
 
 При добавлении индексируемого маршрута одновременно обновляются:
 
-1. страница в `src/pages/` и её SEO-поля;
-2. список URL в `public/sitemap.xml`;
-3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`.
+1. страница в `src/pages/` и её SEO-поля; статья — на `GuideLayout` с объектом `guide` и блоком `GuideFaq`;
+2. список URL в `public/sitemap.xml` и ссылка в `public/llms.txt`;
+3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`;
+4. для статьи — ссылка в блоке «Если вы только начинаете» на главной и в подвале (`Footer.astro`).
+
+При содержательной правке статьи меняются `dateModified` в её объекте `guide` и
+`lastmod` в `public/sitemap.xml`: дата видна на странице как «Обновлено» и уходит
+в разметку `Article`. Цены и числа программы в `llms.txt` сверяет `bun run test:facts`.
 
 ## Changelog
 

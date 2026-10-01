@@ -13,6 +13,8 @@ interface Props {
   viewport?: string;
   themeColor?: string | null;
   includeIcons?: boolean;
+  /** Объекты schema.org; каждый выводится отдельным JSON-LD. */
+  jsonLd?: Record<string, unknown>[];
 }
 
 const {
@@ -29,6 +31,7 @@ const {
   viewport = "width=device-width, initial-scale=1",
   themeColor = "#ffffff",
   includeIcons = true,
+  jsonLd = [],
 } = Astro.props;
 ---
 
@@ -46,5 +49,7 @@ const {
 {ogImage && <meta property="og:image" content={ogImage} />}
 {ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
 {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-{includeIcons && <link rel="icon" href="/assets/acrab-app-icon.png" />}
-{includeIcons && <link rel="apple-touch-icon" href="/assets/acrab-app-icon.png" />}
+{includeIcons && <link rel="icon" href="/favicon.ico" sizes="48x48" />}
+{includeIcons && <link rel="icon" href="/assets/acrab-icon-120.png" sizes="120x120" type="image/png" />}
+{includeIcons && <link rel="apple-touch-icon" href="/assets/acrab-icon-180.png" />}
+{jsonLd.map((data) => <script is:inline type="application/ld+json" set:html={JSON.stringify(data)} />)}

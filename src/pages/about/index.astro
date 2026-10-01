@@ -8,7 +8,7 @@ import Release from "../../components/Release.astro";
 const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Обновления Acrab" description="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель." ogType="website" ogImage="https://acrab.ru/assets/acrab-app-icon.png">
+<BaseLayout title="Обновления Acrab: что нового в приложении для арабского" description="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active="updates" />
   <main id="main">
