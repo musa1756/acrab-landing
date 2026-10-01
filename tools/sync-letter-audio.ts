@@ -10,13 +10,19 @@
  *
  *   cd website && bun run tools/sync-letter-audio.ts
  *
+ * Название буквы (`<slug>.mp3`) скрипт не трогает: в приложении буква озвучена
+ * с окончанием («залюн»), а сайту нужно название в паузальной форме («заль»).
+ * Эти 28 файлов записаны отдельно тем же голосом приложения
+ * (`mobile/scripts/generate-fusha-audio.py generate` по `arabicName` с сукуном
+ * на конце, 1 октября 2026) и лежат в git.
+ *
  * Файлы лежат в `public/assets/audio/letters/`: `<slug>.mp3` — буква,
  * `<slug>-a|i|u.mp3` — слоги, `words/<слово>.mp3` — слова-примеры.
  */
 import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { LETTERS, letterAudioFiles } from "../src/seo/letters";
+import { LETTERS, letterAudioFiles, letterAudioPath } from "../src/seo/letters";
 
 const websiteRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const audioRoot = resolve(websiteRoot, "../mobile/assets/audio");
@@ -37,6 +43,7 @@ const jobs = new Map<string, string>();
 const missing: string[] = [];
 for (const letter of LETTERS) {
   for (const { path, text } of letterAudioFiles(letter)) {
+    if (path === letterAudioPath(letter)) continue;
     const file = recordings.get(text);
     if (file) jobs.set(path, file);
     else missing.push(`${letter.slug}: нет записи для «${text}»`);
