@@ -8,7 +8,7 @@ import Release from "../../components/Release.astro";
 const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Обновления Acrab: что нового в приложении для арабского" description="Что нового в Acrab — приложении для изучения литературного арабского на русском. История обновлений: программа фусхи, огласовки, словари, аудио и AI-учитель." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="История обновлений Acrab — арабский на русском: программа фусхи, огласовки, словари, аудио и AI-учитель." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
+<BaseLayout title="Обновления Acrab: что нового в приложении для арабского" description="История версий Acrab, приложения для изучения литературного арабского на русском: книги в Библиотеке, друзья, Анки, новые уроки и исправления." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="Что изменилось в каждой версии Acrab: новинки, улучшения и исправления." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active="updates" />
   <main id="main">
@@ -16,12 +16,12 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
       <div class="page-head-inner">
         <p class="eyebrow">Обновления</p>
         <h1 class="page-title">Что нового в Acrab</h1>
-        <p class="page-lead">Каждая версия приложения — со своей датой, разбором главной новинки и списком того, что улучшилось и починилось.</p>
+        <p class="page-lead">Что изменилось в каждой версии приложения: главная новинка, улучшения и исправления.</p>
       </div>
     </div>
     <div class="changelog">
       {releases.map((release) => <Release release={release} />)}
-      <p class="changelog-note">Здесь публикуются заметки начиная с версии 2.2. История более ранних версий доступна в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
+      <p class="changelog-note">Здесь собраны версии начиная с 2.2. Те же заметки есть в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
     </div>
   </main>
   <Footer />

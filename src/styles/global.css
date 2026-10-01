@@ -765,8 +765,10 @@ code {
 }
 
 /* Tool tiles rebuilt in CSS rather than screenshotted: crisp at any width,
-   and the grid reflows instead of scrolling. */
-.tool-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+   and the grid reflows instead of scrolling. Nine tiles in three rows mirror
+   the three groups of the app's Tools tab; the gradients are toolAccent and
+   TOOL_FEATURES from mobile/src/features/tools. */
+.tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .tool {
   display: flex;
   min-height: 148px;
@@ -782,14 +784,15 @@ code {
 .tool-ar { font-family: var(--arabic); font-size: 16px; line-height: 1.4; opacity: 0.72; }
 .tool-name { font-size: 16px; font-weight: 650; letter-spacing: -0.015em; }
 .tool-sub { margin-top: 3px; font-size: 13.5px; line-height: 1.4; opacity: 0.86; }
-.tool-translate { background: linear-gradient(150deg, #b263ea, #9448cf); }
-.tool-voice { background: linear-gradient(150deg, #5b7cf5, #3f5fe0); }
-.tool-image { background: linear-gradient(150deg, #f4a04d, #ef7f2e); }
-.tool-vocab { background: linear-gradient(150deg, #d76285, #c94a66); }
-.tool-examples { background: linear-gradient(150deg, #4aa3dd, #2f86c4); }
-.tool-root { background: linear-gradient(150deg, #a09a3f, #4f8c4d); }
-.tool-conj { background: linear-gradient(150deg, #83c882, #57a957); }
-.tool-harakat { background: linear-gradient(150deg, #39b3a4, #1f9184); }
+.tool-translate { background: linear-gradient(150deg, #bf73e6, #8c47c7); }
+.tool-harakat { background: linear-gradient(150deg, #d58f40, #854a26); }
+.tool-voice { background: linear-gradient(150deg, #5c8ef7, #3d59d9); }
+.tool-vocab { background: linear-gradient(150deg, #e66b85, #b93f62); }
+.tool-examples { background: linear-gradient(150deg, #4da0bf, #2e6b9e); }
+.tool-image { background: linear-gradient(150deg, #fa9d52, #ed6b3d); }
+.tool-anki { background: linear-gradient(150deg, #e8c987, #c99738); }
+.tool-conj { background: linear-gradient(150deg, #8fd16b, #4da652); }
+.tool-root { background: linear-gradient(150deg, #92732e, #478547); }
 
 /* Five tool screens in a snap-scrolling rail — a grid of them would push the
    section past two screens of scroll. */
@@ -1080,7 +1083,6 @@ code {
 @media (max-width: 1000px) {
   .about-map { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .about-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 860px) {
@@ -1117,6 +1119,8 @@ code {
   .about-card-shot { aspect-ratio: 1 / 1; }
   .drill-grid { grid-template-columns: minmax(0, 1fr); }
   .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Same as the app: «Перевод» takes the full row, the other eight pair up. */
+  .tool-translate { grid-column: 1 / -1; }
   .about-plans { grid-template-columns: minmax(0, 1fr); }
   .shot-row { grid-auto-columns: 196px; }
   .about-cta .store-links { grid-template-columns: 1fr 1fr; }
@@ -1238,7 +1242,7 @@ code {
   .brand { justify-self: center; }
   /* Five tabs have to fit a 343 pt row (iPhone SE) without wrapping. */
   /* На самых узких экранах строка прокручивается, а не обрезается. */
-  .site-nav { justify-content: safe center; gap: 12px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .site-nav { justify-content: safe center; gap: clamp(6px, 2.4vw, 12px); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
   .site-nav a { padding: 10px 1px 12px; font-size: 14px; }
   .nav-full { display: none; }
   .nav-short { display: inline; }

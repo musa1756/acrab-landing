@@ -10,17 +10,17 @@ const { variant = "full" } = Astro.props;
 const isFull = variant === "full";
 const legalLinks = {
   offer: [
-    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/support", label: "Помощь и контакты" },
     { href: "/privacy", label: "Конфиденциальность" },
     { href: "/consent", label: "Согласие на данные" },
   ],
   consent: [
-    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/support", label: "Помощь и контакты" },
     { href: "/offer", label: "Публичная оферта" },
     { href: "/privacy", label: "Конфиденциальность" },
   ],
   get: [
-    { href: "/support", label: "Поддержка и контакты" },
+    { href: "/support", label: "Помощь и контакты" },
     { href: "/offer", label: "Публичная оферта" },
     { href: "/privacy", label: "Конфиденциальность" },
   ],
@@ -38,7 +38,7 @@ const legalLinks = {
     {isFull && <StoreLinks />}
     {isFull && (
       <div class="footer-social">
-        <span class="footer-social-label">Мы в соцсетях</span>
+        <span class="footer-social-label">Мы в Telegram</span>
         <a class="social-link" href="https://t.me/musa1756_ai" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2.01 1.95c-.23.23-.42.42-.81.42z" /></svg>
           <span>@musa1756_ai</span>
@@ -47,7 +47,7 @@ const legalLinks = {
     )}
     {variant === "guide" ? (
       <div class="footer-links">
-        <a href="/support">Поддержка</a>
+        <a href="/support">Помощь</a>
         <a href="/offer">Публичная оферта</a>
         <a href="/privacy">Конфиденциальность</a>
       </div>
@@ -55,7 +55,7 @@ const legalLinks = {
       <div class="footer-links">
         <a href="/offer" rel="noopener">Публичная оферта</a>
         <a href="/privacy" rel="noopener">Конфиденциальность</a>
-        <a href="/support" rel="noopener">Поддержка и контакты</a>
+        <a href="/support" rel="noopener">Помощь и контакты</a>
       </div>
     ) : (
       <div class="footer-links">
@@ -63,7 +63,7 @@ const legalLinks = {
       </div>
     )}
     {(isFull || variant === "guide") && (
-      <nav class="footer-links footer-guides" aria-label="Руководства">
+      <nav class="footer-links footer-guides" aria-label="Статьи">
         <a href="/articles/">Все статьи</a>
         {GUIDES.map((guide) => <a href={guide.href}>{guide.short}</a>)}
       </nav>
