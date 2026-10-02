@@ -1,0 +1,29 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import type { SectionId, ServiceNav } from "../lib/routes";
+import type { SeoProps } from "../seo/page-meta";
+
+/**
+ * Каркас страницы сайта: ссылка «К содержанию», шапка, `<main id="main">` и
+ * подвал. Раздел шапки задаётся здесь, поэтому страница не может его потерять.
+ */
+type Props = SeoProps & {
+  jsonLd?: Record<string, unknown>[];
+  /** Выбранный раздел шапки. */
+  section?: SectionId;
+  /** Короткая шапка служебной страницы вместо разделов сайта. */
+  nav?: ServiceNav;
+  mainClass?: string;
+};
+
+const { section, nav, mainClass, ...seo } = Astro.props;
+---
+
+<BaseLayout {...seo}>
+  <a class="skip-link" href="#main">К содержанию</a>
+  <Header active={section} variant={nav} />
+  <main id="main" class={mainClass}><slot /></main>
+  <Footer />
+</BaseLayout>

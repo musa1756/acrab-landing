@@ -1,7 +1,5 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
 import Icon from "../../components/Icon.astro";
 import { faqSchema } from "../../seo/schema";
 
@@ -40,10 +38,7 @@ const plainText = (html: string) => html.replace(/<br\s*\/?>/g, " ").replace(/<[
 const faq = faqSchema(questions.map((item) => ({ question: item.question, answer: plainText(item.answer) })));
 ---
 
-<BaseLayout title="Вопросы и поддержка Acrab: оплата Premium, возврат, контакты" description="Помощь Acrab: как оплатить Premium на сайте, когда он включится, как вернуть деньги, что делать при чужом списании и как связаться с поддержкой." canonical="https://acrab.ru/support/" ogTitle="Помощь и поддержка Acrab" ogDescription="Оплата Premium, возврат денег и контакты поддержки Acrab." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab" jsonLd={[faq]}>
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header active="support" />
-  <main id="main">
+<PageLayout section="support" title="Вопросы и поддержка Acrab: оплата Premium, возврат, контакты" description="Помощь Acrab: как оплатить Premium на сайте, когда он включится, как вернуть деньги, что делать при чужом списании и как связаться с поддержкой." canonical="https://acrab.ru/support/" ogTitle="Помощь и поддержка Acrab" ogDescription="Оплата Premium, возврат денег и контакты поддержки Acrab." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab" jsonLd={[faq]}>
 <div class="page-head page-head-centered">
       <div class="page-head-inner">
         <p class="eyebrow">Помощь</p>
@@ -92,6 +87,4 @@ const faq = faqSchema(questions.map((item) => ({ question: item.question, answer
         </div>
       </section>
     </div>
-  </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>

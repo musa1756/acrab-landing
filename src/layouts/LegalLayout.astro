@@ -1,29 +1,11 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
+import PageLayout from "./PageLayout.astro";
+import type { ServiceNav } from "../lib/routes";
+import type { SeoProps } from "../seo/page-meta";
 
-interface Props {
-  variant: "offer" | "consent" | "get";
-  title: string;
-  description?: string;
-  robots?: string;
-  canonical?: string;
-  ogTitle?: string;
-  ogDescription?: string;
-  ogType?: "website" | "article";
-  ogImage?: string;
-  ogImageAlt?: string;
-  viewport?: string;
-  themeColor?: string | null;
-  includeIcons?: boolean;
-}
-const { variant, ...props } = Astro.props;
+type Props = SeoProps & { variant: ServiceNav };
+
+const { variant, ...seo } = Astro.props;
 ---
 
-<BaseLayout {...props}>
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header variant={variant} />
-  <main id="main" class="legal-page"><slot /></main>
-  <Footer />
-</BaseLayout>
+<PageLayout {...seo} nav={variant} mainClass="legal-page"><slot /></PageLayout>

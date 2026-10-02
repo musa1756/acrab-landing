@@ -1,7 +1,5 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
 import Icon from "../../components/Icon.astro";
 import PaymentFlow from "../../features/payment/PaymentFlow";
 import type { PhosphorName } from "../../lib/phosphor";
@@ -25,10 +23,7 @@ const rows: { icon: PhosphorName; title: string; free: string; premium: string; 
 ];
 ---
 
-<BaseLayout title="Оплата Acrab Premium" description="Оплата Acrab Premium: подтвердите почту аккаунта, выберите тариф и оплатите через банк «Точка»." robots="noindex">
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header active="buy" />
-  <main id="main">
+<PageLayout section="buy" title="Оплата Acrab Premium" description="Оплата Acrab Premium: подтвердите почту аккаунта, выберите тариф и оплатите через банк «Точка»." robots="noindex">
 <div class="page-head page-head-centered">
       <div class="page-head-inner">
         <p class="eyebrow">Acrab Premium</p>
@@ -93,6 +88,4 @@ const rows: { icon: PhosphorName; title: string; free: string; premium: string; 
         <p class="compare-note">Таблица та же, что на экране «Преимущества Premium» в приложении. «Словари» — это инструмент «Слова по теме», «Готовые карточки» — инструмент «Картинка». Бесплатная часть программы заканчивается модулем «Место, направление и простые связки». Лимиты обновляются каждый день в 03:00 по Москве; когда лимит исчерпан, уроки работают как обычно. Огласовки по фото на iPhone и iPad, Анки, Спряжение и Семья слов работают без лимитов в обеих версиях.</p>
       </section>
     </div>
-  </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>

@@ -1,34 +1,14 @@
 ---
+import { SECTIONS, SERVICE_NAVS, type SectionId, type ServiceNav } from "../lib/routes";
+
 interface Props {
-  active?: "home" | "articles" | "keyboard" | "updates" | "buy" | "support";
-  variant?: "primary" | "offer" | "consent" | "get";
+  active?: SectionId | undefined;
+  /** Короткая шапка служебной страницы; по умолчанию — разделы сайта. */
+  variant?: ServiceNav | undefined;
 }
 
-const { active, variant = "primary" } = Astro.props;
-const linkSets = {
-  primary: [
-    { id: "home", href: "/", label: "О приложении", short: "Главная" },
-    { id: "updates", href: "/about/", label: "Обновления" },
-    { id: "buy", href: "/buy/", label: "Оплата" },
-    { id: "articles", href: "/articles/", label: "Статьи" },
-    { id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" },
-    { id: "support", href: "/support/", label: "Помощь" },
-  ],
-  offer: [
-      { id: "buy", href: "/buy/", label: "Оплата" },
-      { id: "support", href: "/support/", label: "Помощь" },
-      { id: "privacy", href: "/privacy/", label: "Конфиденциальность" },
-  ],
-  consent: [
-      { id: "buy", href: "/buy/", label: "Оплата" },
-      { id: "privacy", href: "/privacy/", label: "Конфиденциальность" },
-  ],
-  get: [
-      { id: "home", href: "/", label: "О приложении" },
-      { id: "support", href: "/support/", label: "Помощь" },
-  ],
-} as const;
-const links = linkSets[variant];
+const { active, variant } = Astro.props;
+const links = variant ? SERVICE_NAVS[variant] : SECTIONS;
 ---
 
 <header class="site-header">
@@ -39,7 +19,7 @@ const links = linkSets[variant];
     </a>
     <nav class="site-nav" aria-label="Разделы сайта">
       {links.map((link) => (
-        <a href={link.href} aria-current={active === link.id ? "page" : undefined}>{"short" in link ? (<Fragment><span class="nav-full">{link.label}</span><span class="nav-short">{link.short}</span></Fragment>) : link.label}</a>
+        <a href={link.href} aria-current={active === link.id ? "page" : undefined}>{"short" in link && link.short ? (<Fragment><span class="nav-full">{link.label}</span><span class="nav-short">{link.short}</span></Fragment>) : link.label}</a>
       ))}
     </nav>
   </div>

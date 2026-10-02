@@ -89,6 +89,21 @@ GUIDE_ROUTES = (
 # Страницы букв — тоже статьи: Article, BreadcrumbList и FAQPage в разметке.
 GUIDE_ROUTES = GUIDE_ROUTES + LETTER_ROUTES
 
+# Вкладка шапки, выбранная на странице (aria-current="page"). Служебные
+# страницы с короткой шапкой и политика вкладку не выбирают. Тот же раздел
+# задаёт src/lib/routes.ts; здесь он проверяется по готовым страницам.
+SECTION_BY_ROUTE = {
+    "/": "/",
+    "/about": "/about/",
+    "/buy": "/buy/",
+    "/articles": "/articles/",
+    "/support": "/support/",
+    **{route: "/articles/" for route in GUIDE_ROUTES if route != "/arabic-keyboard"},
+    "/arabic-keyboard": "/arabic-keyboard/",
+}
+SITE_NAV_RE = re.compile(r'<nav\b[^>]*\bclass\s*=\s*["\']site-nav["\'][^>]*>(.*?)</nav>', re.IGNORECASE | re.DOTALL)
+CURRENT_LINK_RE = re.compile(r'<a\b[^>]*\bhref\s*=\s*["\']([^"\']+)["\'][^>]*\baria-current\s*=\s*["\']page["\']', re.IGNORECASE)
+
 # These are links that do not identify a file in the generated site.
 EXTERNAL_PREFIXES = (
     "http://",
@@ -486,6 +501,22 @@ class SiteChecker:
         if "WebApplication" not in types:
             self.fail("arabic-keyboard/index.html: нет JSON-LD WebApplication")
 
+    def check_header_sections(self) -> None:
+        """У каждой страницы с шапкой выбрана своя вкладка и только она."""
+
+        for route, relative_path in REQUIRED_ROUTES.items():
+            path = self.site_root / relative_path
+            if not path.is_file():
+                continue
+            nav = SITE_NAV_RE.search(path.read_text(encoding="utf-8"))
+            if nav is None:
+                self.fail(f"{relative_path}: нет шапки с разделами")
+                continue
+            current = CURRENT_LINK_RE.findall(nav.group(1))
+            expected = SECTION_BY_ROUTE.get(route)
+            if current != ([expected] if expected else []):
+                self.fail(f"{relative_path}: в шапке выбрано {current or 'ничего'}, ожидалось {expected or 'ничего'}")
+
     def check_build_id(self) -> None:
         """Every page carries the build id that /build.txt serves (fresh-page.ts)."""
         build_path = self.site_root / "build.txt"
@@ -556,6 +587,7 @@ class SiteChecker:
             self.check_crawling_files()
             self.check_buy_smoke()
             self.check_keyboard_smoke()
+            self.check_header_sections()
             self.check_letter_pages()
             self.check_build_id()
             self.check_junk()

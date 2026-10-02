@@ -8,41 +8,50 @@ import { DEFAULT_PRICING, decodeCheckoutSession, decodePendingCheckout, hasActiv
 import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 import { appSchema, RUSTORE_URL } from "../src/seo/schema";
 import { GUIDES } from "../src/seo/guides";
+import { ROUTES, SECTIONS } from "../src/lib/routes";
+import { GET as GET_SITEMAP } from "../src/pages/sitemap.xml";
+import { readdirSync } from "node:fs";
 import { statSync } from "node:fs";
 import { LETTERS, NON_CONNECTING_CHARS, SUN_CHARS, WORDS, baseLetters, letterAudioFiles, letterDescription, letterTitle, wordPositions } from "../src/seo/letters";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const readSource = (path: string) => readFileSync(resolve(root, path), "utf8");
 
-const sourceRoutes = {
-  "/": "src/pages/index.astro",
-  "/about": "src/pages/about/index.astro",
-  "/articles": "src/pages/articles/index.astro",
-  "/learn-arabic": "src/pages/learn-arabic/index.astro",
-  "/arabic-alphabet": "src/pages/arabic-alphabet/index.astro",
-  "/fusha": "src/pages/fusha/index.astro",
-  "/arabic-app": "src/pages/arabic-app/index.astro",
-  "/arabic-keyboard": "src/pages/arabic-keyboard/index.astro",
-  "/arabic-vowels": "src/pages/arabic-vowels/index.astro",
-  "/sun-moon-letters": "src/pages/sun-moon-letters/index.astro",
-  "/arabic-hello": "src/pages/arabic-hello/index.astro",
-  "/arabic-thank-you": "src/pages/arabic-thank-you/index.astro",
-  "/buy": "src/pages/buy/index.astro",
-  "/support": "src/pages/support/index.astro",
-  "/privacy": "src/pages/privacy/index.astro",
-  "/offer": "src/pages/offer/index.astro",
-  "/consent": "src/pages/consent/index.astro",
-  "/get": "src/pages/get/index.astro",
-} as const;
-
-const indexableRoutes = ["/", "/about", "/articles", "/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/arabic-hello", "/arabic-thank-you", "/fusha", "/arabic-app", "/arabic-keyboard", "/support", "/privacy"] as const;
-const guideRoutes = ["/learn-arabic", "/arabic-alphabet", "/arabic-vowels", "/sun-moon-letters", "/arabic-hello", "/arabic-thank-you", "/fusha", "/arabic-app", "/arabic-keyboard"] as const;
-const noindexRoutes = ["/buy", "/offer", "/consent", "/get"] as const;
+// Маршруты берутся из реестра src/lib/routes.ts; ключ — путь без конечной «/», как в check_site.py.
+const routeKey = (path: string) => (path === "/" ? "/" : path.slice(0, -1));
+const sourceRoutes: Record<string, string> = Object.fromEntries(ROUTES.map((route) => [routeKey(route.path), route.source]));
+const indexableRoutes = ROUTES.filter((route) => route.indexable).map((route) => routeKey(route.path));
+const guideRoutes = ROUTES.filter((route) => route.guide).map((route) => routeKey(route.path));
+const noindexRoutes = ROUTES.filter((route) => !route.indexable).map((route) => routeKey(route.path));
+const sitemap = await GET_SITEMAP().text();
 
 describe("generated site", () => {
-  test("declares every required Astro route", () => {
+  test("declares every required Astro route and registers every page", () => {
     for (const [route, path] of Object.entries(sourceRoutes)) {
       expect(readSource(path), route).toBeTruthy();
+    }
+    // Новая страница без строки в реестре не попадёт ни в sitemap, ни в проверки.
+    const pages = (readdirSync(resolve(root, "src/pages"), { recursive: true }) as string[])
+      .filter((file) => file.endsWith(".astro") && file !== "404.astro" && !file.includes("["))
+      .map((file) => `src/pages/${file}`);
+    expect(pages.sort()).toEqual(Object.values(sourceRoutes).sort());
+  });
+
+  test("marks the page's own header section on every section page", () => {
+    for (const section of SECTIONS) {
+      const route = ROUTES.find((item) => item.path === section.href);
+      expect(route?.section, section.href).toBe(section.id);
+    }
+    for (const route of ROUTES) {
+      const source = readSource(route.source);
+      if (route.guide) {
+        if (route.section === "articles") expect(source, route.path).not.toContain("section=");
+        else expect(source, route.path).toContain(`section="${route.section}"`);
+      } else if (route.section) {
+        expect(source, route.path).toContain(`<PageLayout section="${route.section}"`);
+      } else {
+        expect(source, route.path).toContain("<LegalLayout variant=");
+      }
     }
   });
 
@@ -50,13 +59,16 @@ describe("generated site", () => {
     const titles = new Set<string>();
     const descriptions = new Set<string>();
     for (const route of indexableRoutes) {
-      const source = readSource(sourceRoutes[route]);
+      const source = readSource(sourceRoutes[route]!);
       const title = source.match(/(?:title|"title")\s*[:=]\s*["`]([^"`]+)["`]/)?.[1];
       const description = source.match(/(?:description|"description")\s*[:=]\s*["`]([^"`]+)["`]/)?.[1];
       const canonical = source.match(/(?:canonical|"canonical")\s*[:=]\s*["`]([^"`]+)["`]/)?.[1];
       expect(title, `${route} title`).toBeTruthy();
       expect(description, `${route} description`).toBeTruthy();
-      expect(canonical, `${route} canonical`).toBe(`https://acrab.ru${route === "/" ? "/" : `${route}/`}`);
+      // У статей canonical строит GuideLayout из guide.path.
+      if (guideRoutes.includes(route)) expect(source, `${route} path`).toContain(`path: "${route}/"`);
+      else if (source.includes("canonical={canonical}")) expect(source, `${route} canonical`).toContain(`pageUrl("${route}/")`);
+      else expect(canonical, `${route} canonical`).toBe(`https://acrab.ru${route === "/" ? "/" : `${route}/`}`);
       expect(titles.has(title!), `${route} title uniqueness`).toBe(false);
       expect(descriptions.has(description!), `${route} description uniqueness`).toBe(false);
       titles.add(title!);
@@ -67,9 +79,9 @@ describe("generated site", () => {
 
   test("keeps service pages noindex and homepage application structured data", () => {
     for (const route of noindexRoutes) {
-      expect(readSource(sourceRoutes[route]), route).toMatch(/robots\s*["`]?\s*[:=]\s*["`]\s*noindex/i);
+      expect(readSource(sourceRoutes[route]!), route).toMatch(/robots\s*["`]?\s*[:=]\s*["`]\s*noindex/i);
     }
-    const home = readSource(sourceRoutes["/"]);
+    const home = readSource(sourceRoutes["/"]!);
     expect(home).toContain("jsonLd={[organizationSchema, websiteSchema, appSchema]}");
     expect(appSchema["@type"]).toBe("MobileApplication");
     expect(appSchema.sameAs).toEqual([APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL]);
@@ -77,7 +89,7 @@ describe("generated site", () => {
 
   test("gives every guide article metadata and the same canonical path", () => {
     for (const route of guideRoutes) {
-      const source = readSource(sourceRoutes[route]);
+      const source = readSource(sourceRoutes[route]!);
       expect(source, route).toMatch(/<GuideLayout \{\.\.\.seo\} guide=\{guide\}(?: section="keyboard")?>/);
       expect(source, route).toContain(`path: "${route}/"`);
       expect(source, route).toMatch(/datePublished: "\d{4}-\d{2}-\d{2}"/);
@@ -87,8 +99,8 @@ describe("generated site", () => {
   });
 
   test("shows the online keyboard as its own header section, not as an article", () => {
-    expect(readSource("src/components/Header.astro")).toContain('{ id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" }');
-    const page = readSource(sourceRoutes["/arabic-keyboard"]);
+    expect(SECTIONS).toContainEqual({ id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" });
+    const page = readSource(sourceRoutes["/arabic-keyboard"]!);
     expect(page).toContain('section="keyboard"');
     expect(page).not.toContain('path: "/articles/"');
     expect(page).toContain("data-arabic-rain");
@@ -97,7 +109,7 @@ describe("generated site", () => {
 
   test("points every «Слушать» button of the phrase guides at a bundled recording", () => {
     for (const route of ["/arabic-hello", "/arabic-thank-you"] as const) {
-      const files = [...readSource(sourceRoutes[route]).matchAll(/(?:AudioButton src=|audio: )"(\/assets\/audio\/[a-z-]+\.mp3)"/g)].map((match) => match[1]!);
+      const files = [...readSource(sourceRoutes[route]!).matchAll(/(?:AudioButton src=|audio: )"(\/assets\/audio\/[a-z-]+\.mp3)"/g)].map((match) => match[1]!);
       expect(files.length, route).toBeGreaterThan(0);
       for (const file of files) {
         expect(readFileSync(resolve(root, `public${file}`)).byteLength, `${route} ${file}`).toBeGreaterThan(1000);
@@ -106,7 +118,6 @@ describe("generated site", () => {
   });
 
   test("lists every indexable route in the sitemap and llms.txt", () => {
-    const sitemap = readSource("public/sitemap.xml");
     const llms = readSource("public/llms.txt");
     for (const route of indexableRoutes) {
       const url = `https://acrab.ru${route === "/" ? "/" : `${route}/`}`;
@@ -180,7 +191,6 @@ describe("letter pages", () => {
 
   test("builds them from one dynamic route and registers them in the sitemap, llms.txt and the site checker", () => {
     expect(readSource("src/pages/arabic-alphabet/[letter].astro")).toContain("getStaticPaths");
-    const sitemap = readSource("public/sitemap.xml");
     for (const slug of slugs) expect(sitemap, slug).toContain(`<loc>https://acrab.ru/arabic-alphabet/${slug}/</loc>`);
     expect(readSource("public/llms.txt")).toContain("https://acrab.ru/arabic-alphabet/ayn/");
     const listed = readSource("tools/check_site.py").match(/LETTER_SLUGS = \(([\s\S]*?)\)/)?.[1]?.match(/"([a-z]+)"/g)?.map((item) => item.slice(1, -1));

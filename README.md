@@ -50,8 +50,9 @@ bun run test:browser
 ## Структура
 
 - `src/pages/` — статически генерируемые маршруты сайта.
-- `src/components/` — SEO, шапка, подвал, магазинные ссылки и релизы.
-- `src/layouts/` — общий, учебный и юридический layouts.
+- `src/lib/routes.ts` — реестр сайта: разделы шапки (`SECTIONS`), короткие шапки служебных страниц и все маршруты (`ROUTES`: исходник, индексация, раздел шапки, статья ли, `lastmod`). Из него строятся шапка, `sitemap.xml` (`src/pages/sitemap.xml.ts`) и списки маршрутов в `tests/site.test.ts`; тест падает, если страница в `src/pages/` не записана в реестр.
+- `src/layouts/` — `BaseLayout` (`<head>` и общие скрипты), `PageLayout` (каркас страницы: «К содержанию», шапка с выбранным разделом, `<main id="main">`, подвал), на нём `GuideLayout` (статья: крошки, canonical из `guide.path`, Article и BreadcrumbList) и `LegalLayout` (служебная страница с короткой шапкой). Тип SEO-полей один — `src/seo/page-meta.ts`.
+- `src/components/` — SEO, шапка, подвал, крошки (`Breadcrumbs`), кнопки магазинов (`StoreLinks`: подвал, призыв статей, главная и `/get`; адреса — `src/lib/stores.ts`), соцсети и релизы.
 - `src/content/changelog/` — структурированные JSON-записи changelog.
 - `src/features/payment/` — чистые модели, сообщения и API платежей.
 - `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
@@ -63,7 +64,7 @@ bun run test:browser
 - `src/components/AudioButton.astro` и `src/scripts/phrase-audio.ts` — кнопка «Слушать» в статьях с фразами (`/arabic-hello/`, `/arabic-thank-you/`): `<button hidden>` с `data-audio`, скрипт показывает её и играет файл из `public/assets/audio/`. Файлы — копии озвучки приложения, найденной по тексту фразы в `mobile/src/features/fusha/recordings.ts`; у фразы без записи в приложении кнопки нет, новую озвучку для сайта не генерируют. Голос синтезированный: в тексте его не называют записью диктора или носителя. `tools/check_site.py` проверяет, что каждый `data-audio` указывает на файл сборки.
 - `/arabic-keyboard/` — отдельный раздел шапки «Клавиатура», а не статья: его нет в `src/seo/guides.ts` (раздел «Статьи», блок на главной, подвал), крошки — «Acrab › Арабская клавиатура». Страница остаётся на `GuideLayout` (`section="keyboard"` выбирает раздел шапки): первый экран — слот `stage` во всю ширину окна, в нём только заголовок и `ArabicKeyboard.astro`, за ними дождь из арабских букв (`src/scripts/arabic-rain.ts`, описание — `DESIGN.md`); инструкция, таблицы и вопросы для поиска идут ниже. Раскладка и ввод — `src/scripts/arabic-keyboard-model.ts` и `arabic-keyboard.ts`.
 - `src/seo/letters.ts`, `src/seo/letter-words.ts` и `src/pages/arabic-alphabet/[letter].astro` — 28 страниц букв `/arabic-alphabet/<slug>/`, один маршрут через `getStaticPaths`. Названия, слоги, слова и переводы взяты из уроков приложения (`mobile/src/features/fusha/`), объяснения звука, ошибки русскоязычных и вопросы написаны для сайта; транскрипция слов — только здесь. Slug — латинское имя буквы, а у букв с одинаковым русским названием «тяжёлая» или гортанная получает `h` на конце: `ta`/`tah`, `zay`/`zah`, `ha`/`hah`; после публикации slug не меняют. Озвучка (буква, три слога, слова-примеры) лежит в `public/assets/audio/letters/`; копирует её из записей приложения `tools/sync-letter-audio.ts` (в монорепо: `cd website && bun run tools/sync-letter-audio.ts`), кнопки — тот же `AudioButton`. `src/lib/rich-arabic.ts` оборачивает арабские вставки текста в `lang="ar"`.
-- `public/assets/`, `public/robots.txt`, `public/sitemap.xml`, `public/llms.txt` и `public/favicon.ico` — файлы с неизменными публичными URL. Иконки страниц — уменьшенные копии `acrab-app-icon.png` (`acrab-icon-64/120/180.png`, `acrab-icon-512.jpg`); сам файл 1024 px на 1,5 МБ сохранён по прежнему адресу, но страницы его больше не грузят.
+- `public/assets/`, `public/robots.txt`, `public/llms.txt` и `public/favicon.ico` — файлы с неизменными публичными URL. Иконки страниц — уменьшенные копии `acrab-app-icon.png` (`acrab-icon-64/120/180.png`, `acrab-icon-512.jpg`); сам файл 1024 px на 1,5 МБ сохранён по прежнему адресу, но страницы его больше не грузят.
 - `site/` — результат `bun run build`, который публикует Timeweb; коммитится вместе с исходниками.
 - `tests/` и `tools/check_site.py` — проверки исходников и готового `site/`; `e2e/payment.smoke.ts` — браузерный smoke оплаты (`bun run test:browser`).
 
@@ -80,16 +81,16 @@ bun run test:browser
 
 При добавлении индексируемого маршрута одновременно обновляются:
 
-1. страница в `src/pages/` и её SEO-поля; статья — на `GuideLayout` с объектом `guide` и блоком `GuideFaq`;
-2. список URL в `public/sitemap.xml` и ссылка в `public/llms.txt`;
-3. списки маршрутов в `tools/check_site.py` и `tests/site.test.ts`;
-4. для статьи — запись в `src/seo/guides.ts`: из неё строятся раздел «Статьи» (`/articles/`), блок на главной и строка в подвале; в крошках статьи средний пункт — «Статьи». Раздел шапки (как «Клавиатура») добавляется в `src/components/Header.astro`, а не в `guides.ts`.
+1. страница в `src/pages/` и её SEO-поля; обычная страница — на `PageLayout` с `section`, статья — на `GuideLayout` с объектом `guide` и блоком `GuideFaq`;
+2. строка в `ROUTES` (`src/lib/routes.ts`): по ней страница попадает в sitemap и тесты;
+3. ссылка в `public/llms.txt` (тест сверяет её с реестром) и маршрут в `tools/check_site.py` — он проверяет готовый `site/` независимо от реестра, включая выбранную вкладку шапки (`SECTION_BY_ROUTE`);
+4. для статьи — запись в `src/seo/guides.ts`: из неё строятся раздел «Статьи» (`/articles/`) и блок на главной; в крошках статьи средний пункт — «Статьи». Новый раздел шапки (как «Клавиатура») — строка в `SECTIONS`, `section` у страницы и её раздел в `SECTION_BY_ROUTE`.
 
 При содержательной правке статьи меняются `dateModified` в её объекте `guide` и
-`lastmod` в `public/sitemap.xml`: дата видна на странице как «Обновлено» и уходит
+`lastmod` её строки в `ROUTES` (без него — общий `SITEMAP_LASTMOD`): дата видна на странице как «Обновлено» и уходит
 в разметку `Article`. Цены и числа программы в `llms.txt` сверяет `bun run test:facts`.
 
-Страницы букв `/arabic-alphabet/<slug>/` — дочерние страницы хаба алфавита, а не статьи: в `public/sitemap.xml` перечислены все 28 (каждая — отдельный `<url>`), в `src/seo/guides.ts` их нет, и раздел «Статьи» остаётся списком статей, в `public/llms.txt` они описаны одной строкой хаба. Крошки — «Статьи › Арабский алфавит › Буква …». В `tools/check_site.py` список `LETTER_SLUGS` (тесты сверяют его с `src/seo/letters.ts`) делает страницы обязательными маршрутами и проверяет у каждой блоки, озвучку, соседние буквы и ссылку с хаба. Новая буква или слово — правка `src/seo/letters.ts`, затем `tools/sync-letter-audio.ts` и дополнение sitemap и `LETTER_SLUGS`.
+Страницы букв `/arabic-alphabet/<slug>/` — дочерние страницы хаба алфавита, а не статьи: в sitemap перечислены все 28 (каждая — отдельный `<url>` сразу за хабом, `lastmod` — `LETTER_MODIFIED`), в `src/seo/guides.ts` их нет, и раздел «Статьи» остаётся списком статей, в `public/llms.txt` они описаны одной строкой хаба. Крошки — «Статьи › Арабский алфавит › Буква …». В `tools/check_site.py` список `LETTER_SLUGS` (тесты сверяют его с `src/seo/letters.ts`) делает страницы обязательными маршрутами и проверяет у каждой блоки, озвучку, соседние буквы и ссылку с хаба. Новая буква или слово — правка `src/seo/letters.ts`, затем `tools/sync-letter-audio.ts` и дополнение `LETTER_SLUGS`; sitemap строится из `LETTERS` сам.
 
 ## Кэш браузера
 

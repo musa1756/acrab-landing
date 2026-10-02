@@ -1,12 +1,11 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import Icon from "../../components/Icon.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { GUIDES, GUIDE_GROUPS } from "../../seo/guides";
-import { breadcrumbSchema, SITE_URL } from "../../seo/schema";
+import { pageUrl } from "../../lib/routes";
+import { breadcrumbSchema } from "../../seo/schema";
 
-const canonical = "https://acrab.ru/articles/";
+const canonical = pageUrl("/articles/");
 const groups = (Object.keys(GUIDE_GROUPS) as (keyof typeof GUIDE_GROUPS)[]).map((key) => ({
   title: GUIDE_GROUPS[key],
   guides: GUIDES.filter((guide) => guide.group === key),
@@ -23,18 +22,15 @@ const collection = {
       "@type": "ListItem",
       position: index + 1,
       name: guide.title,
-      url: `${SITE_URL}${guide.href}`,
+      url: pageUrl(guide.href),
     })),
   },
 };
 const crumbs = [{ name: "Acrab", path: "/" }, { name: "Статьи", path: "/articles/" }];
 ---
 
-<BaseLayout title="Статьи об арабском языке для начинающих | Acrab" description="Статьи для тех, кто учит арабский с нуля: план изучения, алфавит, огласовки, солнечные и лунные буквы, фусха и диалекты, выбор приложения." canonical={canonical} robots="index, follow, max-image-preview:large" ogTitle="Статьи об арабском языке — Acrab" ogDescription="План изучения, алфавит, огласовки, артикль и фусха — простыми словами на русском." ogType="website" ogImage="https://acrab.ru/assets/about/lesson-theory.webp" ogImageAlt="Урок теории по арабскому языку в Acrab" twitterCard="summary_large_image" jsonLd={[collection, breadcrumbSchema(crumbs)]}>
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header active="articles" />
-  <main id="main" class="guide-page">
-    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a class="chip" href="/">Acrab</a><Icon name="caret-right" class="crumb-sep" /><span class="chip" aria-current="page">Статьи</span></nav>
+<PageLayout section="articles" mainClass="guide-page" title="Статьи об арабском языке для начинающих | Acrab" description="Статьи для тех, кто учит арабский с нуля: план изучения, алфавит, огласовки, солнечные и лунные буквы, фусха и диалекты, выбор приложения." canonical={canonical} robots="index, follow, max-image-preview:large" ogTitle="Статьи об арабском языке — Acrab" ogDescription="План изучения, алфавит, огласовки, артикль и фусха — простыми словами на русском." ogType="website" ogImage="https://acrab.ru/assets/about/lesson-theory.webp" ogImageAlt="Урок теории по арабскому языку в Acrab" twitterCard="summary_large_image" jsonLd={[collection, breadcrumbSchema(crumbs)]}>
+    <Breadcrumbs crumbs={crumbs} />
     <header class="guide-hero">
       <p class="eyebrow">Статьи</p>
       <h1 class="page-title">Статьи об арабском языке</h1>
@@ -50,6 +46,4 @@ const crumbs = [{ name: "Acrab", path: "/" }, { name: "Статьи", path: "/ar
         </nav>
       </section>
     ))}
-  </main>
-  <Footer />
-</BaseLayout>
+</PageLayout>

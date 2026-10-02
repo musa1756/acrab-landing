@@ -1,17 +1,12 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
 import Release from "../../components/Release.astro";
 
 const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Обновления Acrab: что нового в приложении для арабского" description="История версий Acrab, приложения для изучения литературного арабского на русском: книги в Библиотеке, друзья, Анки, новые уроки и исправления." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="Что изменилось в каждой версии Acrab: новинки, улучшения и исправления." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header active="updates" />
-  <main id="main">
+<PageLayout section="updates" title="Обновления Acrab: что нового в приложении для арабского" description="История версий Acrab, приложения для изучения литературного арабского на русском: книги в Библиотеке, друзья, Анки, новые уроки и исправления." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="Что изменилось в каждой версии Acrab: новинки, улучшения и исправления." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
     <div class="page-head page-head-centered">
       <div class="page-head-inner">
         <p class="eyebrow">Обновления</p>
@@ -23,8 +18,6 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
       {releases.map((release, index) => <Release release={release} open={index === 0} />)}
       <p class="changelog-note" data-appear>Здесь собраны версии начиная с 2.2. Те же заметки есть в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
     </div>
-  </main>
-  <Footer />
   <noscript><style>.release-collapse { grid-template-rows: 1fr; opacity: 1; visibility: visible; }</style></noscript>
   <script>
     // Карточка версии раскрывается по нажатию на заголовок; #v2-4 в адресе раскрывает свою.
@@ -43,4 +36,4 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
     openFromHash();
     addEventListener("hashchange", openFromHash);
   </script>
-</BaseLayout>
+</PageLayout>

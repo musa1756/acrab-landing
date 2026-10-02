@@ -54,14 +54,10 @@ const shortName = `${letter.name}${letter.qualifier ? ` (${letter.qualifier})` :
 const seo = {
   title: letterTitle(letter),
   description: letterDescription(letter),
-  canonical: `https://acrab.ru${path}`,
-  robots: "index, follow, max-image-preview:large",
   ogTitle: heading,
   ogDescription: `${letter.soundShort.charAt(0).toUpperCase()}${letter.soundShort.slice(1)}. Звук, формы в слове, слова с переводом и похожие буквы.`,
-  ogType: "article",
   ogImage: "https://acrab.ru/assets/about/lesson-theory.webp",
   ogImageAlt: "Урок теории по арабскому языку в Acrab",
-  twitterCard: "summary_large_image",
 } as const;
 
 const guide: GuideMeta = {

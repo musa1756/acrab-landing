@@ -1,47 +1,44 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import Icon from "../components/Icon.astro";
+import PageLayout from "./PageLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { pageUrl } from "../lib/routes";
 import { articleSchema, breadcrumbSchema, type GuideMeta } from "../seo/schema";
+import type { SeoProps } from "../seo/page-meta";
 
-interface Props {
-  title: string;
-  description?: string;
-  canonical?: string;
-  robots?: string;
-  ogTitle?: string;
-  ogDescription?: string;
-  ogType?: "website" | "article";
-  ogImage?: string;
-  ogImageAlt?: string;
-  twitterCard?: "summary" | "summary_large_image";
-  csp?: string;
-  /** Статья: крошки на странице и Article + BreadcrumbList в разметке. */
+/**
+ * Статья: крошки на странице, Article + BreadcrumbList в разметке. Canonical
+ * строится из `guide.path`; индексация, `og:type` article и большая карточка
+ * в соцсетях — по умолчанию для всех статей.
+ */
+type Props = Omit<SeoProps, "canonical"> & {
   guide: GuideMeta;
   /** Выбранный раздел шапки: статьи или отдельная вкладка «Клавиатура». */
   section?: "articles" | "keyboard";
-}
-const { guide, section = "articles", ...props } = Astro.props;
-const crumbs = guide.crumbs;
+};
+
+const {
+  guide,
+  section = "articles",
+  robots = "index, follow, max-image-preview:large",
+  ogType = "article",
+  twitterCard = "summary_large_image",
+  ...seo
+} = Astro.props;
 ---
 
-<BaseLayout {...props} jsonLd={[articleSchema(guide), breadcrumbSchema(crumbs)]}>
-  <a class="skip-link" href="#main">К содержанию</a>
-  <Header active={section} />
-  <main id="main">
-    <!-- Первый экран во всю ширину окна, над крошками: так у клавиатуры. -->
-    <slot name="stage" />
-    <div class="guide-page">
-      <nav class="breadcrumbs" aria-label="Хлебные крошки">
-        {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
-          <Fragment><a class="chip" href={crumb.path}>{crumb.name}</a><Icon name="caret-right" class="crumb-sep" /></Fragment>
-        ) : (
-          <span class="chip" aria-current="page">{crumb.name}</span>
-        ))}
-      </nav>
-      <slot />
-    </div>
-  </main>
-  <Footer />
-</BaseLayout>
+<PageLayout
+  {...seo}
+  canonical={pageUrl(guide.path)}
+  robots={robots}
+  ogType={ogType}
+  twitterCard={twitterCard}
+  section={section}
+  jsonLd={[articleSchema(guide), breadcrumbSchema(guide.crumbs)]}
+>
+  <!-- Первый экран во всю ширину окна, над крошками: так у клавиатуры. -->
+  <slot name="stage" />
+  <div class="guide-page">
+    <Breadcrumbs crumbs={guide.crumbs} />
+    <slot />
+  </div>
+</PageLayout>

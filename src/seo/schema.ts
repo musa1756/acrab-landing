@@ -1,4 +1,5 @@
-import { APP_STORE_URL, GOOGLE_PLAY_URL } from "../scripts/store-redirect-model";
+import { pageUrl, SITE_URL } from "../lib/routes";
+import { APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL } from "../lib/stores";
 
 /**
  * Структурированные данные schema.org для поисковиков и ИИ-поиска.
@@ -6,14 +7,13 @@ import { APP_STORE_URL, GOOGLE_PLAY_URL } from "../scripts/store-redirect-model"
  * отзывов и числа учеников в разметке нет (см. PRODUCT.md).
  */
 
-export const SITE_URL = "https://acrab.ru";
-export const RUSTORE_URL = "https://www.rustore.ru/catalog/app/com.acrab";
+export { RUSTORE_URL, SITE_URL };
 export const LOGO_URL = `${SITE_URL}/assets/acrab-icon-512.jpg`;
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 
 type Schema = Record<string, unknown>;
 
-const absolute = (path: string) => (path.startsWith("http") ? path : `${SITE_URL}${path}`);
+const absolute = pageUrl;
 
 const publisher = {
   "@type": "Organization",

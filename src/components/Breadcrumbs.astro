@@ -1,0 +1,19 @@
+---
+import Icon from "./Icon.astro";
+import type { Crumb } from "../seo/schema";
+
+interface Props {
+  /** От корня до текущей страницы; последняя крошка — не ссылка. */
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Хлебные крошки">
+  {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
+    <Fragment><a class="chip" href={crumb.path}>{crumb.name}</a><Icon name="caret-right" class="crumb-sep" /></Fragment>
+  ) : (
+    <span class="chip" aria-current="page">{crumb.name}</span>
+  ))}
+</nav>
