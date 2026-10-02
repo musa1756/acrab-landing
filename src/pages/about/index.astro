@@ -20,9 +20,27 @@ const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.v
       </div>
     </div>
     <div class="changelog">
-      {releases.map((release) => <Release release={release} />)}
+      {releases.map((release, index) => <Release release={release} open={index === 0} />)}
       <p class="changelog-note" data-appear>Здесь собраны версии начиная с 2.2. Те же заметки есть в приложении: кнопка с искрами рядом с заголовком «Программа».</p>
     </div>
   </main>
   <Footer />
+  <noscript><style>.release-collapse { grid-template-rows: 1fr; opacity: 1; visibility: visible; }</style></noscript>
+  <script>
+    // Карточка версии раскрывается по нажатию на заголовок; #v2-4 в адресе раскрывает свою.
+    const cards = document.querySelectorAll<HTMLElement>(".release");
+    const setOpen = (card: HTMLElement, open: boolean) => {
+      card.classList.toggle("is-open", open);
+      card.querySelector(".release-toggle")?.setAttribute("aria-expanded", String(open));
+    };
+    cards.forEach((card) => {
+      card.querySelector(".release-toggle")?.addEventListener("click", () => setOpen(card, !card.classList.contains("is-open")));
+    });
+    const openFromHash = () => {
+      const target = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+      if (target?.classList.contains("release")) setOpen(target, true);
+    };
+    openFromHash();
+    addEventListener("hashchange", openFromHash);
+  </script>
 </BaseLayout>

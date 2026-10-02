@@ -14,7 +14,7 @@
 .support-contact, .support-faq { --row-pad: 16px; padding: var(--row-pad); }
 
 /* Контакты: главная кнопка и три строки со значком. */
-.support-contact .btn { margin-bottom: calc(var(--press-depth) + 8px); }
+.support-contact .btn { margin-top: 12px; margin-bottom: var(--press-depth); }
 .support-rows { display: grid; margin: 0 calc(var(--row-pad) * -1); padding: 0; list-style: none; }
 .support-row {
   position: relative;

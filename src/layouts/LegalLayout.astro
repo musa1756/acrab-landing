@@ -8,6 +8,12 @@ interface Props {
   title: string;
   description?: string;
   robots?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  ogImageAlt?: string;
   viewport?: string;
   themeColor?: string | null;
   includeIcons?: boolean;
@@ -19,5 +25,5 @@ const { variant, ...props } = Astro.props;
   <a class="skip-link" href="#main">К содержанию</a>
   <Header variant={variant} />
   <main id="main" class="legal-page"><slot /></main>
-  <Footer variant={variant} />
+  <Footer />
 </BaseLayout>

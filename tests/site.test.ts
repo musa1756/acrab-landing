@@ -7,6 +7,7 @@ import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage
 import { DEFAULT_PRICING, decodeCheckoutSession, decodePendingCheckout, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, planAmount, PLAN_ORDER, sessionExpiry } from "../src/features/payment/payment-model";
 import { APP_STORE_URL, GOOGLE_PLAY_URL, storeTarget } from "../src/scripts/store-redirect-model";
 import { appSchema, RUSTORE_URL } from "../src/seo/schema";
+import { GUIDES } from "../src/seo/guides";
 import { statSync } from "node:fs";
 import { LETTERS, NON_CONNECTING_CHARS, SUN_CHARS, WORDS, baseLetters, letterAudioFiles, letterDescription, letterTitle, wordPositions } from "../src/seo/letters";
 
@@ -77,12 +78,21 @@ describe("generated site", () => {
   test("gives every guide article metadata and the same canonical path", () => {
     for (const route of guideRoutes) {
       const source = readSource(sourceRoutes[route]);
-      expect(source, route).toContain("<GuideLayout {...seo} guide={guide}>");
+      expect(source, route).toMatch(/<GuideLayout \{\.\.\.seo\} guide=\{guide\}(?: section="keyboard")?>/);
       expect(source, route).toContain(`path: "${route}/"`);
       expect(source, route).toMatch(/datePublished: "\d{4}-\d{2}-\d{2}"/);
       expect(source, route).toMatch(/dateModified: "\d{4}-\d{2}-\d{2}"/);
       expect(source, route).toContain("<GuideFaq items={faq} />");
     }
+  });
+
+  test("shows the online keyboard as its own header section, not as an article", () => {
+    expect(readSource("src/components/Header.astro")).toContain('{ id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" }');
+    const page = readSource(sourceRoutes["/arabic-keyboard"]);
+    expect(page).toContain('section="keyboard"');
+    expect(page).not.toContain('path: "/articles/"');
+    expect(page).toContain("data-arabic-rain");
+    expect(GUIDES.map((guide) => guide.href)).not.toContain("/arabic-keyboard/");
   });
 
   test("points every «Слушать» button of the phrase guides at a bundled recording", () => {
@@ -249,7 +259,7 @@ describe("payment behavior", () => {
     const pricing = DEFAULT_PRICING;
     const annual = { plan: "annual", tier: "premium", status: "active", current_period_end: new Date(Date.now() + 86_400_000).toISOString() };
     const expired = { ...annual, current_period_end: new Date(Date.now() - 86_400_000).toISOString() };
-    expect(PLAN_ORDER).toEqual(["annual", "monthly", "lifetime"]);
+    expect(PLAN_ORDER).toEqual(["monthly", "annual", "lifetime"]);
     expect(planAmount("lifetime", pricing, null)).toBe(6490);
     expect(planAmount("lifetime", pricing, annual)).toBe(3500);
     expect(planAmount("lifetime", pricing, expired)).toBe(6490);

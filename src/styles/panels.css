@@ -71,6 +71,13 @@
   border-radius: var(--r-pill);
   background: var(--c-brand);
 }
+.privacy-mt-10 { margin-top: 10px; }
+.privacy-mt-14 { margin-top: 14px; }
+.legal-section strong { color: var(--c-text); }
+.legal-section .table-wrap { overflow-x: auto; margin-top: 4px; }
+.legal-section table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 14px; }
+.legal-section th, .legal-section td { padding: 8px 10px; border: 1px solid var(--c-hairline); color: var(--c-text-secondary); text-align: left; vertical-align: top; }
+.legal-section th { color: var(--c-text); font-weight: 600; }
 .legal-section a {
   color: var(--c-brand-text);
   font-weight: 600;

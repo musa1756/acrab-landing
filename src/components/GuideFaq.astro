@@ -1,4 +1,5 @@
 ---
+import { richArabic } from "../lib/rich-arabic";
 import { faqSchema, type FaqItem } from "../seo/schema";
 
 interface Props {
@@ -15,7 +16,7 @@ const { items, title = "Частые вопросы" } = Astro.props;
   <h2>{title}</h2>
   <div class="guide-faq card card-plain" data-appear>
     {items.map((item) => (
-      <div><h3>{item.question}</h3><p>{item.answer}</p></div>
+      <div><h3 set:html={richArabic(item.question)} /><p set:html={richArabic(item.answer)} /></div>
     ))}
   </div>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema(items))} />

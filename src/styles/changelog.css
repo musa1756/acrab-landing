@@ -13,12 +13,77 @@
 }
 
 .release {
-  display: grid;
-  gap: 10px;
   padding: 16px;
   border: var(--b-line) solid var(--gold-12);
   border-radius: var(--r-surface);
   background: var(--c-surface);
+}
+
+/* Карточка раскрывается той же пружиной, что версия в «Что нового» (WhatsNewScreen +
+   useMeasuredDisclosure): mass 1, stiffness 700, damping 52.92 — критическое
+   затухание без перелёта, ~380 мс. Высота тела и прозрачность идут вместе;
+   картинка остаётся в голове и видна у свёрнутой карточки, тело
+   схлопывается вместе со своим верхним отступом. */
+.release {
+  --disclosure-spring: linear(0, 0.067, 0.205, 0.358, 0.499, 0.619, 0.715, 0.791, 0.848, 0.89, 0.921, 0.944, 0.96, 0.972, 0.981, 0.986, 0.991, 0.993, 0.995, 0.997, 0.998, 0.999, 0.999, 0.999, 1);
+  --disclosure-duration: 380ms;
+  position: relative;
+  display: grid;
+}
+/* Отступ 10 между головой, заголовком и картинкой; у тела его нет: он в padding тела, чтобы схлопываться. */
+.release > :is(.release-title, .release-media) { margin-top: 10px; }
+.release-title { position: static; }
+.release-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+/* Растянутая область нажатия на всю карточку: голова, заголовок и картинка. */
+.release-toggle::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.release-toggle:focus-visible { outline: none; }
+.release-toggle:focus-visible::before { outline: 2px solid var(--c-brand); outline-offset: -2px; }
+.release-title-text { flex: 1; }
+/* Нажатие приглушает строку заголовка, картинка без блика (pressed .65). */
+.release:has(.release-toggle:active) :is(.release-head, .release-toggle) { opacity: 0.65; }
+/* Стрелка золотая: вправо у свёрнутой карточки, вниз у раскрытой. */
+.release-chevron {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  border-top: 2px solid var(--c-brand);
+  border-right: 2px solid var(--c-brand);
+  transform: rotate(45deg);
+  transition: transform var(--disclosure-duration) var(--disclosure-spring);
+}
+.release.is-open .release-chevron { transform: rotate(135deg); }
+
+.release-collapse {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows var(--disclosure-duration) var(--disclosure-spring), opacity var(--disclosure-duration) var(--disclosure-spring), visibility 0s linear var(--disclosure-duration);
+}
+.release.is-open .release-collapse {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.release-collapse-clip { min-height: 0; overflow: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  .release { --disclosure-spring: ease-out; --disclosure-duration: 160ms; }
 }
 
 /* head: чип версии (paddingV 4, paddingH 10) и дата */
@@ -45,7 +110,7 @@
 .media-placeholder { display: grid; place-items: center; }
 
 /* body: paddingTop 12 от головы, gap 14 */
-.release-body { display: grid; gap: 14px; padding-top: 2px; }
+.release-body { display: grid; gap: 14px; padding-top: 12px; }
 .release-body p {
   margin: 0;
   color: var(--c-text-secondary);

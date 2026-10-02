@@ -19,23 +19,29 @@ interface Props {
   csp?: string;
   /** Статья: крошки на странице и Article + BreadcrumbList в разметке. */
   guide: GuideMeta;
+  /** Выбранный раздел шапки: статьи или отдельная вкладка «Клавиатура». */
+  section?: "articles" | "keyboard";
 }
-const { guide, ...props } = Astro.props;
+const { guide, section = "articles", ...props } = Astro.props;
 const crumbs = guide.crumbs;
 ---
 
 <BaseLayout {...props} jsonLd={[articleSchema(guide), breadcrumbSchema(crumbs)]}>
   <a class="skip-link" href="#main">К содержанию</a>
-  <Header active="articles" />
-  <main id="main" class="guide-page">
-    <nav class="breadcrumbs" aria-label="Хлебные крошки">
-      {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
-        <Fragment><a class="chip" href={crumb.path}>{crumb.name}</a><Icon name="caret-right" class="crumb-sep" /></Fragment>
-      ) : (
-        <span class="chip" aria-current="page">{crumb.name}</span>
-      ))}
-    </nav>
-    <slot />
+  <Header active={section} />
+  <main id="main">
+    <!-- Первый экран во всю ширину окна, над крошками: так у клавиатуры. -->
+    <slot name="stage" />
+    <div class="guide-page">
+      <nav class="breadcrumbs" aria-label="Хлебные крошки">
+        {crumbs.map((crumb, index) => index < crumbs.length - 1 ? (
+          <Fragment><a class="chip" href={crumb.path}>{crumb.name}</a><Icon name="caret-right" class="crumb-sep" /></Fragment>
+        ) : (
+          <span class="chip" aria-current="page">{crumb.name}</span>
+        ))}
+      </nav>
+      <slot />
+    </div>
   </main>
-  <Footer variant="guide" />
+  <Footer />
 </BaseLayout>

@@ -300,15 +300,15 @@ import { GUIDES } from "../seo/guides";
             <figcaption><strong>Перевод</strong>Язык определяется сам. Перевод приходит с огласовками, а каждое слово можно нажать и узнать, что оно значит в этой фразе.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-tashkeel.webp" alt="Огласовки: фраза без огласовок и тот же текст с полным ташкилем" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop"><img src="/assets/about/tool-tashkeel.webp" alt="Огласовки: фраза без огласовок и тот же текст с полным ташкилем" width="620" height="1252" loading="lazy"></div>
             <figcaption><strong>Огласовки</strong>Вставьте арабский текст или выберите фото, и приложение расставит все огласовки. Результат можно скопировать.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-tts.webp" alt="Озвучка: фраза, волна звука и пословная подсветка" width="620" height="1212" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-low"><img src="/assets/about/tool-tts.webp" alt="Озвучка: фраза, волна звука и пословная подсветка" width="620" height="1212" loading="lazy"></div>
             <figcaption><strong>Озвучка</strong>Фраза до 65 символов превращается в аудио с переводом. Её можно замедлить и повторить, а звучащее слово подсвечивается.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-vocab.webp" alt="Слова по теме «Путешествия»: 12 слов с переводом и частью речи" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop"><img src="/assets/about/tool-vocab.webp" alt="Слова по теме «Путешествия»: 12 слов с переводом и частью речи" width="620" height="1252" loading="lazy"></div>
             <figcaption><strong>Слова по теме</strong>Тема на русском или арабском превращается в 12 слов с переводом. Глаголы открываются в «Спряжении».</figcaption>
           </figure>
           <figure>
@@ -316,15 +316,15 @@ import { GUIDES } from "../seo/guides";
             <figcaption><strong>Примеры</strong>Пять фраз со словом в разных ситуациях: «в саду», «урок биологии», «прогулка». У каждой есть перевод и озвучка.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-image.webp" alt="Картинка к слову «гранат»: акварельная карточка с арабским словом" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop"><img src="/assets/about/tool-image.webp" alt="Картинка к слову «гранат»: акварельная карточка с арабским словом" width="620" height="1252" loading="lazy"></div>
             <figcaption><strong>Картинка</strong>Введите слово, и откроется акварельная карточка из базы с подписью по-арабски.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-anki.webp" alt="Анки: карточка с глаголом и кнопки «Знаю» и «Не знаю»" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop"><img src="/assets/about/tool-anki.webp" alt="Анки: карточка с глаголом и кнопки «Знаю» и «Не знаю»" width="620" height="1252" loading="lazy"></div>
             <figcaption><strong>Анки</strong>Темы из «Моих слов» повторяются карточками: смахните вправо, если знаете слово, и влево, если нет.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-conjugation.webp" alt="Спряжение глагола قرأ в настоящем времени, 14 форм" width="620" height="1196" loading="lazy"></div>
+            <div class="shot shot-crop"><img src="/assets/about/tool-conjugation.webp" alt="Спряжение глагола قَرَأَ в настоящем времени, 14 форм" width="620" height="1196" loading="lazy"></div>
             <figcaption><strong>Спряжение</strong>Больше 1 200 глаголов. В прошедшем и настоящем времени по 14 форм, в повелительном наклонении и запрете по 6.</figcaption>
           </figure>
           <figure>
@@ -380,12 +380,11 @@ import { GUIDES } from "../seo/guides";
 
       <!-- ═══ Серия ════════════════════════════════════════════════════ -->
       <section class="about-section" id="streak" aria-labelledby="streak-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="streak-title">Огонёк</h2>
-          <p class="about-p">День засчитывается, когда вы прошли урок или тренировку. Огласовки и вопросы ассистенту серию не продлевают. Пропущенный день закроет заморозка: на старте их две у всех.</p>
-        </div>
-
-        <div class="about-showcase about-showcase-flip">
+        <div class="about-showcase about-showcase-integrated">
+          <div class="about-section-head" data-appear>
+            <h2 class="about-h" id="streak-title">Огонёк</h2>
+            <p class="about-p">День засчитывается, когда вы прошли урок или тренировку. Огласовки и вопросы ассистенту серию не продлевают. Пропущенный день закроет заморозка: на старте их две у всех.</p>
+          </div>
           <div class="about-showcase-copy" data-appear>
             <ul class="about-points">
               <li><Icon name="check-circle" class="about-check" /><strong>Неделя на главном экране.</strong> Огонёк отмечает день с занятием, снежинка — день, который закрыла заморозка.</li>
@@ -395,7 +394,7 @@ import { GUIDES } from "../seo/guides";
             </ul>
           </div>
           <div class="shot about-showcase-figure streak-video" data-appear>
-            <video src="/assets/about/streak-week.mp4" poster="/assets/about/streak-week-poster.webp" width="540" height="806" autoplay muted loop playsinline preload="metadata" aria-label="Огонёк загорается, счётчик растёт с 6 до 7 дней подряд, и неделя заполняется огоньками"></video>
+            <video src="/assets/about/streak-week.mp4" poster="/assets/about/streak-week-poster.webp" width="540" height="806" autoplay muted loop playsinline preload="auto" aria-label="Огонёк загорается, счётчик растёт с 6 до 7 дней подряд, неделя заполняется огоньками, и огонёк продолжает покачиваться"></video>
           </div>
         </div>
       </section>
@@ -440,23 +439,23 @@ import { GUIDES } from "../seo/guides";
 
         <div class="shot-row" data-appear tabindex="0" role="group" aria-label="Экраны друзей, прокручиваются по горизонтали">
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/friends-list.webp" alt="Лист «Друзья»: поиск по ID и список из пяти друзей с уровнями" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friends-list.webp" alt="Лист «Друзья»: поиск по ID и список из пяти друзей с уровнями" width="620" height="1276" loading="lazy"></div>
             <figcaption><strong>Список друзей</strong>Поиск по ID профиля, заявки и все друзья с уровнем.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/friend-profile.webp" alt="Профиль друга: серия, уроки, опыт, Premium и календарь занятий за месяц" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-profile.webp" alt="Профиль друга: серия, уроки, опыт, Premium и календарь занятий за месяц" width="620" height="1276" loading="lazy"></div>
             <figcaption><strong>Профиль друга</strong>Серия, уроки, опыт и «Ритм занятий» друга.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/friend-topic.webp" alt="Тема друга «Еда»: пять слов и кнопка «Скопировать в мои темы»" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-topic.webp" alt="Тема друга «Еда»: пять слов и кнопка «Скопировать в мои темы»" width="620" height="1276" loading="lazy"></div>
             <figcaption><strong>Темы друга</strong>Тему с витрины друга можно скопировать к себе.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/friend-gift.webp" alt="Подарок для друга: выбор тарифа Premium и кнопка «Подарить год»" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-gift.webp" alt="Подарок для друга: выбор тарифа Premium и кнопка «Подарить год»" width="620" height="1276" loading="lazy"></div>
             <figcaption><strong>Premium в подарок</strong>Подарок оплачивается из профиля друга.</figcaption>
           </figure>
           <figure>
-            <div class="shot shot-crop"><img src="/assets/about/friend-received.webp" alt="Лист «Подарки»: друг подарил вам год Premium" width="620" height="1276" loading="lazy"></div>
+            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-received.webp" alt="Лист «Подарки»: друг подарил вам год Premium" width="620" height="1276" loading="lazy"></div>
             <figcaption><strong>Полученный подарок</strong>Подарки друзей собираются в отдельном листе.</figcaption>
           </figure>
         </div>

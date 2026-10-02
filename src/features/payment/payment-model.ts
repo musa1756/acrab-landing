@@ -19,7 +19,7 @@ export const DEFAULT_PRICING: Pricing = { prices: DEFAULT_PRICES, annualLifetime
 export const LEGAL_DOCUMENT_VERSION = "2026-08-25";
 
 /** Порядок кнопок тарифа на странице оплаты. */
-export const PLAN_ORDER: readonly Plan[] = ["annual", "monthly", "lifetime"];
+export const PLAN_ORDER: readonly Plan[] = ["monthly", "annual", "lifetime"];
 
 export function isPlan(value: unknown): value is Plan {
   return value === "monthly" || value === "annual" || value === "lifetime";

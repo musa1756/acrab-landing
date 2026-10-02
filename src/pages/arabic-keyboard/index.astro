@@ -26,9 +26,9 @@ const guide: GuideMeta = {
   image: seo.ogImage,
   datePublished: "2026-10-01",
   dateModified: "2026-10-01",
+  // Клавиатура — отдельный раздел шапки, а не статья: в крошках нет «Статей».
   crumbs: [
     { name: "Acrab", path: "/" },
-    { name: "Статьи", path: "/articles/" },
     { name: "Арабская клавиатура", path: "/arabic-keyboard/" },
   ],
 };
@@ -97,15 +97,20 @@ const toolSchema = webApplicationSchema({
 });
 ---
 
-<GuideLayout {...seo} guide={guide}>
+<GuideLayout {...seo} guide={guide} section="keyboard">
+    <!-- Первый экран — только клавиатура; за ней стекают арабские буквы (arabic-rain.ts). -->
+    <section class="kbd-stage" slot="stage" aria-labelledby="kbd-title">
+      <canvas class="kbd-rain" data-arabic-rain aria-hidden="true"></canvas>
+      <div class="kbd-stage-inner">
+        <h1 class="kbd-title" id="kbd-title">Арабская клавиатура онлайн</h1>
+        <ArabicKeyboard />
+      </div>
+    </section>
+
     <header class="guide-hero tool-hero">
-      <p class="eyebrow">Бесплатный инструмент</p>
-      <h1 class="page-title">Арабская клавиатура онлайн</h1>
       <p class="guide-lead">Печатайте арабские буквы и огласовки: нажимайте клавиши на экране или включите ввод с обычной клавиатуры, и латинские клавиши дадут арабские буквы. Готовый текст копируется одной кнопкой, ничего устанавливать не нужно.</p>
       <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
     </header>
-
-    <ArabicKeyboard />
 
     <div class="guide-layout">
       <aside class="guide-toc" aria-label="Содержание страницы"><strong>На странице</strong><a href="#usage">Как пользоваться</a><a href="#shift">Огласовки и хамза</a><a href="#install">Раскладка в системе</a><a href="#next">Что дальше</a><a href="#faq">Частые вопросы</a></aside>
@@ -206,4 +211,5 @@ const toolSchema = webApplicationSchema({
 
     <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/arabic-vowels/"><span>Знаки на слое Shift</span><strong>Огласовки →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(toolSchema)} />
+    <script src="../../scripts/arabic-rain.ts"></script>
 </GuideLayout>

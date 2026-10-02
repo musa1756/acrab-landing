@@ -103,9 +103,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Бейдж «Выгоднее» — пилюля .badge над верхним краем: top −9 и right 10 от
+/* Бейдж «Выгоднее» — пилюля .badge над верхним краем: top −9, по центру по горизонтали от
    внешнего края плитки (рамка 2 в отсчёте от внутреннего). */
-.plan-badge { position: absolute; top: -11px; right: 8px; pointer-events: none; }
+.plan-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); pointer-events: none; }
 
 
 /* ── Таблица сравнения: ComparisonTable ──────────────────────────────────── */

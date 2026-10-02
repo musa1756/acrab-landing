@@ -1,6 +1,6 @@
 ---
 interface Props {
-  active?: "home" | "articles" | "updates" | "buy" | "support";
+  active?: "home" | "articles" | "keyboard" | "updates" | "buy" | "support";
   variant?: "primary" | "offer" | "consent" | "get";
 }
 
@@ -8,9 +8,10 @@ const { active, variant = "primary" } = Astro.props;
 const linkSets = {
   primary: [
     { id: "home", href: "/", label: "О приложении", short: "Главная" },
-    { id: "articles", href: "/articles/", label: "Статьи" },
     { id: "updates", href: "/about/", label: "Обновления" },
     { id: "buy", href: "/buy/", label: "Оплата" },
+    { id: "articles", href: "/articles/", label: "Статьи" },
+    { id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" },
     { id: "support", href: "/support/", label: "Помощь" },
   ],
   offer: [
@@ -43,3 +44,5 @@ const links = linkSets[variant];
     </nav>
   </div>
 </header>
+
+<script src="../scripts/site-nav.ts"></script>
