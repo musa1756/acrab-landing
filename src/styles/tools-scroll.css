@@ -1,0 +1,225 @@
+/* Инструменты на главной: плитки и экраны.
+   Базовый вид (узкий экран, низкое окно, reduced motion, без скрипта) — плитки
+   сеткой и горизонтальная лента `.shot-row` из home.css. Широкий экран
+   (скрипт tools-scroll.ts ставит `.is-pinned`) — закреплённая сцена: плитки
+   слева, телефон со снимком активного инструмента справа, снимок меняется вместе
+   с прокруткой раздела. Все классы блока — `ts-`; `.tool*` и `.shot-row`
+   из home.css здесь не переопределяются глобально, только внутри `.ts`. */
+
+/* ── Плитка-кнопка ─────────────────────────────────────────────────────────
+   В home.css `.tool` описан для div. Кнопка сбрасывает стили браузера, чтобы
+   вид остался прежним; ячейка `.ts-cell` — элемент сетки (появление двигает её,
+   выделение — саму кнопку). */
+.ts-cell { display: grid; min-width: 0; }
+button.tool {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: transform var(--press-out) var(--ease-press);
+}
+/* Название и подпись раньше были абзацами с `text-wrap: pretty` из base.css. */
+button.tool .tool-name,
+button.tool .tool-sub { text-wrap: pretty; }
+button.tool:disabled { cursor: default; }
+button.tool:not(:disabled):active {
+  transform: scale(0.98);
+  transition-duration: var(--press-in);
+}
+button.tool:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+
+/* Как и прежде, «Перевод» занимает весь ряд, когда плитки в две колонки. */
+@media (max-width: 860px) {
+  .ts-cell-wide { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.tool:not(:disabled):active { transform: none; }
+}
+
+/* Сцена и телефон нужны только закреплённому режиму. */
+.ts-steps,
+.ts-aside { display: none; }
+
+/* ── Закреплённая сцена ────────────────────────────────────────────────────
+   Внешний контейнер выше окна на девять шагов по 22 высоты экрана; внутри сцена
+   `position: sticky` под шапкой, высотой с остаток экрана. */
+.ts {
+  --ts-top: calc(var(--header-h) + 8px);
+  --ts-scene-h: calc(100vh - var(--ts-top));
+  --ts-step: 22vh;
+  --ts-aside-w: clamp(256px, 30vw, 320px);
+  /* Телефон по высоте: сцена минус подпись (до трёх строк) и промежуток;
+     ширина снимка 620 : 1252. Не шире своей колонки: на 861–900 px колонка
+     уже, чем телефон по высоте окна. */
+  --ts-phone-w: min(var(--ts-aside-w), clamp(200px, calc((100vh - var(--ts-top) - 130px) * 0.4952), 300px));
+}
+@supports (height: 100svh) {
+  .ts {
+    --ts-scene-h: calc(100svh - var(--ts-top));
+    --ts-step: 22svh;
+    --ts-phone-w: min(var(--ts-aside-w), clamp(200px, calc((100svh - var(--ts-top) - 130px) * 0.4952), 300px));
+  }
+}
+
+.ts.is-pinned .ts-track {
+  position: relative;
+  height: calc(var(--ts-scene-h) + 9 * var(--ts-step));
+}
+/* Метки шагов: девять равных полос на всей длине прокрутки закреплённой сцены. */
+.ts.is-pinned .ts-steps {
+  position: absolute;
+  inset: 0 auto var(--ts-scene-h) 0;
+  display: grid;
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+  width: 1px;
+  pointer-events: none;
+}
+.ts.is-pinned .ts-scene {
+  position: sticky;
+  top: var(--ts-top);
+  height: var(--ts-scene-h);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ts-aside-w);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: center;
+}
+.ts.is-pinned .ts-row { display: none; }
+
+/* Плитки: в сцене они компактнее, а четыре в ряд на узкой колонке становятся 2 × 2. */
+.ts.is-pinned .ts-tools {
+  container: ts-tools / inline-size;
+  gap: 14px;
+}
+.ts.is-pinned .tool-group { gap: 8px; }
+.ts.is-pinned .tool { min-height: 112px; padding: 14px 16px; }
+@container ts-tools (max-width: 580px) {
+  .ts-grid-4 { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Неактивные приглушены, активная приподнята и обведена своим цветом (кольцо —
+   псевдоэлемент: меняется прозрачность, а не тень). */
+.ts.is-pinned button.tool {
+  position: relative;
+  opacity: 0.55;
+  transition:
+    opacity 260ms ease-out,
+    transform var(--spring-micro-duration) var(--spring-micro);
+}
+.ts.is-pinned button.tool::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 3px solid var(--tool-b);
+  border-radius: calc(var(--r-tile) + 6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+.ts.is-pinned button.tool:not(:disabled):hover { opacity: 0.85; }
+.ts.is-pinned button.tool:focus-visible { opacity: 1; }
+.ts.is-pinned button.tool[aria-pressed="true"] {
+  z-index: 1;
+  opacity: 1;
+  transform: translateY(-4px) scale(1.03);
+}
+.ts.is-pinned button.tool[aria-pressed="true"]::after { opacity: 1; }
+.ts.is-pinned button.tool:not(:disabled):active { transform: translateY(-2px) scale(1.01); }
+
+/* ── Телефон и подпись ───────────────────────────────────────────────────── */
+.ts.is-pinned .ts-aside {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+}
+/* Окно под карточки: высота — самого высокого снимка, карточки стоят на его
+   нижней кромке, чтобы подпись всегда была сразу под ними. */
+.ts-phone {
+  position: relative;
+  width: var(--ts-phone-w);
+  aspect-ratio: 620 / 1252;
+}
+/* Карточка `.shot` из home.css (радиус 20, тень high); высота — по пропорции
+   снимка, поэтому ничего не обрезается. Пока снимок не загрузился, карточка
+   уже нужного размера (--ts-ar задаёт скрипт). */
+.ts-slide {
+  position: absolute;
+  inset: auto 0 0;
+  aspect-ratio: var(--ts-ar, 620 / 1252);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(18px);
+  transition:
+    opacity 200ms ease-out,
+    transform 300ms ease-out,
+    visibility 0s linear 300ms;
+}
+.ts-slide.is-before { transform: translateY(-18px); }
+.ts-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 320ms ease-out 60ms,
+    transform var(--spring-appear-duration) var(--spring-appear),
+    visibility 0s;
+}
+.ts-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Пока снимок не пришёл, подпись alt не мелькает внутри пустой карточки. */
+  color: transparent;
+  font-size: 0;
+}
+
+/* Подписи лежат друг на друге в одной ячейке: высота блока — самой длинной,
+   поэтому телефон не прыгает при смене. */
+.ts-captions {
+  display: grid;
+  width: 100%;
+  max-width: 320px;
+}
+.ts-cap {
+  grid-area: 1 / 1;
+  align-self: start;
+  color: var(--c-text-secondary);
+  font-size: var(--t-subhead);
+  line-height: var(--lh-subhead);
+  text-align: center;
+  text-wrap: pretty;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity 160ms ease-out,
+    transform 240ms ease-out,
+    visibility 0s linear 240ms;
+}
+.ts-cap.is-before { transform: translateY(-8px); }
+.ts-cap.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 260ms ease-out 80ms,
+    transform 360ms ease-out 80ms,
+    visibility 0s;
+}
+.ts-cap strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}

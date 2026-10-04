@@ -1,0 +1,126 @@
+---
+import Icon from "../Icon.astro";
+
+/**
+ * Инструменты на главной: плитки повторяют TOOL_FEATURES из
+ * mobile/src/features/tools/ToolsScreen.tsx (тот же порядок, названия и подписи,
+ * цвета — из toolAccent), ниже — экраны инструментов.
+ *
+ * Порядок плиток совпадает с порядком снимков в ленте `.shot-row`: скрипт
+ * tools-scroll.ts сопоставляет их по номеру. На широком экране скрипт включает
+ * «закреплённую» сцену — плитки слева, телефон справа, снимок меняется вместе с
+ * прокруткой. Без скрипта, на телефоне, при низком окне и при reduced motion —
+ * плитки сеткой и горизонтальная лента, как раньше.
+ *
+ * Плитка — `<button>` внутри ячейки `.ts-cell`: появление (appear.ts) двигает
+ * ячейку, а выделение активной плитки — саму кнопку, они не мешают друг другу.
+ * Внутри кнопки только строчные элементы (`span`), поэтому вид из home.css тот же.
+ */
+const groups = [
+  {
+    title: "Работа с текстом",
+    tools: [
+      { cls: "tool-translate", icon: "translate-bold", ar: "تَرْجَمَةٌ", name: "Перевод", sub: "Арабский ⇄ Русский", wide: true },
+      { cls: "tool-harakat", icon: "text-aa-bold", ar: "تَشْكِيلٌ", name: "Огласовки", sub: "Текст или фото → огласовки" },
+      { cls: "tool-voice", icon: "file-audio-bold", ar: "صَوْتٌ", name: "Озвучка", sub: "Фраза → аудио и перевод" },
+    ],
+  },
+  {
+    title: "Изучение слов",
+    four: true,
+    tools: [
+      { cls: "tool-vocab", icon: "book-bookmark-bold", ar: "مُفْرَدَاتٌ", name: "Слова по теме", sub: "12 слов по теме" },
+      { cls: "tool-examples", icon: "article-ny-times-bold", ar: "أَمْثِلَةٌ", name: "Примеры", sub: "Контекст и озвучка" },
+      { cls: "tool-image", icon: "panorama-bold", ar: "صُورَةٌ", name: "Картинка", sub: "Образ слова и подпись" },
+      { cls: "tool-anki", icon: "stack-bold", ar: "مُرَاجَعَةٌ", name: "Анки", sub: "Повторение слов по темам" },
+    ],
+  },
+  {
+    title: "Грамматика",
+    tools: [
+      { cls: "tool-conj", icon: "table-bold", ar: "تَصْرِيفٌ", name: "Спряжение", sub: "Таблица глагольных форм" },
+      { cls: "tool-root", icon: "git-merge-bold", ar: "عَائِلَة", name: "Семья слов", sub: "Корень и родственные слова" },
+    ],
+  },
+] as const;
+---
+
+<div class="ts" data-ts>
+  <div class="ts-track">
+    <!-- Невидимые метки шагов: скрипт кладёт сюда девять элементов, по ним
+         IntersectionObserver узнаёт, какой инструмент сейчас активен. -->
+    <div class="ts-steps" aria-hidden="true"></div>
+    <div class="ts-scene">
+      <div class="tool-groups ts-tools">
+        {groups.map((group) => (
+          <div class="tool-group">
+            <h3 class="tool-group-title t-headline">{group.title}</h3>
+            <div class:list={["tool-grid", { "ts-grid-4": "four" in group }]} data-appear-group>
+              {group.tools.map((tool) => (
+                <div class:list={["ts-cell", { "ts-cell-wide": "wide" in tool }]}>
+                  <button type="button" class={`tool ${tool.cls}`} aria-controls="ts-phone" disabled>
+                    <span class="tool-top">
+                      <Icon name={tool.icon} />
+                      <span class="tool-ar" lang="ar">{tool.ar}</span>
+                    </span>
+                    <span class="tool-copy">
+                      <span class="tool-name">{tool.name}</span>
+                      <span class="tool-sub">{tool.sub}</span>
+                    </span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <!-- Телефон и подпись: скрипт собирает их из ленты ниже (те же снимки,
+           alt и подписи), пока сцена закреплена. -->
+      <div class="ts-aside">
+        <div class="ts-phone" id="ts-phone" role="group" aria-label="Экран выбранного инструмента"></div>
+        <div class="ts-captions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shot-row ts-row" id="ts-row" data-appear tabindex="0" role="group" aria-label="Экраны инструментов, прокручиваются по горизонтали">
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-translate.webp" alt="Переводчик: русская фраза и её арабский перевод с огласовками" width="620" height="988" loading="lazy"></div>
+      <figcaption><strong>Перевод</strong>Язык определяется сам. Перевод приходит с огласовками, а каждое слово можно нажать и узнать, что оно значит в этой фразе.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-tashkeel.webp" alt="Огласовки: фраза без огласовок и тот же текст с полным ташкилем" width="620" height="1252" loading="lazy"></div>
+      <figcaption><strong>Огласовки</strong>Вставьте арабский текст или выберите фото, и приложение расставит все огласовки. Результат можно скопировать.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop shot-crop-low"><img src="/assets/about/tool-tts.webp" alt="Озвучка: фраза, волна звука и пословная подсветка" width="620" height="1212" loading="lazy"></div>
+      <figcaption><strong>Озвучка</strong>Фраза до 65 символов превращается в аудио с переводом. Её можно замедлить и повторить, а звучащее слово подсвечивается.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-vocab.webp" alt="Слова по теме «Путешествия»: 12 слов с переводом и частью речи" width="620" height="1252" loading="lazy"></div>
+      <figcaption><strong>Слова по теме</strong>Тема на русском или арабском превращается в 12 слов с переводом. Глаголы открываются в «Спряжении».</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-examples.webp" alt="Примеры: слово «пчела» в разных ситуациях с переводом и озвучкой" width="620" height="1212" loading="lazy"></div>
+      <figcaption><strong>Примеры</strong>Пять фраз со словом в разных ситуациях: «в саду», «урок биологии», «прогулка». У каждой есть перевод и озвучка.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-image.webp" alt="Картинка к слову «гранат»: акварельная карточка с арабским словом" width="620" height="1252" loading="lazy"></div>
+      <figcaption><strong>Картинка</strong>Введите слово, и откроется акварельная карточка из базы с подписью по-арабски.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-anki.webp" alt="Анки: карточка с глаголом и кнопки «Знаю» и «Не знаю»" width="620" height="1252" loading="lazy"></div>
+      <figcaption><strong>Анки</strong>Темы из «Моих слов» повторяются карточками: смахните вправо, если знаете слово, и влево, если нет.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-conjugation.webp" alt="Спряжение глагола قَرَأَ в настоящем времени, 14 форм" width="620" height="1196" loading="lazy"></div>
+      <figcaption><strong>Спряжение</strong>Больше 1 200 глаголов. В прошедшем и настоящем времени по 14 форм, в повелительном наклонении и запрете по 6.</figcaption>
+    </figure>
+    <figure>
+      <div class="shot shot-crop"><img src="/assets/about/tool-root.webp" alt="Семья слов: корень ك-ت-ب и производные — глагол, масдар, деятель, объект" width="620" height="1196" loading="lazy"></div>
+      <figcaption><strong>Семья слов</strong>Корень <span lang="ar">ك‑ت‑ب</span> и слова от него: глаголы пород I–X, масдар, имена деятеля и объекта. В базе 955 корней.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<script src="../../scripts/tools-scroll.ts"></script>

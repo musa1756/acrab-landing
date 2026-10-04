@@ -1,0 +1,208 @@
+/* Карта арабского мира из точек на главной (components/home/ArabicWorldMap.astro).
+   Точки рисует SVG: каждая — подпуть `M x y h0` со скруглённым концом, толщина
+   линии = диаметр точки, шаг сетки = 1 единица viewBox. Классы начинаются с `wm-`;
+   скрипт — scripts/world-map.ts. Цвета — токены: страны Лиги `--c-brand`,
+   прочая суша `--c-line-strong`. */
+
+.wm-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .wm-stage {
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 28vw, 300px);
+    gap: clamp(24px, 3vw, 36px);
+  }
+}
+
+/* ── Карта ───────────────────────────────────────────────────────────────── */
+.wm-map { padding: clamp(10px, 2.2vw, 22px); }
+.wm-canvas { position: relative; }
+.wm-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.wm-land,
+.wm-league {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 0.6;
+}
+.wm-land { stroke: var(--c-line-strong); }
+.wm-country {
+  stroke: var(--c-brand);
+  transition:
+    stroke var(--fade) ease-out,
+    stroke-width var(--spring-micro-duration) var(--spring-micro),
+    opacity var(--fade) ease-out;
+}
+.wm-country.is-tiny { stroke-width: 0.78; }
+.wm-band { transition: opacity var(--fade) ease-out; }
+
+/* Мишени для мыши: широкая невидимая линия поверх точек страны. Квадратные
+   концы шириной в шаг сетки смыкаются без щелей между точками. */
+.wm-targets { pointer-events: none; }
+.wm-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 1;
+  stroke-linecap: square;
+  pointer-events: stroke;
+}
+.wm-live .wm-hit { cursor: pointer; }
+
+/* Выбранная страна: точки темнее и крупнее, кольцо под ними пульсирует, остальное
+   отступает. */
+.wm-halo {
+  fill: none;
+  stroke: var(--gold-40);
+  stroke-linecap: round;
+  stroke-width: 1.55;
+  opacity: 0;
+  transition: opacity var(--fade) ease-out;
+}
+.wm-live.is-tiny-active .wm-halo { stroke-width: 3.2; }
+.wm-live.has-active .wm-halo {
+  opacity: 1;
+  animation: wm-pulse 1500ms ease-in-out infinite alternate;
+}
+.wm-live.is-offscreen .wm-halo { animation-play-state: paused; }
+@keyframes wm-pulse {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+.wm-live .wm-country.is-active { stroke: var(--c-brand-edge-fill); stroke-width: 0.82; }
+.wm-live .wm-country.is-tiny.is-active { stroke-width: 1.3; }
+.wm-live.has-active .wm-country:not(.is-active) { opacity: 0.45; }
+.wm-live.has-active .wm-band { opacity: 0.6; }
+
+/* Плашка с названием: карточка приложения, висит над страной (или под ней). */
+.wm-plate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 7px 14px 8px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-mid);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(var(--wm-x, 0), var(--wm-y, 0));
+  transition:
+    opacity var(--fade) ease-out,
+    visibility 0s linear var(--fade);
+}
+.wm-plate.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--fade) ease-out,
+    transform var(--spring-micro-duration) var(--spring-micro);
+}
+.wm-plate.is-snap { transition: opacity var(--fade) ease-out; }
+.wm-plate-ru {
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-footnote);
+  font-weight: 700;
+  line-height: var(--lh-footnote);
+}
+.wm-plate-ar {
+  color: var(--c-text);
+  font-family: var(--font-arabic);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+/* Хвостик указывает на страну: к низу плашки, а если она под страной — к верху. */
+.wm-plate::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: var(--wm-tail, 50%);
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border: solid var(--c-brand);
+  border-width: 0 var(--b-emphasis) var(--b-emphasis) 0;
+  background: var(--c-surface);
+  transform: rotate(45deg);
+  border-bottom-right-radius: 3px;
+}
+.wm-plate.is-below::after {
+  top: -7px;
+  bottom: auto;
+  border-width: var(--b-emphasis) 0 0 var(--b-emphasis);
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 3px;
+}
+
+/* ── Список стран ────────────────────────────────────────────────────────── */
+.wm-side { display: flex; flex-direction: column; gap: 10px; }
+.wm-hint { margin: 0; }
+.wm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wm-chip {
+  min-height: 36px;
+  gap: 8px;
+  padding: 5px 12px;
+  cursor: default;
+}
+button.wm-chip { cursor: pointer; }
+.wm-chip:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 2px; }
+.wm-chip-ar {
+  font-family: var(--font-arabic);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.wm-chip.is-active {
+  border-color: var(--c-brand-strong);
+  background: var(--gold-24);
+  color: var(--c-text);
+}
+.wm-chip[aria-pressed="true"] { border-color: var(--c-brand-strong); }
+
+/* ── Появление ───────────────────────────────────────────────────────────────
+   Скрипт ставит `.wm-armed` только на карту ниже первого экрана и без
+   «уменьшения движения», а `.wm-in` — когда она показана: суша проявляется
+   полосами с запада на восток, страны Лиги зажигаются после неё. */
+.wm-armed .wm-band,
+.wm-armed .wm-country { opacity: 0; }
+.wm-armed.wm-in .wm-band {
+  opacity: 1;
+  transition: opacity 520ms ease-out;
+  transition-delay: calc(var(--wm-d, 0) * 38ms);
+}
+.wm-armed.wm-in .wm-country {
+  opacity: 1;
+  transition: opacity 560ms ease-out;
+  transition-delay: calc(1300ms + var(--wm-d, 0) * 50ms);
+}
+
+@media (max-width: 520px) {
+  .wm-plate { padding: 5px 11px 6px; border-radius: 12px; }
+  .wm-plate-ar { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-live.has-active .wm-halo { animation: none; opacity: 1; }
+  .wm-plate.is-on { transition: opacity var(--fade) ease-out; }
+}
+
+@media print {
+  .wm-armed .wm-band,
+  .wm-armed .wm-country { opacity: 1; }
+}

@@ -1,0 +1,208 @@
+/* Главная: отзывы из App Store и Google Play (components/home/Reviews.astro).
+   Сводка — плитки-ссылки .tile-neutral, карточки отзывов — белые, радиус 20,
+   тень high, как карточки Программы. Лента — две одинаковые дорожки подряд,
+   сдвиг на −50 % даёт бесшовную петлю. Движение только transform; пауза при
+   наведении и фокусе, вне экрана и по кнопке. Префикс классов — rv-. */
+
+.rv {
+  --rv-gap: 16px;
+  --rv-card-w: 320px;
+  --rv-fade: 56px;
+  --rv-lap: 60s;
+  /* Поле страницы (--page): 24 px, на телефоне 16 px. Лента выходит на него. */
+  --rv-bleed: 24px;
+}
+
+/* ── Сводка и кнопка паузы ─────────────────────────────────────────────── */
+.rv-bar { margin-bottom: 8px; }
+.rv-scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rv-score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+}
+.rv-score-glyph { width: 22px; height: 22px; flex: 0 0 auto; fill: var(--c-text); }
+.rv-score-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.rv-score-name {
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+}
+.rv-score-line { display: flex; align-items: center; gap: 6px; }
+.rv-score-num {
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 700;
+  line-height: var(--lh-callout);
+  font-variant-numeric: tabular-nums;
+}
+
+.rv-stars { display: inline-flex; gap: 1px; color: var(--c-brand); }
+.rv-stars svg { width: 14px; height: 14px; flex: 0 0 auto; fill: currentColor; }
+
+.rv-controls { display: flex; justify-content: center; margin: 0; }
+.rv-toggle[hidden] { display: none; }
+.rv-ico-play { display: none; }
+.rv.is-paused .rv-ico-pause { display: none; }
+.rv.is-paused .rv-ico-play { display: block; }
+
+/* ── Лента ──────────────────────────────────────────────────────────────────
+   Рамка растянута до краёв окна (на ширину поля страницы), чтобы карточки выходили из
+   затухания у самого края экрана; вертикальные поля оставляют место тени. */
+.rv-frame { margin-inline: calc(var(--rv-bleed) * -1); border-radius: var(--r-surface); }
+.rv-marquee {
+  overflow: hidden;
+  padding: 12px 0 24px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--rv-fade), #000 calc(100% - var(--rv-fade)), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 var(--rv-fade), #000 calc(100% - var(--rv-fade)), transparent 100%);
+}
+/* Кольцо фокуса рисует рамка: на самой ленте его съела бы маска. */
+.rv-marquee:focus { outline: none; }
+.rv-frame:has(.rv-marquee:focus-visible) {
+  outline: 2px solid var(--c-brand-strong);
+  outline-offset: -2px;
+}
+
+.rv-track {
+  display: flex;
+  width: max-content;
+  direction: ltr;
+  animation: rv-run var(--rv-lap) linear infinite;
+  will-change: transform;
+}
+@keyframes rv-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Пауза: наведение мыши, фокус внутри, кнопка, лента вне экрана. */
+.rv-marquee:focus-within .rv-track,
+.rv.is-paused .rv-track,
+.rv.rv-js:not(.is-live) .rv-track { animation-play-state: paused; }
+@media (hover: hover) {
+  .rv-marquee:hover .rv-track { animation-play-state: paused; }
+}
+
+/* Каждая дорожка заканчивается зазором, поэтому половина трека — ровно круг. */
+.rv-set {
+  display: flex;
+  gap: var(--rv-gap);
+  margin: 0;
+  padding: 0 var(--rv-gap) 0 0;
+  list-style: none;
+}
+
+/* ── Карточка отзыва ───────────────────────────────────────────────────── */
+.rv-card {
+  display: flex;
+  flex: 0 0 var(--rv-card-w);
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px;
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-high);
+}
+.rv-card-head { display: flex; align-items: center; gap: 12px; }
+.rv-avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--gold-12);
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-headline);
+  font-weight: 700;
+  line-height: 1;
+}
+.rv-who { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.rv-author {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-rounded);
+  font-size: var(--t-callout);
+  font-weight: 600;
+  line-height: var(--lh-callout);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rv-title {
+  margin: 0;
+  font-family: var(--font-rounded);
+  font-size: var(--t-headline);
+  font-weight: 600;
+  line-height: var(--lh-headline);
+}
+/* Текст не правится: длинный отзыв только обрезается по высоте. */
+.rv-text {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--c-text);
+  font-size: var(--t-callout);
+  line-height: var(--lh-callout);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 11;
+  line-clamp: 11;
+  overflow-wrap: anywhere;
+}
+.rv-text-lg {
+  font-family: var(--font-rounded);
+  font-size: var(--t-title);
+  font-weight: 600;
+  line-height: var(--lh-title);
+}
+.rv-text-md {
+  font-size: var(--t-headline);
+  line-height: var(--lh-headline);
+}
+.rv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  margin: auto 0 0;
+  padding-top: 12px;
+  border-top: var(--b-line) solid var(--c-line);
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+}
+
+/* ── Телефон: карточки ~280 px ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .rv { --rv-bleed: 16px; }
+}
+@media (max-width: 560px) {
+  .rv { --rv-card-w: 280px; --rv-fade: 28px; --rv-lap: 52s; }
+  .rv-scores { gap: 10px; }
+  .rv-score { gap: 8px; padding: 9px 12px; }
+}
+
+/* ── Уменьшенное движение: без бега, ряд листается вручную ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .rv { --rv-fade: var(--rv-bleed); }
+  .rv-marquee {
+    overflow-x: auto;
+    scroll-padding-inline: var(--rv-bleed);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .rv-track { animation: none; transform: none; will-change: auto; }
+  .rv-set { padding-inline: var(--rv-bleed); }
+  .rv-set[aria-hidden="true"] { display: none; }
+  .rv-card { scroll-snap-align: start; }
+  .rv-toggle { display: none; }
+}

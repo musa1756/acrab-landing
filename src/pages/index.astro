@@ -2,6 +2,9 @@
 import PageLayout from "../layouts/PageLayout.astro";
 import Icon from "../components/Icon.astro";
 import StoreLinks from "../components/StoreLinks.astro";
+import ToolsScroll from "../components/home/ToolsScroll.astro";
+import ArabicWorldMap from "../components/home/ArabicWorldMap.astro";
+import Reviews from "../components/home/Reviews.astro";
 import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import { GUIDES } from "../seo/guides";
 ---
@@ -17,9 +20,9 @@ import { GUIDES } from "../seo/guides";
           <p class="about-hero-lead">Acrab ведёт от 28 букв до чтения текстов с огласовками. Правила объяснены по-русски, а перевод, спряжение и ИИ-учитель открываются в соседних вкладках того же приложения.</p>
           <StoreLinks class="about-hero-actions" />
           <dl class="about-stats">
-            <div class="about-stat"><dd>44</dd><dt>модуля в программе</dt></div>
-            <div class="about-stat"><dd>240</dd><dt>уроков от букв до грамматики</dt></div>
-            <div class="about-stat"><dd>10</dd><dt>инструментов вместе с ИИ-ассистентом</dt></div>
+            <div class="about-stat"><dd data-count="44">44</dd><dt>модуля в программе</dt></div>
+            <div class="about-stat"><dd data-count="240">240</dd><dt>уроков от букв до грамматики</dt></div>
+            <div class="about-stat"><dd data-count="10">10</dd><dt>инструментов вместе с ИИ-ассистентом</dt></div>
           </dl>
         </div>
         <div class="shot about-hero-figure">
@@ -169,152 +172,7 @@ import { GUIDES } from "../seo/guides";
           <p class="about-p">Всё, ради чего обычно уходят из урока в поиск: перевести фразу, расставить огласовки, проспрягать глагол, найти родственные слова, услышать произношение. Спряжение, Семья слов и Анки работают без интернета.</p>
         </div>
 
-        <div class="tool-groups">
-          <div class="tool-group">
-            <h3 class="tool-group-title t-headline">Работа с текстом</h3>
-            <div class="tool-grid" data-appear-group>
-              <div class="tool tool-translate">
-                <div class="tool-top">
-                  <Icon name="translate-bold" />
-                  <span class="tool-ar" lang="ar">تَرْجَمَةٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Перевод</p>
-                  <p class="tool-sub">Арабский ⇄ Русский</p>
-                </div>
-              </div>
-              <div class="tool tool-harakat">
-                <div class="tool-top">
-                  <Icon name="text-aa-bold" />
-                  <span class="tool-ar" lang="ar">تَشْكِيلٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Огласовки</p>
-                  <p class="tool-sub">Текст или фото → огласовки</p>
-                </div>
-              </div>
-              <div class="tool tool-voice">
-                <div class="tool-top">
-                  <Icon name="file-audio-bold" />
-                  <span class="tool-ar" lang="ar">صَوْتٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Озвучка</p>
-                  <p class="tool-sub">Фраза → аудио и перевод</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tool-group">
-            <h3 class="tool-group-title t-headline">Изучение слов</h3>
-            <div class="tool-grid" data-appear-group>
-              <div class="tool tool-vocab">
-                <div class="tool-top">
-                  <Icon name="book-bookmark-bold" />
-                  <span class="tool-ar" lang="ar">مُفْرَدَاتٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Слова по теме</p>
-                  <p class="tool-sub">12 слов по теме</p>
-                </div>
-              </div>
-              <div class="tool tool-examples">
-                <div class="tool-top">
-                  <Icon name="article-ny-times-bold" />
-                  <span class="tool-ar" lang="ar">أَمْثِلَةٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Примеры</p>
-                  <p class="tool-sub">Контекст и озвучка</p>
-                </div>
-              </div>
-              <div class="tool tool-image">
-                <div class="tool-top">
-                  <Icon name="panorama-bold" />
-                  <span class="tool-ar" lang="ar">صُورَةٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Картинка</p>
-                  <p class="tool-sub">Образ слова и подпись</p>
-                </div>
-              </div>
-              <div class="tool tool-anki">
-                <div class="tool-top">
-                  <Icon name="stack-bold" />
-                  <span class="tool-ar" lang="ar">مُرَاجَعَةٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Анки</p>
-                  <p class="tool-sub">Повторение слов по темам</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tool-group">
-            <h3 class="tool-group-title t-headline">Грамматика</h3>
-            <div class="tool-grid" data-appear-group>
-              <div class="tool tool-conj">
-                <div class="tool-top">
-                  <Icon name="table-bold" />
-                  <span class="tool-ar" lang="ar">تَصْرِيفٌ</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Спряжение</p>
-                  <p class="tool-sub">Таблица глагольных форм</p>
-                </div>
-              </div>
-              <div class="tool tool-root">
-                <div class="tool-top">
-                  <Icon name="git-merge-bold" />
-                  <span class="tool-ar" lang="ar">عَائِلَة</span>
-                </div>
-                <div class="tool-copy">
-                  <p class="tool-name">Семья слов</p>
-                  <p class="tool-sub">Корень и родственные слова</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="shot-row" data-appear tabindex="0" role="group" aria-label="Экраны инструментов, прокручиваются по горизонтали">
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-translate.webp" alt="Переводчик: русская фраза и её арабский перевод с огласовками" width="620" height="988" loading="lazy"></div>
-            <figcaption><strong>Перевод</strong>Язык определяется сам. Перевод приходит с огласовками, а каждое слово можно нажать и узнать, что оно значит в этой фразе.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-tashkeel.webp" alt="Огласовки: фраза без огласовок и тот же текст с полным ташкилем" width="620" height="1252" loading="lazy"></div>
-            <figcaption><strong>Огласовки</strong>Вставьте арабский текст или выберите фото, и приложение расставит все огласовки. Результат можно скопировать.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop shot-crop-low"><img src="/assets/about/tool-tts.webp" alt="Озвучка: фраза, волна звука и пословная подсветка" width="620" height="1212" loading="lazy"></div>
-            <figcaption><strong>Озвучка</strong>Фраза до 65 символов превращается в аудио с переводом. Её можно замедлить и повторить, а звучащее слово подсвечивается.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-vocab.webp" alt="Слова по теме «Путешествия»: 12 слов с переводом и частью речи" width="620" height="1252" loading="lazy"></div>
-            <figcaption><strong>Слова по теме</strong>Тема на русском или арабском превращается в 12 слов с переводом. Глаголы открываются в «Спряжении».</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-examples.webp" alt="Примеры: слово «пчела» в разных ситуациях с переводом и озвучкой" width="620" height="1212" loading="lazy"></div>
-            <figcaption><strong>Примеры</strong>Пять фраз со словом в разных ситуациях: «в саду», «урок биологии», «прогулка». У каждой есть перевод и озвучка.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-image.webp" alt="Картинка к слову «гранат»: акварельная карточка с арабским словом" width="620" height="1252" loading="lazy"></div>
-            <figcaption><strong>Картинка</strong>Введите слово, и откроется акварельная карточка из базы с подписью по-арабски.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-anki.webp" alt="Анки: карточка с глаголом и кнопки «Знаю» и «Не знаю»" width="620" height="1252" loading="lazy"></div>
-            <figcaption><strong>Анки</strong>Темы из «Моих слов» повторяются карточками: смахните вправо, если знаете слово, и влево, если нет.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-conjugation.webp" alt="Спряжение глагола قَرَأَ в настоящем времени, 14 форм" width="620" height="1196" loading="lazy"></div>
-            <figcaption><strong>Спряжение</strong>Больше 1 200 глаголов. В прошедшем и настоящем времени по 14 форм, в повелительном наклонении и запрете по 6.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop"><img src="/assets/about/tool-root.webp" alt="Семья слов: корень ك-ت-ب и производные — глагол, масдар, деятель, объект" width="620" height="1196" loading="lazy"></div>
-            <figcaption><strong>Семья слов</strong>Корень <span lang="ar">ك‑ت‑ب</span> и слова от него: глаголы пород I–X, масдар, имена деятеля и объекта. В базе 955 корней.</figcaption>
-          </figure>
-        </div>
+        <ToolsScroll />
       </section>
 
       <!-- ═══ Ассистент ════════════════════════════════════════════════ -->
@@ -476,6 +334,9 @@ import { GUIDES } from "../seo/guides";
         </div>
       </section>
 
+      <!-- ═══ Карта арабского мира ═══════════════════════════════════════ -->
+      <ArabicWorldMap />
+
       <!-- ═══ Free и Premium ═══════════════════════════════════════════
            Лимиты — те же, что в таблице на /buy и в PremiumPaywall.tsx. -->
       <section class="about-section" id="plans" aria-labelledby="plans-title">
@@ -538,6 +399,9 @@ import { GUIDES } from "../seo/guides";
         <p class="about-link-row" data-appear><a class="about-action" href="/articles/">Все статьи<Icon name="arrow-right" /></a></p>
       </section>
 
+      <!-- ═══ Отзывы из магазинов ═══════════════════════════════════════ -->
+      <Reviews />
+
       <!-- ═══ Призыв: карточка RaisedTileSurface, кнопки магазинов — .store-link ═══ -->
       <section class="card about-cta" aria-labelledby="cta-title" data-appear>
         <h2 id="cta-title">Начните с первых шести модулей</h2>
@@ -546,4 +410,5 @@ import { GUIDES } from "../seo/guides";
       </section>
 
     </div>
+<script src="../scripts/home-polish.ts"></script>
 </PageLayout>

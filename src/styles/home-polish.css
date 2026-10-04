@@ -1,0 +1,85 @@
+/* Главная: бегущие цифры героя и золотой блик по рамке Premium
+   (src/scripts/home-polish.ts). Префикс классов — hp-. */
+
+/* ── Цифры героя ───────────────────────────────────────────────────────────
+   Моноширинные цифры, чтобы ширина не прыгала, пока число набегает. */
+.about-stat dd[data-count] { font-variant-numeric: tabular-nums; }
+
+/* Итоговое число для чтения с экрана, пока набегает визуальное. */
+.hp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Блик по рамке карточки Premium ───────────────────────────────────────
+   Рамка карточки — 2 px золота (.card). Поверх неё лежит кольцо того же
+   размера с конусным градиентом: маска оставляет только кант 2 px, угол
+   градиента крутится @property. Класс .hp-beam-live ставит скрипт, пока
+   карточка видна; без него (и без скрипта) рамка остаётся как в home.css. */
+@property --hp-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Только position: relative — с isolation карточка рисуется на другом слое и
+   угловые пиксели рамки чуть расходятся с исходным видом. Без isolation ореол
+   ::before с z-index −1 ложится под фон карточки: снаружи виден, внутри нет. */
+.about-plan-premium { position: relative; }
+.about-plan-premium::before,
+.about-plan-premium::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--b-emphasis) * -1);
+  border-radius: var(--r-surface);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease-out;
+}
+/* Ореол: тот же конус, размытый за краем карточки. */
+.about-plan-premium::before {
+  z-index: -1;
+  background: conic-gradient(
+    from var(--hp-angle),
+    transparent 0deg,
+    transparent 250deg,
+    var(--gold-40) 300deg,
+    var(--c-brand) 338deg,
+    var(--gold-40) 352deg,
+    transparent 360deg
+  );
+  filter: blur(12px);
+}
+/* Луч: кант 2 px поверх рамки — тёмное золото переходит в светлый блик. */
+.about-plan-premium::after {
+  padding: var(--b-emphasis);
+  background: conic-gradient(
+    from var(--hp-angle),
+    transparent 0deg,
+    transparent 250deg,
+    var(--c-brand-edge-fill) 300deg,
+    var(--c-brand-soft) 330deg,
+    #fff 342deg,
+    var(--c-brand-soft) 352deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.about-plan-premium.hp-beam-live::before { opacity: 0.85; animation: hp-spin 5s linear infinite; }
+.about-plan-premium.hp-beam-live::after { opacity: 1; animation: hp-spin 5s linear infinite; }
+@keyframes hp-spin {
+  from { --hp-angle: 0deg; }
+  to { --hp-angle: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-plan-premium::before,
+  .about-plan-premium::after { display: none; }
+}
