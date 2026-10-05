@@ -6,9 +6,20 @@ interface Props {
   /** Подпись для чтения с экрана; без неё значок декоративный. */
   label?: string;
   class?: string;
+  /**
+   * Ссылка `<use>` на общий контур из `<IconSprite>` той же страницы вместо копии
+   * контура. Для значка, который на странице повторяется десятки раз (звёзды
+   * отзывов, галочки списков). Без спрайта на странице значок пустой —
+   * tools/check_site.py это ловит.
+   */
+  sprite?: boolean;
 }
 
-const { name, label, class: className } = Astro.props;
+const { name, label, class: className, sprite = false } = Astro.props;
 ---
 
-<svg class={className} viewBox="0 0 256 256" fill="currentColor" focusable="false" aria-hidden={label ? undefined : "true"} role={label ? "img" : undefined} aria-label={label} set:html={PHOSPHOR[name]} />
+{sprite ? (
+  <svg class={className} viewBox="0 0 256 256" fill="currentColor" focusable="false" aria-hidden={label ? undefined : "true"} role={label ? "img" : undefined} aria-label={label}><use href={`#icon-${name}`} /></svg>
+) : (
+  <svg class={className} viewBox="0 0 256 256" fill="currentColor" focusable="false" aria-hidden={label ? undefined : "true"} role={label ? "img" : undefined} aria-label={label} set:html={PHOSPHOR[name]} />
+)}

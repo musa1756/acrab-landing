@@ -1,16 +1,19 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import Icon from "../components/Icon.astro";
+import IconSprite from "../components/IconSprite.astro";
 import StoreLinks from "../components/StoreLinks.astro";
 import ToolsScroll from "../components/home/ToolsScroll.astro";
 import ArabicWorldMap from "../components/home/ArabicWorldMap.astro";
 import Reviews from "../components/home/Reviews.astro";
 import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import { GUIDES } from "../seo/guides";
+import "../styles/page-home.css";
 ---
 
 <PageLayout section="home" title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 44 модуля от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 44 модулей, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema, appSchema]}>
 <div class="about">
+<IconSprite names={["check-circle"]} />
 
       <!-- ═══ Герой ═══════════════════════════════════════════════════════ -->
       <section class="about-hero">
@@ -66,11 +69,11 @@ import { GUIDES } from "../seo/guides";
           <h2 class="about-h" id="program-title">44 модуля: от первой буквы до грамматики</h2>
           <p class="about-p">Модули идут по порядку, и каждый опирается на предыдущий. Сначала 28 букв и чтение, потом приветствия, рассказ о себе, артикль <span lang="ar">ال</span> с солнечными и лунными буквами, именное предложение и дальше грамматика. Модули собраны в четыре курса: от «Алиф: первые шаги» до «Мир: говорим шире».</p>
           <ul class="about-points about-points-spaced">
-            <li><Icon name="check-circle" class="about-check" /><strong>Видно, куда вы идёте.</strong> У каждого модуля есть название, цель на практике и процент прохождения.</li>
-            <li><Icon name="check-circle" class="about-check" /><strong>Тест уровня при первом запуске.</strong> Если вы уже учили арабский, ответьте на 10–12 вопросов, и приложение подскажет, с какого модуля начать.</li>
-            <li><Icon name="check-circle" class="about-check" /><strong>Урок тренирует только свою лексику.</strong> Слова из следующих модулей в него не попадают.</li>
-            <li><Icon name="check-circle" class="about-check" /><strong>Огласовки во всех модулях:</strong> в словах, примерах и упражнениях.</li>
-            <li><Icon name="check-circle" class="about-check" /><strong>Уроки работают без интернета.</strong> Тексты и озвучка уроков хранятся на устройстве.</li>
+            <li><Icon name="check-circle" class="about-check" sprite /><strong>Видно, куда вы идёте.</strong> У каждого модуля есть название, цель на практике и процент прохождения.</li>
+            <li><Icon name="check-circle" class="about-check" sprite /><strong>Тест уровня при первом запуске.</strong> Если вы уже учили арабский, ответьте на 10–12 вопросов, и приложение подскажет, с какого модуля начать.</li>
+            <li><Icon name="check-circle" class="about-check" sprite /><strong>Урок тренирует только свою лексику.</strong> Слова из следующих модулей в него не попадают.</li>
+            <li><Icon name="check-circle" class="about-check" sprite /><strong>Огласовки во всех модулях:</strong> в словах, примерах и упражнениях.</li>
+            <li><Icon name="check-circle" class="about-check" sprite /><strong>Уроки работают без интернета.</strong> Тексты и озвучка уроков хранятся на устройстве.</li>
           </ul>
         </div>
 
@@ -184,10 +187,10 @@ import { GUIDES } from "../seo/guides";
           </div>
           <div class="about-showcase-copy" data-appear>
             <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" /><strong>Глубину ответа выбираете вы:</strong> «Кратко», «Подробно» или «Глубоко».</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Можно потренировать разговор.</strong> Напишите по-арабски, и ассистент ответит как собеседник: по-арабски, с русским переводом ниже.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Арабский в ответах всегда с огласовками,</strong> поэтому пример можно сразу прочитать вслух.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>10 запросов в день бесплатно, 100 в Premium.</strong> Диалоги хранятся на вашем устройстве.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Глубину ответа выбираете вы:</strong> «Кратко», «Подробно» или «Глубоко».</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Можно потренировать разговор.</strong> Напишите по-арабски, и ассистент ответит как собеседник: по-арабски, с русским переводом ниже.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Арабский в ответах всегда с огласовками,</strong> поэтому пример можно сразу прочитать вслух.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>10 запросов в день бесплатно, 100 в Premium.</strong> Диалоги хранятся на вашем устройстве.</li>
             </ul>
           </div>
           <div class="shot about-showcase-figure" data-appear>
@@ -206,11 +209,11 @@ import { GUIDES } from "../seo/guides";
         <div class="about-showcase about-showcase-flip">
           <div class="about-showcase-copy" data-appear>
             <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" /><strong>«аль-Кироату ар-Рашида» с переводом по нажатию.</strong> Нажмите на слово, и появится его перевод в этом месте текста. В книге 90 коротких текстов, первые пять открыты бесплатно.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Учебники в PDF:</strong> «Байна ядайк» в восьми частях и «Арабский в рифмах». Скачайте книгу один раз, и она откроется без интернета, с закладками.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Картинки:</strong> акварельные карточки слов с подписями по-арабски и по-русски.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Глаголы</strong> из «Спряжения» с тестом на формы из 10 вопросов.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Аудио</strong> из «Озвучки»: фразы можно переслушать медленнее.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>«аль-Кироату ар-Рашида» с переводом по нажатию.</strong> Нажмите на слово, и появится его перевод в этом месте текста. В книге 90 коротких текстов, первые пять открыты бесплатно.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Учебники в PDF:</strong> «Байна ядайк» в восьми частях и «Арабский в рифмах». Скачайте книгу один раз, и она откроется без интернета, с закладками.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Картинки:</strong> акварельные карточки слов с подписями по-арабски и по-русски.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Глаголы</strong> из «Спряжения» с тестом на формы из 10 вопросов.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Аудио</strong> из «Озвучки»: фразы можно переслушать медленнее.</li>
             </ul>
           </div>
           <div class="shot about-showcase-figure" data-appear>
@@ -228,14 +231,14 @@ import { GUIDES } from "../seo/guides";
           </div>
           <div class="about-showcase-copy" data-appear>
             <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" /><strong>Неделя на главном экране.</strong> Огонёк отмечает день с занятием, снежинка — день, который закрыла заморозка.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Календарь «Ритм занятий»</strong> в профиле показывает каждый месяц целиком.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Заморозки тратятся сами.</strong> В Premium запас пополняется на одну каждый понедельник, но не больше двух.</li>
-              <li><Icon name="check-circle" class="about-check" /><strong>Серия хранится в аккаунте</strong> и восстанавливается после переустановки.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Неделя на главном экране.</strong> Огонёк отмечает день с занятием, снежинка — день, который закрыла заморозка.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Календарь «Ритм занятий»</strong> в профиле показывает каждый месяц целиком.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Заморозки тратятся сами.</strong> В Premium запас пополняется на одну каждый понедельник, но не больше двух.</li>
+              <li><Icon name="check-circle" class="about-check" sprite /><strong>Серия хранится в аккаунте</strong> и восстанавливается после переустановки.</li>
             </ul>
           </div>
           <div class="shot about-showcase-figure streak-video" data-appear>
-            <video src="/assets/about/streak-week.mp4" poster="/assets/about/streak-week-poster.webp" width="540" height="806" autoplay muted loop playsinline preload="auto" aria-label="Огонёк загорается, счётчик растёт с 6 до 7 дней подряд, неделя заполняется огоньками, и огонёк продолжает покачиваться"></video>
+            <video src="/assets/about/streak-week.mp4" poster="/assets/about/streak-week-poster.webp" width="540" height="806" muted loop playsinline preload="none" aria-label="Огонёк загорается, счётчик растёт с 6 до 7 дней подряд, неделя заполняется огоньками, и огонёк продолжает покачиваться"></video>
           </div>
         </div>
       </section>

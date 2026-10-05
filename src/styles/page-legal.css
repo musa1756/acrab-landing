@@ -1,0 +1,4 @@
+/* Стили служебных страниц (LegalLayout: /privacy, /offer, /consent, /get) и 404. */
+
+@import "./global.css";
+@import "./panels.css";

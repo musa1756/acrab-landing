@@ -1,5 +1,6 @@
 ---
 import Icon from "../Icon.astro";
+import IconSprite from "../IconSprite.astro";
 import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL, RUSTORE_URL } from "../../lib/stores";
 import { STORE_RATINGS, STORE_REVIEWS, type RatedStore, type StoreReview } from "../../data/store-reviews";
 
@@ -8,7 +9,8 @@ import { STORE_RATINGS, STORE_REVIEWS, type RatedStore, type StoreReview } from 
    Тексты и имена лежат в data/store-reviews.ts дословно. Лента — две одинаковые
    дорожки подряд, сдвиг на половину ширины даёт бесшовную петлю; вторая
    дорожка скрыта от чтения с экрана. Движение — только CSS (reviews.css);
-   reviews.ts ставит на паузу вне экрана и по кнопке. */
+   reviews.ts ставит на паузу вне экрана и по кнопке. Звёзд в блоке под сотню,
+   поэтому контур звезды один (IconSprite), звёзды на него ссылаются. */
 
 const MONTHS = [
   "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -57,6 +59,7 @@ const LABEL_PLAY = "Продолжить ленту отзывов";
 ---
 
 <section class="about-section rv" id="reviews" aria-labelledby="reviews-title">
+  <IconSprite names={["star"]} />
   <div class="about-section-head" data-appear>
     <h2 class="about-h" id="reviews-title">Что пишут в App Store и Google Play</h2>
     <p class="about-p">Отзывы со страниц приложения в магазинах — дословно, без правок.</p>
@@ -72,7 +75,7 @@ const LABEL_PLAY = "Продолжить ленту отзывов";
               <span class="rv-score-name">{item.store}</span>
               <span class="rv-score-line">
                 <strong class="rv-score-num">{formatRating(item.rating)}</strong>
-                <span class="rv-stars" aria-hidden="true">{STARS.map(() => <Icon name="star" />)}</span>
+                <span class="rv-stars" aria-hidden="true">{STARS.map(() => <Icon name="star" sprite />)}</span>
               </span>
             </span>
           </a>
@@ -92,7 +95,7 @@ const LABEL_PLAY = "Продолжить ленту отзывов";
                   <span class="rv-avatar" aria-hidden="true">{initial(review.author)}</span>
                   <div class="rv-who">
                     <p class="rv-author">{review.author}</p>
-                    <span class="rv-stars" role="img" aria-label={`Оценка ${review.rating} из 5`}>{STARS.slice(0, review.rating).map(() => <Icon name="star" />)}</span>
+                    <span class="rv-stars" role="img" aria-label={`Оценка ${review.rating} из 5`}>{STARS.slice(0, review.rating).map(() => <Icon name="star" sprite />)}</span>
                   </div>
                 </div>
                 {review.title && <p class="rv-title">{review.title}</p>}

@@ -146,16 +146,7 @@
    ему нужна ширина. */
 .about-showcase-wide { grid-template-columns: 372px minmax(0, 1fr); }
 
-/* Рамка скриншота: карточка над фоном экрана — радиус surface 20, тень high,
-   без обводки. */
-.shot {
-  margin: 0;
-  overflow: hidden;
-  border-radius: var(--r-surface);
-  background: var(--c-surface-warm);
-  box-shadow: var(--shadow-high);
-}
-.shot img { width: 100%; height: auto; }
+/* Рамка скриншота `.shot` — kit.css. */
 /* Снимки разной высоты; общий кадр выравнивает ряд. */
 .shot-crop { aspect-ratio: 5 / 8; }
 .shot-crop img { height: 100%; object-fit: cover; object-position: top center; }

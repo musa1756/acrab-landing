@@ -145,7 +145,7 @@ button.tool:focus-visible { outline: 2px solid var(--c-brand-strong); outline-of
   width: var(--ts-phone-w);
   aspect-ratio: 620 / 1252;
 }
-/* Карточка `.shot` из home.css (радиус 20, тень high); высота — по пропорции
+/* Карточка `.shot` из kit.css (радиус 20, тень high); высота — по пропорции
    снимка, поэтому ничего не обрезается. Пока снимок не загрузился, карточка
    уже нужного размера (--ts-ar задаёт скрипт). */
 .ts-slide {

@@ -1,0 +1,18 @@
+---
+import { PHOSPHOR, type PhosphorName } from "../lib/phosphor";
+
+/**
+ * Контуры значков один раз на страницу: `<Icon name="…" sprite />` ссылается на
+ * них через `<use href="#icon-…">`. Ставится рядом с блоком, где значок
+ * повторяется.
+ */
+interface Props {
+  names: PhosphorName[];
+}
+
+const { names } = Astro.props;
+---
+
+<svg class="icon-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  {names.map((name) => <symbol id={`icon-${name}`} viewBox="0 0 256 256" set:html={PHOSPHOR[name]} />)}
+</svg>

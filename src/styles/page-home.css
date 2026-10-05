@@ -1,0 +1,10 @@
+/* Стили главной (pages/index.astro). Порядок импорта — порядок каскада:
+   блоки уточняют home.css, поэтому идут после него. */
+
+@import "./global.css";
+@import "./home.css";
+@import "./tools-scroll.css";
+@import "./world-map.css";
+@import "./reviews.css";
+@import "./home-polish.css";
+@import "./guide-tiles.css";

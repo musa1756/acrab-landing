@@ -1,6 +1,5 @@
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   site: "https://acrab.ru",
@@ -34,8 +33,5 @@ export default defineConfig({
         resources: ["'self'", "https://mc.yandex.ru", "https://yastatic.net"],
       },
     },
-  },
-  vite: {
-    plugins: [tailwindcss()],
   },
 });

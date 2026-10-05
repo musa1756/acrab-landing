@@ -1,0 +1,56 @@
+/* Плитки-ссылки на статьи: «Статьи» на главной и в /articles/ (`.home-guides`),
+   «Другие статьи» под статьёй (`.related-guides`). Вид — `.tile.tile-neutral`
+   (TileSurface: рамка 2, ребро 3, нажатие опускает лицо); разметка общая с
+   главной, поэтому плитка описана селекторами, а не классом. Файл подключают
+   guides.css и главная: остальные стили статей главной не нужны. */
+.home-guides a,
+.related-guides a {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  margin: 0 0 var(--press-depth);
+  padding: 18px 18px 20px;
+  border: var(--b-emphasis) solid var(--c-line);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+  box-shadow: 0 var(--press-depth) 0 var(--c-edge-neutral);
+  color: var(--c-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform var(--press-out) var(--ease-press),
+    box-shadow var(--press-out) var(--ease-press),
+    border-color var(--fade) ease-out;
+}
+@media (hover: hover) {
+  .home-guides a:hover,
+  .related-guides a:hover { border-color: var(--c-edge-neutral); }
+}
+.home-guides a:active,
+.related-guides a:active {
+  transform: translateY(var(--press-depth));
+  box-shadow: 0 0 0 var(--c-edge-neutral);
+  transition-duration: var(--press-in);
+}
+.home-guides a:focus-visible,
+.related-guides a:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: 3px; }
+.home-guides span,
+.related-guides span { color: var(--c-text-secondary); font-family: var(--font-rounded); font-size: var(--t-footnote); font-weight: 600; line-height: var(--lh-footnote); }
+.home-guides strong,
+.related-guides strong { font-family: var(--font-rounded); font-size: var(--t-headline); font-weight: 600; line-height: var(--lh-headline); }
+
+.home-guides { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.home-guides p { margin: 0; color: var(--c-text-secondary); font-size: 15px; }
+
+@media (max-width: 860px) {
+  .home-guides { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .home-guides { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-guides a:active, .related-guides a:active { transform: none; box-shadow: 0 var(--press-depth) 0 var(--c-edge-neutral); }
+}

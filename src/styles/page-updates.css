@@ -1,0 +1,4 @@
+/* Стили «Обновлений» (/about/). */
+
+@import "./global.css";
+@import "./changelog.css";

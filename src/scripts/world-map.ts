@@ -6,10 +6,9 @@
  *   страну, нажатие закрепляет её (повторное нажатие или Escape снимает);
  * - то же при наведении мыши на страну на самой карте и при касании её на телефоне;
  * - подсвечивает точки страны (класс `is-active`), включает кольцо-пульс `halo` и
- *   ставит плашку с названием у страны, не выпуская её за край карты;
- * - при первом появлении карты на экране проявляет сушу волной с запада на восток,
- *   а страны Лиги зажигает последними (если ниже первого экрана и не включено
- *   «уменьшение движения»; иначе карта просто статична).
+ *   ставит плашку с названием у страны, не выпуская её за край карты; название
+ *   берёт из подписей самого чипа;
+ * - ставит пульс кольца на паузу, пока карта вне экрана.
  *
  * Только классы и CSS-переменные через `style.setProperty`: у собранного сайта
  * строгая CSP без `unsafe-inline` для стилей. Без скрипта карта и список видны.
@@ -63,8 +62,8 @@ function init(root: HTMLElement): void {
       id,
       chip,
       country,
-      ru: chip.dataset["ru"] ?? "",
-      ar: chip.dataset["ar"] ?? "",
+      ru: chip.querySelector(".wm-chip-ru")?.textContent ?? "",
+      ar: chip.querySelector(".wm-chip-ar")?.textContent ?? "",
       ax: Number(chip.dataset["ax"]),
       ay: Number(chip.dataset["ay"]),
       ty: Number(chip.dataset["ty"]),
@@ -208,32 +207,4 @@ function init(root: HTMLElement): void {
   new IntersectionObserver((records) => {
     for (const record of records) root.classList.toggle("is-offscreen", !record.isIntersecting);
   }).observe(canvas);
-
-  // Волна появления: суша с запада на восток, страны Лиги — последними.
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduced || canvas.getBoundingClientRect().top <= window.innerHeight) return;
-
-  const bands = Array.from(svg.querySelectorAll<SVGElement>(".wm-band"));
-  bands.forEach((band, index) => band.style.setProperty("--wm-d", String(index)));
-  const league = Array.from(entries.values())
-    .filter((entry) => entry.country)
-    .sort((a, b) => a.ax - b.ax || a.ay - b.ay);
-  league.forEach((entry, index) => (entry.country as SVGElement).style.setProperty("--wm-d", String(index)));
-  root.classList.add("wm-armed");
-
-  const waves = new IntersectionObserver(
-    (records) => {
-      if (!records.some((record) => record.isIntersecting)) return;
-      waves.disconnect();
-      root.classList.add("wm-in");
-      // 1300 мс до первой страны + 22 × 50 мс лесенки + 520 мс самого проявления.
-      window.setTimeout(() => {
-        root.classList.remove("wm-armed", "wm-in");
-        for (const node of bands) node.style.removeProperty("--wm-d");
-        for (const entry of league) (entry.country as SVGElement).style.removeProperty("--wm-d");
-      }, 3200);
-    },
-    { threshold: 0.3 },
-  );
-  waves.observe(canvas);
 }

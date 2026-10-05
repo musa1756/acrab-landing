@@ -1,10 +1,12 @@
 /**
- * Два движения главной (стили — home-polish.css):
+ * Движения главной (стили — home-polish.css):
  *  1. Цифры героя набегают от 0 до значения, пока загружается первый экран.
  *     Итоговое число уже в разметке: без скрипта оно просто видно, а скринридер
  *     читает его всегда — набегающие цифры спрятаны от чтения.
  *  2. Золотой блик бежит по рамке карточки Premium, пока карточка на экране.
- * При `prefers-reduced-motion: reduce` не происходит ни то, ни другое.
+ *  3. Видео серии грузится и играет, только когда до него докрутили, и встаёт
+ *     вне экрана. До этого и без скрипта виден постер (`preload="none"`).
+ * При `prefers-reduced-motion: reduce` не происходит ничего из этого.
  */
 export {};
 
@@ -72,5 +74,23 @@ function watchPremiumBeam(): void {
   });
 }
 
+/* ── 3. Видео серии ───────────────────────────────────────────────────── */
+function watchStreakVideo(): void {
+  const video = document.querySelector<HTMLVideoElement>(".streak-video video");
+  if (!video || !("IntersectionObserver" in window)) return;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && !reducedMotion.matches) void video.play().catch(() => undefined);
+        else video.pause();
+      }
+    },
+    // Начать загрузку чуть раньше, чем видео покажется.
+    { rootMargin: "200px 0px" },
+  );
+  observer.observe(video);
+}
+
 startCounters();
 watchPremiumBeam();
+watchStreakVideo();

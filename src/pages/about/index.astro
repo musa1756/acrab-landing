@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "../../layouts/PageLayout.astro";
 import Release from "../../components/Release.astro";
+import "../../styles/page-updates.css";
 
 const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---

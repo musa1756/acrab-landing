@@ -531,6 +531,24 @@ class SiteChecker:
             if not match or match.group(1) != build_id:
                 self.fail(f"{path.relative_to(self.site_root)}: data-build не совпадает с build.txt")
 
+    def check_page_styles(self) -> None:
+        """Каждая страница подключает стили: свой вход page-*.css, а не BaseLayout."""
+
+        for path in self.html_files():
+            text = path.read_text(encoding="utf-8")
+            if not re.search(r'<link\b[^>]*\brel="stylesheet"[^>]*\bhref="/_astro/[^"]+\.css"', text):
+                self.fail(f"{path.relative_to(self.site_root)}: нет стилей — страница не импортирует src/styles/page-*.css")
+
+    def check_svg_references(self) -> None:
+        """Каждый <use href="#…"> ссылается на элемент той же страницы (IconSprite, карта)."""
+
+        for path in self.html_files():
+            text = path.read_text(encoding="utf-8")
+            ids = set(re.findall(r'(?<![\w-])id="([^"]+)"', text))
+            for target in sorted(set(re.findall(r'<use\b[^>]*\bhref="#([^"]+)"', text))):
+                if target not in ids:
+                    self.fail(f"{path.relative_to(self.site_root)}: <use> ссылается на #{target}, а его на странице нет")
+
     def check_junk(self) -> None:
         for path in self.site_root.rglob(".DS_Store"):
             self.fail(f"в сборке лежит {path.relative_to(self.site_root)}")
@@ -590,6 +608,8 @@ class SiteChecker:
             self.check_header_sections()
             self.check_letter_pages()
             self.check_build_id()
+            self.check_page_styles()
+            self.check_svg_references()
             self.check_junk()
 
         if self.failures:

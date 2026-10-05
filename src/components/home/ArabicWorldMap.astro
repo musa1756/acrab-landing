@@ -2,8 +2,10 @@
 /**
  * Карта арабского мира из точек: 22 страны Лиги арабских государств золотом,
  * остальная суша серым, море пустое. Данные — src/data/arabic-world-dots.ts
- * (строит tools/build-arabic-world-dots.ts). Подсветка, плашка с названием и
- * волна появления — scripts/world-map.ts; без скрипта карта и чипы просто видны.
+ * (строит tools/build-arabic-world-dots.ts): отрезки по строкам сетки, которые
+ * world-map.css рисует пунктиром из точек. Подсветка и плашка с названием —
+ * scripts/world-map.ts; без скрипта карта и чипы просто видны. Карта появляется
+ * вместе с карточкой (`data-appear`), без своей анимации.
  *
  * Каждая страна — один <path> в <defs>; на экране он нарисован дважды через <use>:
  * золотыми точками и невидимой широкой линией-мишенью для наведения.
@@ -63,9 +65,7 @@ const TINY = 4;
           <defs>
             {countries.map(({ id, dots }) => <path id={`wm-d-${id}`} d={dots.d} fill="none" />)}
           </defs>
-          <g class="wm-land" data-wm-land>
-            {WORLD_DOTS.land.map((d) => <path class="wm-band" d={d} />)}
-          </g>
+          <path class="wm-land" d={WORLD_DOTS.land} />
           <use class="wm-halo" data-wm-halo />
           <g class="wm-league">
             {countries.map(({ id, dots }) => (
@@ -91,8 +91,6 @@ const TINY = 4;
             <span
               class="chip wm-chip"
               data-wm-id={id}
-              data-ru={ru}
-              data-ar={ar}
               data-ax={dots.ax}
               data-ay={dots.ay}
               data-ty={dots.ty}

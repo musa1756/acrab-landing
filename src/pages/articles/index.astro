@@ -4,6 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { GUIDES, GUIDE_GROUPS } from "../../seo/guides";
 import { pageUrl } from "../../lib/routes";
 import { breadcrumbSchema } from "../../seo/schema";
+import "../../styles/page-guide.css";
 
 const canonical = pageUrl("/articles/");
 const groups = (Object.keys(GUIDE_GROUPS) as (keyof typeof GUIDE_GROUPS)[]).map((key) => ({

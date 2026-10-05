@@ -65,6 +65,8 @@ function init(root: HTMLElement): void {
       img.width = width;
       img.height = height;
       img.decoding = "async";
+      // Сцена далеко от первого экрана: снимок качается, когда до неё докрутили.
+      img.loading = "lazy";
       img.draggable = false;
       img.dataset.src = source?.getAttribute("src") ?? "";
       slide.style.setProperty("--ts-ar", `${width} / ${height}`);

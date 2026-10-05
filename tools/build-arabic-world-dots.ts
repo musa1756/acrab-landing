@@ -22,12 +22,15 @@
  *    `STEP` градусов широты; в клетке точка есть, если страна покрывает не меньше
  *    `MIN_COVER` её площади (сетка 4×4 выборок), владелец клетки — страна с
  *    наибольшим покрытием.
- * 3. Страны Лиги арабских государств получают по одной SVG-линии на страну: каждая
- *    точка — подпуть `M x y h0` с круглым окончанием (в самих данных — относительные
- *    `m dx 0h0`, чтобы файл был короче). Остальная суша нарезана на вертикальные
- *    полосы по `BAND` столбцов (`land`): страница проявляет их по очереди с запада
- *    на восток. Западная Сахара засчитана Марокко, Сомалиленд — Сомали (так же
- *    красятся на карте).
+ * 3. Страны Лиги арабских государств получают по одному SVG-пути на страну,
+ *    остальная суша — один путь `land`. Путь — отрезки по строкам сетки: соседние
+ *    точки строки сливаются в подпуть `M x y h len` (дальше в строке —
+ *    относительные `m dx 0h len`). Страница рисует его пунктиром `0 1` с круглым
+ *    окончанием: каждый штрих нулевой длины — точка в своей клетке. Отрезок
+ *    длиннее на `TAIL`, иначе браузер теряет штрих на самом конце, то есть
+ *    последнюю точку строки. Так путь в десять раз короче, чем «точка — подпуть».
+ *    Западная Сахара засчитана Марокко, Сомалиленд — Сомали (так же красятся на
+ *    карте).
  * 4. Страна, которой сетка не досталась (Бахрейн, Коморы и т. п.), получает точку
  *    в клетке, ближайшей к её центру; клетка у соседа отбирается.
  * 5. Координаты — в единицах сетки: шаг 1, точка (i, j) стоит в (i, j), viewBox
@@ -50,7 +53,7 @@ const COS = Math.cos((25 * Math.PI) / 180);
 const STEP = 0.85; // шаг сетки в градусах широты
 const SAMPLES = 4; // выборок на сторону клетки
 const MIN_COVER = 0.34;
-const BAND = 3; // столбцов в полосе суши
+const TAIL = ".001"; // удлинение отрезка: штрих на конце пути иначе не рисуется
 
 /** Страны Лиги: имя в Natural Earth → код. Зависимые территории — коду соседа. */
 const LEAGUE: Record<string, string> = {
@@ -248,35 +251,32 @@ for (const code of ORDER) {
   console.log(`точка в центре: ${code} → ${pick.key}`);
 }
 
-// Путь: относительные шаги внутри строки.
-function pathOf(code: string, columns?: [number, number]): { d: string; n: number; cells: Array<[number, number]> } {
+// Путь: подряд идущие точки строки — один отрезок, шаги внутри строки относительные.
+function pathOf(code: string): { d: string; n: number; cells: Array<[number, number]> } {
   const cells: Array<[number, number]> = [];
   for (const [key, who] of owner) {
     if (who !== code) continue;
-    const [i, j] = key.split(",").map(Number) as [number, number];
-    if (columns && (i < columns[0] || i >= columns[1])) continue;
-    cells.push([i, j]);
+    cells.push(key.split(",").map(Number) as [number, number]);
   }
   cells.sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+  const runs: Array<{ i: number; j: number; len: number }> = [];
+  for (const [i, j] of cells) {
+    const last = runs.at(-1);
+    if (last && last.j === j && last.i + last.len + 1 === i) last.len++;
+    else runs.push({ i, j, len: 0 });
+  }
   let d = "";
   let px = 0;
   let py = -1;
-  for (const [i, j] of cells) {
-    d += j === py ? `m${i - px} 0h0` : `M${i} ${j}h0`;
-    px = i;
+  for (const { i, j, len } of runs) {
+    d += j === py ? `m${i - px} 0h${len}${TAIL}` : `M${i} ${j}h${len}${TAIL}`;
+    px = i + len;
     py = j;
   }
   return { d, n: cells.length, cells };
 }
 
-const bands: string[] = [];
-let landCount = 0;
-for (let start = 0; start < cols; start += BAND) {
-  const band = pathOf("x", [start, start + BAND]);
-  if (band.n === 0) continue;
-  bands.push(band.d);
-  landCount += band.n;
-}
+const otherLand = pathOf("x");
 const countries = ORDER.map((code) => {
   const { d, n, cells } = pathOf(code);
   const [u, v] = mainCentre(code);
@@ -296,8 +296,9 @@ const body = `// Сгенерировано tools/build-arabic-world-dots.ts —
 // Сетка ${cols}×${rows}, шаг ${STEP}° широты, поправка cos 25° по долготе, область
 // долгота ${LON0}…${LON1}, широта ${LAT0}…${LAT1}.
 // Единицы пути — клетки сетки: точка (i, j) стоит в (i, j), \`viewBox\` начинается с −0,5.
-// Каждая точка — подпуть \`M x y h0\` (дальше в строке — \`m dx 0h0\`); рисуется линией
-// со скруглёнными концами, толщина = диаметр точки.
+// Подряд идущие точки строки — отрезок \`M x y h len\` (дальше в строке — \`m dx 0h len\`),
+// длиннее на ${TAIL}. Рисуется пунктиром \`0 1\` со скруглёнными концами: каждый штрих —
+// точка, толщина линии = диаметр точки.
 
 export interface WorldDotsCountry {
   /** Код страны, как в ArabicWorldMap.astro. */
@@ -316,13 +317,12 @@ export interface WorldDotsCountry {
 export const WORLD_DOTS = {
   cols: ${cols},
   rows: ${rows},
-  /** Прочая суша: вертикальные полосы шириной ${BAND} столбца, с запада на восток. */
-  land: ${JSON.stringify(bands, null, 2).replace(/\n/g, "\n  ")} as string[],
-  landCount: ${landCount},
+  /** Прочая суша, ${otherLand.n} точек. */
+  land: ${JSON.stringify(otherLand.d)},
   countries: ${JSON.stringify(countries, null, 2).replace(/\n/g, "\n  ")} satisfies WorldDotsCountry[],
 } as const;
 `;
 writeFileSync(OUT, body);
 const bytes = Buffer.byteLength(body);
-console.log(`сетка ${cols}×${rows}; суши ${landCount} в ${bands.length} полосах; файл ${bytes} Б (${(bytes / 1024).toFixed(1)} КБ)`);
+console.log(`сетка ${cols}×${rows}; суши ${otherLand.n} точек; файл ${bytes} Б (${(bytes / 1024).toFixed(1)} КБ)`);
 for (const c of countries) console.log(c.id.padEnd(3), String(c.n).padStart(4), `anchor ${c.ax},${c.ay}`);
