@@ -29,7 +29,16 @@
   gap: 10px;
   padding: 9px 14px;
 }
-.rv-score-glyph { width: 22px; height: 22px; flex: 0 0 auto; fill: var(--c-text); }
+.rv-score-glyph { width: 22px; height: 22px; flex: 0 0 auto; fill: var(--c-text); transition: fill var(--fade) ease-out; }
+/* Наведение — фирменный цвет магазина, как у кнопок StoreLinks: рамка, значок
+   и лёгкая подложка; --brand задаёт base.css по адресу ссылки. */
+@media (hover: hover) {
+  .rv-score:hover {
+    --tile-border: var(--brand);
+    --tile-face: color-mix(in srgb, var(--brand) 8%, var(--c-surface));
+  }
+  .rv-score:hover .rv-score-glyph { fill: var(--brand); }
+}
 .rv-score-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .rv-score-name {
   font-family: var(--font-rounded);
@@ -102,8 +111,12 @@
 }
 
 /* ── Карточка отзыва ───────────────────────────────────────────────────── */
+/* Ширина задана явно, а не только flex-basis: Firefox считает max-content
+   дорожки по тексту отзывов в одну строку, и без width дорожка выходила в 2,5
+   раза шире карточек — после седьмой карточки лента пустела до конца круга. */
 .rv-card {
   display: flex;
+  width: var(--rv-card-w);
   flex: 0 0 var(--rv-card-w);
   flex-direction: column;
   gap: 10px;
@@ -189,6 +202,19 @@
   .rv { --rv-card-w: 280px; --rv-fade: 28px; --rv-lap: 52s; }
   .rv-scores { gap: 10px; }
   .rv-score { gap: 8px; padding: 9px 12px; }
+}
+/* Три плитки в строку уже не помещаются (нужно около 500 px): ровная сетка,
+   в плитке значок, название и оценка друг под другом. */
+@media (max-width: 540px) {
+  .rv-scores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .rv-score { flex-direction: column; gap: 4px; padding: 10px 4px; text-align: center; }
+  .rv-score-text { align-items: center; }
+  .rv-score-name { font-size: var(--t-footnote); line-height: var(--lh-footnote); }
+  .rv-score-line { gap: 4px; }
+  .rv-score .rv-stars svg { width: 11px; height: 11px; }
+}
+@media (max-width: 360px) {
+  .rv-score .rv-stars svg { width: 9px; height: 9px; }
 }
 
 /* ── Уменьшенное движение: без бега, ряд листается вручную ─────────────── */

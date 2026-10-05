@@ -1,9 +1,10 @@
 ---
 import Icon from "../Icon.astro";
-import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL } from "../../lib/stores";
-import { STORE_RATINGS, STORE_REVIEWS, type ReviewStore, type StoreReview } from "../../data/store-reviews";
+import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL, RUSTORE_URL } from "../../lib/stores";
+import { STORE_RATINGS, STORE_REVIEWS, type RatedStore, type StoreReview } from "../../data/store-reviews";
 
-/* Отзывы из магазинов: сводка по двум магазинам и бегущая лента карточек.
+/* Отзывы из магазинов: сводка по трём магазинам и бегущая лента карточек.
+   Цвет плитки магазина при наведении — тот же, что у кнопок StoreLinks (base.css).
    Тексты и имена лежат в data/store-reviews.ts дословно. Лента — две одинаковые
    дорожки подряд, сдвиг на половину ширины даёт бесшовную петлю; вторая
    дорожка скрыта от чтения с экрана. Движение — только CSS (reviews.css);
@@ -35,10 +36,14 @@ function initial(name: string): string {
 }
 
 /* Значки магазинов — те же контуры, что в StoreLinks. */
-const STORES: Record<ReviewStore, { href: string; glyph: string }> = {
+const STORES: Record<RatedStore, { href: string; glyph: string }> = {
   "App Store": {
     href: APP_STORE_PAGE_URL,
     glyph: "M17.05 12.53c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.71-3.19-1.73-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.21 1.1-.05 1.52-.72 2.85-.72 1.33 0 1.71.72 2.88.69 1.19-.02 1.94-1.08 2.67-2.14.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.87 6.09c.61-.74 1.02-1.77.91-2.79-.88.04-1.94.59-2.57 1.32-.56.65-1.06 1.7-.92 2.7.98.08 1.98-.5 2.58-1.23z",
+  },
+  RuStore: {
+    href: RUSTORE_URL,
+    glyph: "M17.6 9.48l1.84-3.18a.38.38 0 0 0-.14-.52.38.38 0 0 0-.52.14l-1.87 3.23a11.43 11.43 0 0 0-9.82 0L5.22 5.92a.38.38 0 0 0-.52-.14.38.38 0 0 0-.14.52L6.4 9.48A10.81 10.81 0 0 0 1 18h22a10.81 10.81 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z",
   },
   "Google Play": {
     href: GOOGLE_PLAY_URL,

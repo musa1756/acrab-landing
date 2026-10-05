@@ -207,11 +207,12 @@ p { text-wrap: pretty; }
   transition-duration: var(--press-in);
 }
 .store-link svg { width: 22px; height: 22px; flex: 0 0 auto; fill: currentColor; transition: color var(--fade) ease-out; }
-/* Фирменные цвета при наведении: рамка, значок и лёгкая подложка. */
+/* Фирменные цвета при наведении: рамка, значок и лёгкая подложка. Цвета
+   магазинов берут и плитки оценок в отзывах на главной (reviews.css). */
 .store-link { --brand: var(--c-edge-neutral); }
-.store-link[href*="apps.apple.com"] { --brand: #0d96f6; }
-.store-link[href*="rustore.ru"] { --brand: #0077ff; }
-.store-link[href*="play.google.com"] { --brand: #01875f; }
+:is(.store-link, .rv-score)[href*="apps.apple.com"] { --brand: #0d96f6; }
+:is(.store-link, .rv-score)[href*="rustore.ru"] { --brand: #0077ff; }
+:is(.store-link, .rv-score)[href*="play.google.com"] { --brand: #01875f; }
 .store-link[href*="t.me/"] { --brand: #26a5e4; }
 .store-link[href*="instagram.com"] { --brand: #e1306c; }
 .store-link[href*="x.com"] { --brand: #000000; }

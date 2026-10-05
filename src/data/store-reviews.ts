@@ -13,7 +13,8 @@
  * Пропущены (список SKIPPED_REVIEWS внизу): два отзыва Google Play — вопрос о
  * пропадающем звуке (не отзыв о приложении) и отзыв из одного значка ♥️.
  *
- * Оценки магазинов (STORE_RATINGS) — со страниц на ту же дату. Число оценок
+ * Оценки магазинов (STORE_RATINGS): App Store — со страницы на ту же дату,
+ * Google Play и RuStore — 5 со слов владельца 5 октября 2026. Число оценок
  * не хранится: оно устаревает.
  */
 
@@ -86,15 +87,19 @@ export const STORE_REVIEWS: readonly StoreReview[] = [
   },
 ];
 
+/** Магазины со сводной оценкой: отзывы берутся из двух, оценка — из трёх. */
+export type RatedStore = ReviewStore | "RuStore";
+
 export interface StoreRating {
-  store: ReviewStore;
+  store: RatedStore;
   /** Средняя оценка со страницы магазина. */
   rating: number;
 }
 
 export const STORE_RATINGS: readonly StoreRating[] = [
   { store: "App Store", rating: 4.89 },
-  { store: "Google Play", rating: 4.9 },
+  { store: "Google Play", rating: 5 },
+  { store: "RuStore", rating: 5 },
 ];
 
 /** Что не попало в STORE_REVIEWS и почему. */
