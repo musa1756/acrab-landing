@@ -1,0 +1,420 @@
+/* Второй экран главной — доверие (components/home/SocialTrust.astro). Классы `tr-`.
+   Плитки и карточки — та же объёмная кнопка, что у магазинов и слов первого
+   экрана: белое лицо, рамка 2 px и ребро 3 px. */
+
+.tr {
+  width: var(--page);
+  margin: 0 auto clamp(72px, 10vw, 130px);
+  text-align: center;
+}
+.tr-head { max-width: 680px; margin: 0 auto clamp(24px, 3vw, 36px); }
+.tr-title {
+  margin: 0 0 12px;
+  color: var(--c-text);
+  font-size: clamp(32px, 4.4vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+.tr-title span { color: var(--c-brand); }
+.tr-lead { margin: 0; color: var(--c-text-secondary); font-size: clamp(16px, 1.6vw, 19px); }
+
+/* ── Оценки магазинов: плитка в цвете магазина, как кнопки первого экрана ── */
+.tr-scores {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 clamp(28px, 3.6vw, 44px);
+  padding: 0;
+  list-style: none;
+}
+.tr-score {
+  --brand: var(--c-edge-neutral);
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas: "glyph num" "stars stars" "name name";
+  align-items: center;
+  justify-items: center;
+  column-gap: 10px;
+  min-width: 190px;
+  margin-bottom: var(--press-depth);
+  padding: 14px 22px 12px;
+  border: var(--b-emphasis) solid var(--brand);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+  box-shadow: 0 var(--press-depth) 0 var(--brand);
+  color: var(--c-text);
+  text-decoration: none;
+  transition: transform var(--press-out) var(--ease-press), box-shadow var(--press-out) var(--ease-press);
+}
+.tr-score[href*="apps.apple.com"] { --brand: #0d96f6; }
+.tr-score[href*="rustore.ru"] { --brand: #0077ff; }
+.tr-score[href*="play.google.com"] { --brand: #01875f; }
+.tr-score:active { transform: translateY(var(--press-depth)); box-shadow: 0 0 0 var(--brand); transition-duration: var(--press-in); }
+.tr-score-glyph { grid-area: glyph; width: 28px; height: 28px; fill: var(--brand); }
+.tr-score-num { grid-area: num; font-family: var(--font-rounded); font-size: 44px; font-weight: 700; line-height: 1; }
+.tr-score .tr-stars { grid-area: stars; margin: 6px 0 4px; }
+.tr-score-name { grid-area: name; color: var(--c-text-secondary); font-size: 14px; font-weight: 600; }
+
+.tr-stars { display: inline-flex; gap: 2px; color: var(--c-streak); }
+.tr-stars svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* ── Лента отзывов: на всю ширину окна, края растворяются ─────────────── */
+.tr-marquee {
+  width: 100vw;
+  margin-left: 50%;
+  translate: -50% 0;
+  overflow: hidden;
+  padding: 4px 0 calc(var(--press-depth) + 8px);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.tr-marquee:focus-visible { outline: 2px solid var(--c-brand-strong); outline-offset: -2px; }
+.tr-track { display: flex; width: max-content; animation: tr-marquee 120s linear infinite; }
+.tr-marquee:is(:hover, :focus-within) .tr-track { animation-play-state: paused; }
+.tr-set { display: flex; gap: 16px; margin: 0; padding: 0 8px; list-style: none; }
+@keyframes tr-marquee { to { transform: translateX(-50%); } }
+
+.tr-card {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  padding: 16px 18px 14px;
+  border: var(--b-emphasis) solid var(--c-line);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+  box-shadow: 0 var(--press-depth) 0 var(--c-edge-neutral);
+  text-align: start;
+}
+.tr-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.tr-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-brand-face);
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-weight: 700;
+}
+.tr-who { display: grid; gap: 2px; }
+.tr-author { color: var(--c-text); font-weight: 700; font-size: 15px; }
+.tr-card-title { margin: 0 0 4px; color: var(--c-text); font-weight: 700; font-size: 15px; }
+.tr-card-text {
+  display: -webkit-box;
+  margin: 0 0 10px;
+  overflow: hidden;
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}
+.tr-card-meta { margin: auto 0 0; color: var(--c-text-secondary); font-size: 13px; }
+
+/* ── Урок вдвоём: текст и живая доска с плитками ─────────────────────── */
+/* ── Экран «вместе»: ровно в окно ─────────────────────────────────────
+   Прокрутка мягко притягивает (proximity, не mandatory) к первому экрану и к
+   этому: долистали близко — страница сама доезжает, дальше листается свободно.
+   Телефон нарисован в настоящем размере iPhone (390 × 844 pt экрана) и
+   уменьшается целиком, чтобы влезть в высоту окна: --phone-scale ставит
+   scripts/pair-sim.ts, без скрипта — 0,7. */
+html:has(.tr-screen) { scroll-snap-type: y proximity; scroll-padding-top: 0; }
+/* Первый экран притягивает к самому верху страницы, вместе с шапкой. */
+.home-hero { scroll-snap-align: start; scroll-margin-top: 200px; }
+.tr-screen {
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: 24px;
+  scroll-snap-align: start;
+  scroll-margin-top: 0;
+}
+.tr-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "head phone" "body phone";
+  column-gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: start;
+}
+.tr-pair-head { grid-area: head; align-self: end; margin-bottom: 18px; }
+.tr-pair-head .tr-title { font-size: clamp(36px, 4.6vw, 60px); }
+.tr-pair-head .tr-lead { color: var(--c-text); font-size: clamp(18px, 1.8vw, 22px); line-height: 1.4; }
+.tr-pair-body { grid-area: body; align-self: start; max-width: 520px; }
+.tr-phone-slot { grid-area: phone; }
+.tr-pair-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.tr-pair-list li { display: flex; align-items: center; gap: 10px; color: var(--c-text); font-weight: 600; }
+.tr-pair-list svg { width: 22px; height: 22px; flex: 0 0 auto; fill: var(--c-brand-strong); }
+
+/* Симуляция задания с общим выбором (scripts/pair-sim.ts) — экран парного урока
+   приложения в рамке телефона. Значения из mobile: плитка — Tile (рамка 2 px и
+   ребро 3 px цвета C.gold, радиус 12, текст 20/600), карточка вопроса —
+   MultipleChoicePrompt (рамка 2 px золото, радиус 20, слово 42 pt C.darkGold),
+   половины выбора — pair/pairColors.ts (.32 золота и синего), шапка —
+   PairLessonHeader, плашка «Верно» — LessonFeedbackDock, фон — палитра lesson. */
+.tr-phone-slot {
+  --phone-scale: 0.7;
+  justify-self: center;
+  width: calc(414px * var(--phone-scale));
+  height: calc(868px * var(--phone-scale));
+}
+/* Корпус iPhone: рамка 12 pt, скругление экрана 50, «остров» и кнопки на боках. */
+.tr-phone {
+  position: relative;
+  width: 414px;
+  height: 868px;
+  padding: 12px;
+  border-radius: 62px;
+  background: #16191f;
+  box-shadow:
+    inset 0 0 0 2px #3a3f4a,
+    inset 0 0 0 5px #16191f,
+    0 30px 60px rgba(36, 43, 56, 0.22),
+    0 8px 18px rgba(36, 43, 56, 0.12);
+  transform: scale(var(--phone-scale));
+  transform-origin: top left;
+}
+.tr-phone::before, .tr-phone::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  border-radius: 2px;
+  background: #2a2e36;
+}
+.tr-phone::before { left: -3px; top: 190px; height: 64px; box-shadow: 0 84px 0 #2a2e36; }
+.tr-phone::after { right: -3px; top: 230px; height: 100px; }
+.tr-island {
+  position: absolute;
+  top: 23px;
+  left: 50%;
+  z-index: 3;
+  width: 124px;
+  height: 36px;
+  margin-left: -62px;
+  border-radius: 18px;
+  background: #000;
+}
+.tr-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  margin: 0 -20px 4px;
+  padding: 4px 34px 0 50px;
+  color: #000;
+}
+.tr-status-time { font-family: var(--font-rounded); font-size: 17px; font-weight: 700; }
+.tr-status-icons { display: flex; align-items: center; gap: 6px; }
+.tr-status-icons svg { height: 12px; width: auto; fill: currentColor; }
+.tr-status-icons .tr-status-battery { height: 13px; }
+.tr-home-bar {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  z-index: 2;
+  width: 134px;
+  height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: #000;
+}
+.tr-sim {
+  --you: var(--c-brand);
+  --you-fill: var(--gold-32);
+  --friend: var(--c-streak-frozen);
+  --friend-fill: rgba(71, 158, 209, 0.32);
+  --gold-dark: var(--c-brand-strong);
+  position: relative;
+  height: 844px;
+  overflow: hidden;
+  padding: 0 20px;
+  border-radius: 50px;
+  background:
+    radial-gradient(60% 40% at 0% 0%, #fcf7ed, transparent 70%),
+    radial-gradient(60% 40% at 100% 10%, #f2f5ff, transparent 70%),
+    radial-gradient(70% 45% at 0% 60%, #edf7fc, transparent 70%),
+    radial-gradient(70% 45% at 100% 70%, #fcf5e3, transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, #f5f2fc, transparent 70%),
+    #faf7f5;
+  text-align: start;
+}
+
+/* Шапка: «Закрыть» слева, два аватара с кольцом цвета роли по центру. */
+.tr-sim-nav { position: relative; display: flex; justify-content: center; align-items: center; gap: 12px; height: 44px; margin-bottom: 12px; }
+.tr-sim-close {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-surface);
+  box-shadow: 0 1px 4px var(--c-hairline-strong);
+  color: var(--c-text);
+}
+.tr-sim-close svg { width: 16px; height: 16px; }
+.tr-ava { padding: 2px; border: 2px solid; border-radius: 50%; line-height: 0; }
+.tr-ava img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.tr-ava.is-you { border-color: var(--you); }
+.tr-ava.is-friend { border-color: var(--friend); }
+
+.tr-sim-prompt {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 22px;
+  border: var(--b-emphasis) solid var(--c-brand);
+  border-radius: var(--r-surface);
+  background: var(--c-surface);
+  text-align: center;
+}
+.tr-sim-sub { margin: 0; color: var(--c-text-secondary); font-family: var(--font-rounded); font-size: 16px; line-height: 22px; font-weight: 600; }
+.tr-sim-phrase { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0; }
+.tr-sim-word { color: var(--gold-dark); font-family: var(--font-arabic); font-size: 42px; line-height: 51px; font-weight: 600; padding: 10px 0 4px; }
+.tr-sim-speak {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold-dark);
+  color: var(--c-text-on-brand);
+}
+.tr-sim-speak svg { width: 14px; height: 14px; }
+
+.tr-sim-legend { display: flex; justify-content: center; gap: 16px; margin-bottom: 10px; color: var(--c-text-secondary); font-family: var(--font-rounded); font-size: 13px; }
+.tr-sim-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tr-sim-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--you); }
+.tr-sim-legend .is-friend::before { background: var(--friend); }
+
+/* Плитка: лицо с рамкой стоит на ребре того же цвета; нажатие опускает лицо. */
+.tr-sim-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tr-opt, .tr-sim-next {
+  --edge: var(--c-brand);
+  --face: var(--c-surface);
+  --ink: var(--c-text);
+  position: relative;
+  display: flex;
+  padding-bottom: var(--press-depth);
+}
+.tr-opt::before, .tr-sim-next::before {
+  content: "";
+  position: absolute;
+  inset: var(--press-depth) 0 0;
+  border-radius: var(--r-control);
+  background: var(--edge);
+  transition: background-color 0.2s;
+}
+.tr-opt-face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 68px;
+  padding: 16px 8px;
+  overflow: hidden;
+  border: var(--b-emphasis) solid var(--edge);
+  border-radius: var(--r-control);
+  background: var(--face);
+  color: var(--ink);
+  font-family: var(--font-rounded);
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  transition: transform var(--press-out) var(--ease-press), border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+.tr-opt-text { position: relative; }
+.tr-half { position: absolute; top: 0; bottom: 0; width: 50%; opacity: 0; transition: opacity 0.18s; }
+.tr-half.is-you { left: 0; background: var(--you-fill); }
+.tr-half.is-friend { right: 0; background: var(--friend-fill); }
+.tr-opt.by-you .tr-half.is-you, .tr-opt.by-friend .tr-half.is-friend { opacity: 1; }
+.tr-opt.is-pressed .tr-opt-face { transform: translateY(var(--press-depth)); transition-duration: var(--press-in); }
+
+/* Обе половины на верной плитке — проверка, как в уроке: плитка зелёная, снизу плашка. */
+.tr-sim.is-verdict .tr-opt[data-correct], .tr-sim-next { --edge: var(--c-success); --face: var(--c-success-surface); --ink: var(--c-success-strong); }
+.tr-sim.is-verdict .tr-opt .tr-half.tr-half { opacity: 0; }
+.tr-sim-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px 20px 34px;
+  border-top: 1px solid var(--c-hairline);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transform: translateY(105%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tr-sim.is-verdict .tr-sim-dock { transform: none; }
+.tr-sim-dock-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--c-success);
+  border-radius: var(--r-surface);
+  background: var(--c-success-surface);
+}
+.tr-sim-dock-title { margin: 0; color: var(--c-success-strong); font-family: var(--font-rounded); font-size: 17px; font-weight: 700; }
+.tr-sim-next .tr-opt-face { min-height: 52px; padding: 13px; font-size: 17px; font-weight: 700; }
+
+/* Пальцы — аватары игроков с кольцом цвета роли; translate ставит скрипт. */
+.tr-finger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: none;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  padding: 2px;
+  border: 2px solid;
+  border-radius: 50%;
+  background: var(--c-surface);
+  line-height: 0;
+  box-shadow: 0 4px 12px rgba(36, 43, 56, 0.22);
+  pointer-events: none;
+  transition: translate 0.38s cubic-bezier(0.3, 0.7, 0.3, 1), scale 0.12s;
+}
+.tr-finger img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.tr-sim.is-live .tr-finger { display: block; }
+.tr-sim.is-jump .tr-finger { transition: none; }
+.tr-finger.is-you { border-color: var(--you); }
+.tr-finger.is-friend { border-color: var(--friend); }
+.tr-finger.is-down { scale: 0.82; }
+
+/* Без скрипта и без движения: обе половины уже на «Привет». */
+.tr-sim.is-static .tr-opt[data-correct] .tr-half { opacity: 1; }
+
+/* ── Призыв ───────────────────────────────────────────────────────────── */
+.tr-cta { margin-top: clamp(56px, 7vw, 96px); }
+.tr-cta-title { margin: 0 0 8px; color: var(--c-text); font-size: clamp(32px, 4vw, 48px); line-height: 1.1; }
+.tr-cta-text { margin: 0 0 22px; color: var(--c-text-secondary); font-size: 18px; }
+.tr-stores { justify-content: center; }
+/* Магазины призыва — в своём цвете, как на первом экране. */
+.tr-stores .store-link { border-color: var(--brand); background: var(--c-surface); box-shadow: 0 var(--press-depth) 0 var(--brand); }
+.tr-stores .store-link svg { color: var(--brand); }
+.tr-stores .store-link:active { box-shadow: 0 0 0 var(--brand); }
+
+/* Телефон: заголовок, под ним iPhone на остаток окна, описание — ниже. */
+@media (max-width: 760px) {
+  .tr-screen { align-items: start; padding-top: 20px; }
+  .tr-pair { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "phone" "body"; text-align: center; }
+  .tr-pair-head { margin-bottom: 16px; }
+  .tr-pair-head .tr-title { font-size: 34px; margin-bottom: 8px; }
+  .tr-pair-head .tr-lead { font-size: 17px; }
+  .tr-pair-body { margin: 28px auto 0; text-align: start; }
+  .tr-card { width: 280px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tr-track { animation: none; }
+  .tr-marquee { overflow-x: auto; }
+  .tr-set[aria-hidden="true"] { display: none; }
+}

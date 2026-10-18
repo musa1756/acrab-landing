@@ -16,14 +16,16 @@ type Props = SeoProps & {
   /** Короткая шапка служебной страницы вместо разделов сайта. */
   nav?: ServiceNav;
   mainClass?: string;
+  /** Плавающая шапка-плашка и ровный фон без сетчатого градиента. */
+  floatingHeader?: boolean;
 };
 
-const { section, nav, mainClass, ...seo } = Astro.props;
+const { section, nav, mainClass, floatingHeader = false, ...seo } = Astro.props;
 ---
 
-<BaseLayout {...seo}>
+<BaseLayout {...seo} bodyClass={floatingHeader ? "page-plain" : undefined}>
   <a class="skip-link" href="#main">К содержанию</a>
-  <Header active={section} variant={nav} />
+  <Header active={section} variant={nav} floating={floatingHeader} />
   <main id="main" class={mainClass}><slot /></main>
   <Footer />
 </BaseLayout>

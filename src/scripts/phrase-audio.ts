@@ -1,10 +1,10 @@
 /**
- * Кнопки «Слушать» в статьях с фразами. Каждая играет один файл из
+ * Кнопки «Слушать» в статьях с фразами и слова-плашки на первом экране главной. Каждая играет один файл из
  * /assets/audio/ — озвучку из приложения. Одновременно звучит одна дорожка:
  * повторное нажатие останавливает её, нажатие на другую кнопку переключает.
  * Без скрипта кнопки остаются скрытыми (атрибут hidden), страница читается как есть.
  */
-const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button.audio-btn[data-audio]"));
+const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button[data-audio]"));
 
 let active: { button: HTMLButtonElement; audio: HTMLAudioElement } | null = null;
 

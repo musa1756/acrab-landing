@@ -117,10 +117,15 @@ p { text-wrap: pretty; }
 .site-nav a:hover { background: var(--gold-06); color: var(--c-text); }
 .site-nav a:active { opacity: 0.65; transition-duration: var(--press-in); }
 .nav-short { display: none; }
+/* Текущий раздел — кнопка «выбрано», как слова и магазины на главной: белое
+   лицо, золотые рамка и ребро. Рамка толще на 1 px — отступ меньше на 1 px,
+   чтобы пункты не прыгали. */
 .site-nav a[aria-current="page"] {
-  border-color: var(--gold-55);
-  background: var(--gold-12);
-  color: var(--c-brand-text);
+  padding: 6px 12px;
+  border: var(--b-emphasis) solid var(--c-brand-strong);
+  background: var(--c-surface);
+  box-shadow: 0 var(--press-depth) 0 var(--c-brand-strong);
+  color: var(--c-text);
 }
 
 /* ── Заголовок страницы ──────────────────────────────────────────────────── */
@@ -253,6 +258,33 @@ p { text-wrap: pretty; }
 .footer-links a:hover { color: var(--c-brand-text); }
 .site-footer .store-links { justify-content: center; }
 
+/* ── Плавающая шапка и ровный фон (главная) ───────────────────────────────
+   Шапка — отдельная плашка с отступом от края: та же вуаль с размытием, но с
+   рамкой и скруглением карточки; справа — кнопка «Скачать» (/get). Фон страницы
+   ровный, без сетчатого градиента. */
+body.page-plain::before { display: none; }
+.site-header-floating {
+  padding-top: 12px;
+  border-bottom: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.site-header-floating .site-header-inner {
+  min-height: 60px;
+  padding: 0 10px 0 16px;
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--r-surface);
+  background: var(--c-veil);
+  box-shadow: var(--shadow-low);
+  -webkit-backdrop-filter: saturate(1.8) blur(20px);
+  backdrop-filter: saturate(1.8) blur(20px);
+}
+.site-header-cta { justify-self: end; }
+/* При прокрутке вниз плашка уезжает за верх экрана (scripts/site-nav.ts). */
+.site-header-floating { transition: transform 260ms var(--ease-press); }
+.site-header-floating.is-hidden { transform: translateY(calc(-100% - 8px)); }
+
 /* 641–860 px: шесть разделов полным кеглем не помещаются рядом с логотипом
    (нужно около 760 px), поэтому чипы берут кегль телефона; до 720 px от логотипа
    остаётся значок. */
@@ -263,6 +295,10 @@ p { text-wrap: pretty; }
 }
 @media (min-width: 641px) and (max-width: 720px) {
   .site-header .brand span { display: none; }
+}
+/* Разделам нужна вся строка: «Скачать» уступает им место, магазины есть в герое. */
+@media (max-width: 960px) {
+  .site-header-cta { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -278,6 +314,8 @@ p { text-wrap: pretty; }
   .site-nav a { padding: 6px; font-size: 13px; line-height: 18px; }
   .nav-full { display: none; }
   .nav-short { display: inline; }
+  .site-header-floating { padding-top: 8px; }
+  .site-header-floating .site-header-inner { padding: 8px 6px 6px; border-radius: var(--r-tile); }
   /* Две ровные колонки вместо рваного переноса трёх кнопок в 358 pt. */
   .store-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
 }

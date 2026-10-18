@@ -5,7 +5,7 @@ import type { SeoProps } from "../seo/page-meta";
 
 type Props = SeoProps & {
   jsonLd?: Record<string, unknown>[];
-  bodyClass?: string;
+  bodyClass?: string | undefined;
 };
 
 const { bodyClass, ...seo } = Astro.props;

@@ -1,0 +1,187 @@
+/* Глобус арабского мира под первым экраном главной
+   (components/home/ArabicGlobe.astro, scripts/arabic-globe.ts). Классы `ag-`.
+   Море — светло-голубое, суша — песок, страны Лиги — золото приложения. */
+
+.ag {
+  --ag-sea-light: #d3ecfb;
+  --ag-sea-dark: #7fbbe6;
+  --ag-land: #f3e2bd;
+  --ag-land-edge: #ffffff;
+  width: var(--page);
+  margin: 0 auto clamp(56px, 8vw, 104px);
+  text-align: center;
+}
+.ag-head { max-width: 680px; margin: 0 auto clamp(18px, 2.6vw, 28px); }
+.ag-head .about-h span { color: var(--c-brand); }
+
+/* Карта — фон блока во всю ширину окна, высотой со второй экран без заголовка;
+   рисунок обрезается по высоте (preserveAspectRatio slice), края мягко уходят в
+   фон страницы. Поверх карты — три ленты фотографий. */
+.ag-stage {
+  position: relative;
+  isolation: isolate;
+  width: 100vw;
+  height: clamp(520px, calc(100svh - 150px), 860px);
+  margin-left: 50%;
+  translate: -50% 0;
+  overflow: hidden;
+}
+.ag-svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.ag [hidden] { display: none; }
+
+/* Ленты: первая и третья едут слева направо, вторая — справа налево. Между
+   рядами видна карта; наведение проходит сквозь фото к странам. */
+.ag-ribbons {
+  position: absolute;
+  z-index: 1;
+  inset: 5% 0;
+  display: grid;
+  /* Невысокие ряды, разнесённые по высоте: между ними видна карта. */
+  grid-template-rows: repeat(3, clamp(84px, 13vh, 124px));
+  align-content: space-between;
+  pointer-events: none;
+}
+.ag-ribbon { min-height: 0; overflow: hidden; }
+.ag-ribbon-track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  height: 100%;
+  animation: ag-ribbon 90s linear infinite;
+}
+.ag-ribbon.is-forward .ag-ribbon-track { animation-direction: reverse; }
+.ag-ribbon img {
+  display: block;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 30 / 21;
+  border: 3px solid var(--c-surface);
+  border-radius: var(--r-tile);
+  box-shadow: 0 6px 18px rgba(36, 43, 56, 0.18);
+  object-fit: cover;
+}
+/* Ряд повторён дважды: сдвиг на половину ряда плюс половину промежутка — бесшовно. */
+@keyframes ag-ribbon {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 7px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ag-ribbon-track { animation: none; }
+}
+
+.ag-sea-light { stop-color: var(--ag-sea-light); }
+.ag-sea-dark { stop-color: var(--ag-sea-dark); }
+.ag-grat { fill: none; stroke: rgba(255, 255, 255, 0.6); stroke-width: 1; pointer-events: none; }
+.ag-land { fill: var(--ag-land); stroke: var(--ag-land-edge); stroke-width: 0.8; stroke-linejoin: round; }
+
+/* Заливка стран — их флаги (атрибут fill из разметки), граница белая. Наведённая
+   страна обводится тёмным контуром и поднимается над соседями. */
+.ag-country,
+.ag-dot {
+  stroke: var(--c-surface);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: stroke var(--fade) ease-out, stroke-width var(--fade) ease-out;
+}
+.ag-dot { stroke-width: 2.5; }
+.ag-country.is-active,
+.ag-dot.is-active { stroke: var(--c-text); stroke-width: 2.5; }
+@media (hover: hover) {
+  .ag-country:hover,
+  .ag-dot:hover { stroke: var(--c-text); stroke-width: 2.5; }
+}
+
+/* Появление (scripts/arabic-globe.ts ставит data-ag-reveal, если движение не
+   выключено): флаги проявляются по очереди с запада на восток. */
+.ag[data-ag-reveal] :is(.ag-country, .ag-dot) { opacity: 0; transition: opacity 520ms ease-out, stroke var(--fade) ease-out, stroke-width var(--fade) ease-out; }
+.ag[data-ag-reveal].is-revealed :is(.ag-country, .ag-dot) { opacity: 1; }
+.ag[data-ag-reveal] .ag-cities { opacity: 0; transition: opacity 600ms ease-out 1.4s; }
+.ag[data-ag-reveal].is-revealed .ag-cities { opacity: 1; }
+
+
+/* Мекка — Кааба с золотым поясом и мягкой пульсацией, Медина — зелёный купол. */
+.ag-city { cursor: pointer; }
+.ag-kaaba { fill: #1d1d1f; stroke: var(--c-surface); stroke-width: 1.6; }
+.ag-kaaba-band { fill: var(--c-brand); pointer-events: none; }
+.ag-dome { fill: #1f8a4c; stroke: var(--c-surface); stroke-width: 1.6; stroke-linejoin: round; }
+.ag-dome-tip { fill: none; stroke: var(--c-brand); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.ag-pulse {
+  fill: none;
+  stroke: var(--c-brand);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ag-pulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes ag-pulse {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+.ag-city.is-active .ag-kaaba,
+.ag-city.is-active .ag-dome { stroke: var(--c-brand); }
+@media (prefers-reduced-motion: reduce) {
+  .ag-pulse { animation: none; opacity: 0; }
+}
+
+.ag-sea {
+  fill: #2f6f9c;
+  font-family: var(--font-rounded);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+
+/* Плашка страны — белая карточка с флагом над точкой центра страны. */
+.ag-tip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  border: var(--b-emphasis) solid var(--c-brand-strong);
+  border-radius: var(--r-control);
+  background: var(--c-surface);
+  box-shadow: 0 var(--press-depth) 0 var(--c-brand-strong), 0 10px 24px rgba(36, 43, 56, 0.12);
+  transform: translate(-50%, calc(-100% - 14px));
+  pointer-events: none;
+  white-space: nowrap;
+  text-align: start;
+}
+.ag-flag[hidden] { display: none; }
+.ag-flag {
+  display: block;
+  width: 44px;
+  height: 33px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px var(--c-hairline);
+  object-fit: cover;
+}
+.ag-tip-text { display: grid; line-height: 1.2; }
+.ag-tip-ru { color: var(--c-text); font-family: var(--font-rounded); font-size: 16px; font-weight: 700; }
+.ag-tip-ar { color: var(--c-text-secondary); font-family: var(--font-arabic); font-size: 16px; }
+
+/* Телефон: свой кадр 760×700 крупнее (scripts/arabic-globe.ts), почти во всю ширину,
+   края растворяются позже — иначе маска съедает Мавританию и Оман. */
+@media (max-width: 640px) {
+  .ag-stage { width: calc(100vw - 8px); }
+  .ag-svg {
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
+  }
+}

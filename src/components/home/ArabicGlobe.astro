@@ -1,0 +1,131 @@
+---
+/**
+ * Арабский мир на шаре сразу под первым экраном: неподвижный приближенный кусок
+ * глобуса, растянутый овалом; 22 страны Лиги арабских государств залиты своими
+ * флагами, остальная суша песочная, моря и океаны подписаны, отмечены Мекка и
+ * Медина. Карта — фон блока во всю ширину окна, поверх неё три ленты фотографий
+ * людей, улиц и мечетей арабских стран едут навстречу друг другу. Названия стран не подписаны:
+ * наведение или нажатие на страну (или город) показывает плашку с названием.
+ *
+ * Пути стран пустые: их рисует scripts/arabic-globe.ts (ортографическая проекция
+ * d3-geo по данным src/data/arabic-globe.ts), он же ставит заливку-флаг на рамку
+ * страны и подписи морей по координатам. Без скрипта виден заголовок и список
+ * стран для чтения с экрана. Флаги — public/assets/flags (flag-icons, MIT).
+ * Классы блока начинаются с `ag-`.
+ */
+
+/**
+ * Три ленты фотографий за картой (public/assets/people, Unsplash — список в
+ * SOURCES.txt). Фото раскладываются по лентам по очереди, чтобы страны
+ * перемешались; в ленте они повторены дважды для бесшовной прокрутки.
+ */
+const PEOPLE = Array.from({ length: 60 }, (_, i) => `/assets/people/${String(i + 1).padStart(2, "0")}.webp`);
+const RIBBONS = [0, 1, 2].map((row) => PEOPLE.filter((_, i) => i % 3 === row));
+
+/** Подписи морей: долгота и широта центра подписи, наклон в градусах. */
+const SEAS = [
+  { ru: "Атлантический океан", lon: -19, lat: 26.5, angle: -76 },
+  { ru: "Средиземное море", lon: 18, lat: 34.6, angle: 0 },
+  { ru: "Красное море", lon: 38.6, lat: 20.2, angle: 58 },
+  { ru: "Персидский залив", lon: 51.6, lat: 27.6, angle: -28 },
+  { ru: "Аравийское море", lon: 57.5, lat: 15.2, angle: 0 },
+  { ru: "Аденский залив", lon: 48.6, lat: 12.4, angle: 0 },
+  { ru: "Индийский океан", lon: 53, lat: 4, angle: 0 },
+] as const;
+
+/** Названия стран — как у Лиги арабских государств. */
+const LEAGUE = [
+  { id: "ma", ru: "Марокко", ar: "الْمَغْرِبُ" },
+  { id: "dz", ru: "Алжир", ar: "الْجَزَائِرُ" },
+  { id: "tn", ru: "Тунис", ar: "تُونِسُ" },
+  { id: "ly", ru: "Ливия", ar: "لِيبِيَا" },
+  { id: "eg", ru: "Египет", ar: "مِصْرُ" },
+  { id: "sd", ru: "Судан", ar: "السُّودَانُ" },
+  { id: "mr", ru: "Мавритания", ar: "مُورِيتَانِيَا" },
+  { id: "so", ru: "Сомали", ar: "الصُّومَالُ" },
+  { id: "dj", ru: "Джибути", ar: "جِيبُوتِي" },
+  { id: "km", ru: "Коморы", ar: "جُزُرُ الْقَمَرِ" },
+  { id: "sa", ru: "Саудовская Аравия", ar: "السُّعُودِيَّةُ" },
+  { id: "ye", ru: "Йемен", ar: "الْيَمَنُ" },
+  { id: "om", ru: "Оман", ar: "عُمَانُ" },
+  { id: "ae", ru: "ОАЭ", ar: "الْإِمَارَاتُ" },
+  { id: "qa", ru: "Катар", ar: "قَطَرُ" },
+  { id: "bh", ru: "Бахрейн", ar: "الْبَحْرَيْنُ" },
+  { id: "kw", ru: "Кувейт", ar: "الْكُوَيْتُ" },
+  { id: "iq", ru: "Ирак", ar: "الْعِرَاقُ" },
+  { id: "sy", ru: "Сирия", ar: "سُورِيَا" },
+  { id: "lb", ru: "Ливан", ar: "لُبْنَانُ" },
+  { id: "jo", ru: "Иордания", ar: "الْأُرْدُنُّ" },
+  { id: "ps", ru: "Палестина", ar: "فِلَسْطِينُ" },
+] as const;
+---
+
+<section class="ag" id="arabic-world" aria-labelledby="arabic-world-title" data-ag>
+  <div class="ag-head" data-appear>
+    <h2 class="about-h" id="arabic-world-title">Один язык — <span>тысяча возможностей</span></h2>
+  </div>
+
+  <div class="ag-stage" data-ag-stage>
+    <div class="ag-ribbons" aria-hidden="true">
+      {RIBBONS.map((photos, row) => (
+        <div class:list={["ag-ribbon", { "is-forward": row !== 1 }]}>
+          <div class="ag-ribbon-track">
+            {[...photos, ...photos].map((src) => <img src={src} alt="" width="300" height="210" loading="lazy" decoding="async" />)}
+          </div>
+        </div>
+      ))}
+    </div>
+    <svg class="ag-svg" viewBox="0 0 1300 820" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Карта: 22 арабские страны залиты своими флагами, подписаны моря и океаны." focusable="false">
+      <defs>
+        <radialGradient id="ag-sea" cx="40%" cy="30%" r="75%">
+          <stop offset="0" class="ag-sea-light" />
+          <stop offset="1" class="ag-sea-dark" />
+        </radialGradient>
+        {LEAGUE.map(({ id }) => (
+          <pattern id={`ag-f-${id}`} patternUnits="userSpaceOnUse" data-ag-pattern={id}>
+            <rect class="ag-flag-bg" fill="none" />
+            <image href={`/assets/flags/${id}.svg`} preserveAspectRatio="none" />
+          </pattern>
+        ))}
+        {LEAGUE.map(({ id }) => (
+          <pattern id={`ag-fd-${id}`} patternContentUnits="objectBoundingBox" width="1" height="1">
+            <image href={`/assets/flags/${id}.svg`} width="1" height="1" preserveAspectRatio="xMidYMid slice" />
+          </pattern>
+        ))}
+      </defs>
+      <circle class="ag-sphere" cx="650" cy="410" r="900" fill="url(#ag-sea)" />
+      <path class="ag-grat" data-ag-grat />
+      <path class="ag-land" data-ag-land />
+      <g class="ag-seas">
+        {SEAS.map(({ ru, lon, lat, angle }) => <text class="ag-sea" data-lon={lon} data-lat={lat} data-angle={angle} text-anchor="middle">{ru}</text>)}
+      </g>
+      <g class="ag-countries">
+        {LEAGUE.map(({ id }) => <path class="ag-country" data-ag-id={id} fill={`url(#ag-f-${id})`} />)}
+      </g>
+      <g class="ag-dots">
+        {LEAGUE.map(({ id }) => <circle class="ag-dot" data-ag-dot={id} r="8" fill={`url(#ag-fd-${id})`} />)}
+      </g>
+      <g class="ag-cities">
+        <g class="ag-city" data-ag-city="mecca" data-ru="Мекка" data-ar="مَكَّةُ الْمُكَرَّمَةُ" data-lon="39.826" data-lat="21.423">
+          <circle class="ag-pulse" r="9" />
+          <rect class="ag-kaaba" x="-7" y="-7.5" width="14" height="15" rx="1.5" />
+          <rect class="ag-kaaba-band" x="-7" y="-4" width="14" height="2.6" />
+        </g>
+        <g class="ag-city" data-ag-city="medina" data-ru="Медина" data-ar="الْمَدِينَةُ الْمُنَوَّرَةُ" data-lon="39.611" data-lat="24.468">
+          <path class="ag-dome" d="M-7 6H7V2A7 7 0 0 0 -7 2Z" />
+          <path class="ag-dome-tip" d="M0 -5V-9" />
+        </g>
+      </g>
+    </svg>
+    <div class="ag-tip" data-ag-tip aria-hidden="true" hidden>
+      <img class="ag-flag" data-ag-flag alt="" width="44" height="33" />
+      <span class="ag-tip-text"><span class="ag-tip-ru" data-ag-ru></span><span class="ag-tip-ar" lang="ar" dir="rtl" data-ag-ar></span></span>
+    </div>
+  </div>
+
+  <ul class="visually-hidden" aria-label="Арабские страны">
+    {LEAGUE.map(({ id, ru, ar }) => <li data-ag-name={id} data-ru={ru} data-ar={ar}>{ru}</li>)}
+  </ul>
+</section>
+
+<script src="../../scripts/arabic-globe.ts"></script>

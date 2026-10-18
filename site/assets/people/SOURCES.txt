@@ -1,0 +1,65 @@
+Фотографии лент на главной (components/home/ArabicGlobe.astro).
+Источник — Unsplash, лицензия Unsplash: бесплатно, в том числе для коммерческого
+использования, без обязательной подписи (https://unsplash.com/license).
+Скачаны 16.10.2026 в размере 300×210, WebP.
+
+01.webp  https://unsplash.com/photos/iQ_cOTlR7wo
+02.webp  https://unsplash.com/photos/JGBoIaHTACI
+03.webp  https://unsplash.com/photos/fxVztXDkh4E
+04.webp  https://unsplash.com/photos/73McbHJFLmI
+05.webp  https://unsplash.com/photos/0vWN9eHJrSc
+06.webp  https://unsplash.com/photos/ewOcj59oySY
+07.webp  https://unsplash.com/photos/3DCGME9sGzE
+08.webp  https://unsplash.com/photos/RU2UyQ8FYdk
+09.webp  https://unsplash.com/photos/oMSPhjE2e4Q
+10.webp  https://unsplash.com/photos/slbA3QKfhH8
+11.webp  https://unsplash.com/photos/019Y5aQdkDU
+12.webp  https://unsplash.com/photos/Z89kRdt8wFE
+13.webp  https://unsplash.com/photos/9UdGLlw-Sfk
+14.webp  https://unsplash.com/photos/WUYprauUJik
+15.webp  https://unsplash.com/photos/NqhS1Wb6TxQ
+16.webp  https://unsplash.com/photos/Fb1O51_hTdI
+17.webp  https://unsplash.com/photos/yPbHMWJTTOU
+18.webp  https://unsplash.com/photos/dTo6fNHOaf8
+19.webp  https://unsplash.com/photos/Ch8KPaf5YYk
+20.webp  https://unsplash.com/photos/jeeF4y1Lbo0
+21.webp  https://unsplash.com/photos/DE441f6eBbU
+22.webp  https://unsplash.com/photos/UAApjAJMzIs
+23.webp  https://unsplash.com/photos/jrJkQvOnGF4
+24.webp  https://unsplash.com/photos/22fcgpq8Xj4
+25.webp  https://unsplash.com/photos/hA_fShk7ud8
+26.webp  https://unsplash.com/photos/6UWwgpC4n6Y
+27.webp  https://unsplash.com/photos/xsRuqjFJ-cI
+28.webp  https://unsplash.com/photos/kLl2FHMQRb8
+29.webp  https://unsplash.com/photos/iSXYSrcVC10
+30.webp  https://unsplash.com/photos/tnQuaiP9njQ
+31.webp  https://unsplash.com/photos/u8LxFRE6PS8
+32.webp  https://unsplash.com/photos/IsfJ0EY7F5Q
+33.webp  https://unsplash.com/photos/Lg68k5y0f1I
+34.webp  https://unsplash.com/photos/D7WanF6Wb6M
+35.webp  https://unsplash.com/photos/4G1Tt98JGfQ
+36.webp  https://unsplash.com/photos/7LanP-PHQd0
+37.webp  https://unsplash.com/photos/be5B3YGDmtc
+38.webp  https://unsplash.com/photos/KzrTgVCh5WA
+39.webp  https://unsplash.com/photos/bs213bDbew4
+40.webp  https://unsplash.com/photos/Ap1lc8DpSQ4
+41.webp  https://unsplash.com/photos/Fxe-jOZNrgM
+42.webp  https://unsplash.com/photos/i1bfxi1cFBY
+43.webp  https://unsplash.com/photos/Y2oE2uNLSrs
+44.webp  https://unsplash.com/photos/RnyZVY9KDNE
+45.webp  https://unsplash.com/photos/-BHiUdFK5T4
+46.webp  https://unsplash.com/photos/4H_lQ0IYUUc
+47.webp  https://unsplash.com/photos/s8fQHF9rxMo
+48.webp  https://unsplash.com/photos/zfaVwkHDcXQ
+49.webp  https://unsplash.com/photos/oHsMklLpCdw
+50.webp  https://unsplash.com/photos/FM9BD4oRDoM
+51.webp  https://unsplash.com/photos/6xa6Q9-QajA
+52.webp  https://unsplash.com/photos/r-mNcYLICZA
+53.webp  https://unsplash.com/photos/uaJnRCdLgYU
+54.webp  https://unsplash.com/photos/RQM1Y1UfCEM
+55.webp  https://unsplash.com/photos/Udd_KFjeVVE
+56.webp  https://unsplash.com/photos/hRCbl5I2EIs
+57.webp  https://unsplash.com/photos/tIc9p1J5ZIA
+58.webp  https://unsplash.com/photos/5WLiUbFAEt4
+59.webp  https://unsplash.com/photos/QcPCOyRIuas
+60.webp  https://unsplash.com/photos/cXccb9Hsvhs

@@ -1,0 +1,85 @@
+---
+/**
+ * Третий экран главной — путь «от букв до книг»: четыре шага обучения и
+ * настоящие скрины приложения (public/assets/about).
+ *
+ * На компьютере телефон справа стоит на месте (sticky), а при прокрутке шагов
+ * в нём сменяется скрин — scripts/learning-path.ts. Без скрипта виден первый.
+ * На телефоне у каждого шага свой скрин под текстом. Классы блока — `lp-`,
+ * стили — learning-path.css.
+ */
+const STEPS = [
+  {
+    title: "Программа по шагам",
+    text: "81 модуль от алфавита до грамматики. Каждый урок опирается на прошлый, и всегда видно, что учить дальше.",
+    src: "/assets/about/program-path.webp",
+    width: 620,
+    height: 1250,
+    alt: "Экран «Программа»: модули по порядку с процентом прохождения",
+  },
+  {
+    title: "Правила по-русски",
+    text: "Перед заданиями — короткая теория с примерами и огласовками, без лишних терминов.",
+    src: "/assets/about/lesson-theory.webp",
+    width: 620,
+    height: 1212,
+    alt: "Теория урока о настоящем времени: правило по-русски и примеры на арабском",
+  },
+  {
+    title: "Практика в каждом уроке",
+    text: "Собирайте фразы из плиток, выбирайте перевод и слушайте озвучку — так слова запоминаются.",
+    src: "/assets/about/lesson-build.webp",
+    width: 576,
+    height: 1168,
+    alt: "Задание «Соберите предложение»: фраза «Погода сегодня холодная» из арабских плиток",
+  },
+  {
+    title: "Чтение настоящих книг",
+    text: "В Библиотеке — учебники и книги на арабском. Читайте их прямо в приложении.",
+    src: "/assets/about/library-books.webp",
+    width: 620,
+    height: 1276,
+    alt: "Библиотека: обложки книг на арабском",
+  },
+];
+---
+
+<section class="lp" aria-labelledby="lp-title">
+  <div class="lp-head">
+    <h2 class="lp-title" id="lp-title">От букв <span>до книг</span></h2>
+    <p class="lp-lead">Всё, что нужно для фусхи, — в одном приложении и по порядку.</p>
+  </div>
+
+  <div class="lp-body">
+    <ol class="lp-steps" role="list">
+      {STEPS.map((step, i) => (
+        <li class:list={["lp-step", { "is-active": i === 0 }]} data-step={i}>
+          <span class="lp-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="lp-step-title">{step.title}</h3>
+          <p class="lp-step-text">{step.text}</p>
+          <div class="lp-phone lp-step-phone">
+            <span class="lp-island" aria-hidden="true"></span>
+            <div class="lp-screen">
+              <span class="lp-status" aria-hidden="true">9:41</span>
+              <img src={step.src} alt={step.alt} width={step.width} height={step.height} loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="lp-phone-slot" aria-hidden="true">
+      <div class="lp-phone">
+        <span class="lp-island"></span>
+        <div class="lp-screen">
+          <span class="lp-status">9:41</span>
+          {STEPS.map((step, i) => (
+            <img class:list={["lp-shot", { "is-active": i === 0 }]} data-shot={i} src={step.src} alt="" width={step.width} height={step.height} loading="lazy" decoding="async" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../../scripts/learning-path.ts"></script>

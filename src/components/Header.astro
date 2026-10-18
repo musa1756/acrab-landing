@@ -5,13 +5,15 @@ interface Props {
   active?: SectionId | undefined;
   /** Короткая шапка служебной страницы; по умолчанию — разделы сайта. */
   variant?: ServiceNav | undefined;
+  /** Плавающая плашка с кнопкой «Скачать» (главная). */
+  floating?: boolean | undefined;
 }
 
-const { active, variant } = Astro.props;
+const { active, variant, floating = false } = Astro.props;
 const links = variant ? SERVICE_NAVS[variant] : SECTIONS;
 ---
 
-<header class="site-header">
+<header class:list={["site-header", { "site-header-floating": floating }]}>
   <div class="site-header-inner">
     <a class="brand" href="/" aria-label="Acrab, на главную">
       <img src="/assets/acrab-icon-64.png" alt="" width="30" height="30" />
@@ -22,6 +24,7 @@ const links = variant ? SERVICE_NAVS[variant] : SECTIONS;
         <a href={link.href} aria-current={active === link.id ? "page" : undefined}>{"short" in link && link.short ? (<Fragment><span class="nav-full">{link.label}</span><span class="nav-short">{link.short}</span></Fragment>) : link.label}</a>
       ))}
     </nav>
+    {floating && <a class="btn btn-dense site-header-cta" href="/get/">Скачать</a>}
   </div>
 </header>
 

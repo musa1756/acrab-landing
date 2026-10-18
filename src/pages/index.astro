@@ -1,417 +1,50 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import Icon from "../components/Icon.astro";
-import IconSprite from "../components/IconSprite.astro";
 import StoreLinks from "../components/StoreLinks.astro";
-import ToolsScroll from "../components/home/ToolsScroll.astro";
-import ArabicWorldMap from "../components/home/ArabicWorldMap.astro";
-import Reviews from "../components/home/Reviews.astro";
+import SocialTrust from "../components/home/SocialTrust.astro";
+import LearningPath from "../components/home/LearningPath.astro";
 import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
-import { GUIDES } from "../seo/guides";
 import "../styles/page-home.css";
+
+// Слова вокруг заголовка: нажатие играет озвучку из приложения (те же файлы,
+// что в статьях о приветствиях и благодарности). Места и наклон плашек — в
+// home-hero.css по порядку: CSP сайта не пускает атрибут style.
+const HERO_WORDS = [
+  { ar: "مَرْحَبًا", reading: "мархабан", ru: "привет", audio: "/assets/audio/marhaban.mp3" },
+  { ar: "كَيْفَ حَالُكَ؟", reading: "кайфа халюка", ru: "как дела?", audio: "/assets/audio/kayfa-haluka.mp3" },
+  { ar: "شُكْرًا", reading: "шукран", ru: "спасибо", audio: "/assets/audio/shukran.mp3" },
+  { ar: "أَهْلًا وَسَهْلًا", reading: "ахлян ва сахлян", ru: "добро пожаловать", audio: "/assets/audio/ahlan-wa-sahlan.mp3" },
+  { ar: "صَبَاحُ الْخَيْرِ", reading: "сабаху-ль-хайр", ru: "доброе утро", audio: "/assets/audio/sabah-al-khayr.mp3" },
+  { ar: "السَّلَامُ عَلَيْكُمْ", reading: "ас-саляму алайкум", ru: "мир вам", audio: "/assets/audio/as-salamu-alaykum.mp3" },
+];
 ---
 
-<PageLayout section="home" title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 81 модуль от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 81 модуля, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema, appSchema]}>
-<div class="about">
-<IconSprite names={["check-circle"]} />
-
-      <!-- ═══ Герой ═══════════════════════════════════════════════════════ -->
-      <section class="about-hero">
-        <div class="about-hero-copy">
-          <p class="eyebrow">Арабский язык с нуля</p>
-          <h1 class="page-title">Учите литературный арабский по шагам</h1>
-          <p class="about-hero-lead">Acrab ведёт от 28 букв до чтения текстов с огласовками. Правила объяснены по-русски, а перевод, спряжение и ИИ-учитель открываются в соседних вкладках того же приложения.</p>
-          <StoreLinks class="about-hero-actions" />
-          <dl class="about-stats">
-            <div class="about-stat"><dd data-count="81">81</dd><dt>модуль в программе</dt></div>
-            <div class="about-stat"><dd data-count="663">663</dd><dt>урока от букв до грамматики</dt></div>
-            <div class="about-stat"><dd data-count="10">10</dd><dt>инструментов вместе с ИИ-ассистентом</dt></div>
-          </dl>
-        </div>
-        <div class="shot about-hero-figure">
-          <img src="/assets/about/program-path.webp" alt="Экран «Программа»: модули с названиями, описанием и процентом прохождения" width="620" height="1250" fetchpriority="high">
-        </div>
-      </section>
-
-      <!-- ═══ Карта разделов: те же пять вкладок, что в приложении ═══════════
-           Плитки-ссылки .tile-neutral, значки — вкладки AppTabs.tsx. -->
-      <nav class="about-map" aria-label="Разделы приложения" data-appear-group>
-        <a class="tile tile-neutral" href="#program">
-          <span class="icon-badge"><Icon name="graduation-cap" /></span>
-          <span class="about-map-name">Программа</span>
-          <span class="about-map-sub">81 модуль и тренировки</span>
-        </a>
-        <a class="tile tile-neutral" href="#tools">
-          <span class="icon-badge"><Icon name="sparkle" /></span>
-          <span class="about-map-name">Инструменты</span>
-          <span class="about-map-sub">Перевод, спряжение, Анки</span>
-        </a>
-        <a class="tile tile-neutral" href="#assistant">
-          <span class="icon-badge"><Icon name="chats-circle" /></span>
-          <span class="about-map-name">Ассистент</span>
-          <span class="about-map-sub">ИИ-учитель на русском</span>
-        </a>
-        <a class="tile tile-neutral" href="#library">
-          <span class="icon-badge"><Icon name="books" /></span>
-          <span class="about-map-name">Библиотека</span>
-          <span class="about-map-sub">Книги, картинки, глаголы</span>
-        </a>
-        <a class="tile tile-neutral" href="#streak">
-          <span class="icon-badge"><Icon name="user-circle" /></span>
-          <span class="about-map-name">Профиль</span>
-          <span class="about-map-sub">Серия, друзья, синхронизация</span>
-        </a>
-      </nav>
-
-      <!-- ═══ Программа ════════════════════════════════════════════════ -->
-      <section class="about-section" id="program" aria-labelledby="program-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="program-title">81 модуль: от первой буквы до грамматики</h2>
-          <p class="about-p">Модули идут по порядку, и каждый опирается на предыдущий. Сначала 28 букв и чтение, потом приветствия, рассказ о себе, артикль <span lang="ar">ال</span> с солнечными и лунными буквами, именное предложение и дальше грамматика. Модули собраны в шесть курсов: от «Начало: буквы и первые фразы» до «Мастерство: формы и общество».</p>
-          <ul class="about-points about-points-spaced">
-            <li><Icon name="check-circle" class="about-check" sprite /><strong>Видно, куда вы идёте.</strong> У каждого модуля есть название, цель на практике и процент прохождения.</li>
-            <li><Icon name="check-circle" class="about-check" sprite /><strong>Тест уровня при первом запуске.</strong> Если вы уже учили арабский, ответьте на 10–12 вопросов, и приложение подскажет, с какого модуля начать.</li>
-            <li><Icon name="check-circle" class="about-check" sprite /><strong>Урок тренирует только свою лексику.</strong> Слова из следующих модулей в него не попадают.</li>
-            <li><Icon name="check-circle" class="about-check" sprite /><strong>Огласовки во всех модулях:</strong> в словах, примерах и упражнениях.</li>
-            <li><Icon name="check-circle" class="about-check" sprite /><strong>Уроки работают без интернета.</strong> Тексты и озвучка уроков хранятся на устройстве.</li>
-          </ul>
-        </div>
-
-        <h3 class="about-subhead" data-appear>Как устроен урок</h3>
-        <div class="about-cards" data-appear-group>
-          <article class="card card-plain about-card">
-            <figure class="about-card-shot"><img src="/assets/about/lesson-theory.webp" alt="Карточка «Теория» в уроке: правило про настоящее время с примерами" width="620" height="1212" loading="lazy"></figure>
-            <div class="about-card-body">
-              <h3>Сначала правило</h3>
-              <p>Новая тема начинается с короткой теории по-русски: как строится форма и где она встречается. Все примеры с огласовками.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-card">
-            <figure class="about-card-shot"><img src="/assets/about/lesson-choice.webp" alt="Упражнение «Выберите перевод»: арабское слово и четыре варианта ответа" width="620" height="896" loading="lazy"></figure>
-            <div class="about-card-body">
-              <h3>Выбор перевода</h3>
-              <p>Слово с огласовками и озвучкой и четыре варианта. Ответ проверяется сразу, верный приносит XP.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-card">
-            <figure class="about-card-shot"><img src="/assets/about/lesson-build.webp" alt="Упражнение «Соберите предложение»: арабские слова собираются в строку" width="576" height="1168" loading="lazy"></figure>
-            <div class="about-card-body">
-              <h3>Соберите предложение</h3>
-              <p>Русская фраза и арабские слова вразброс: расставьте их по порядку. Засчитываются разные верные варианты перевода.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-card">
-            <figure class="about-card-shot"><img src="/assets/about/lesson-listening.webp" alt="Упражнение «Аудирование»: волна звука и четыре варианта перевода" width="576" height="1128" loading="lazy"></figure>
-            <div class="about-card-body">
-              <h3>Аудирование</h3>
-              <p>Фраза звучит без текста. Её можно замедлить, повторить или показать написание, а потом выбрать перевод.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- ═══ Быстрые тренировки ═══════════════════════════════════════
-           Названия и подписи карточек — из mobile/src/features/fusha/training. -->
-      <section class="about-section" id="drills" aria-labelledby="drills-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="drills-title">Слово возвращается, пока не закрепится</h2>
-          <p class="about-p">На главном экране «Программы» есть блок «Быстрые тренировки». Он берёт слова и фразы из пройденных уроков и возвращает их через 1, 7 и 30 дней. После третьего верного ответа в срок слово считается закреплённым.</p>
-        </div>
-
-        <div class="drill-grid" data-appear-group>
-          <div class="drill drill-review">
-            <div class="drill-top">
-              <span class="drill-icon" aria-hidden="true"><Icon name="arrow-clockwise" /></span>
-              <span class="drill-count">10</span>
-            </div>
-            <div class="drill-copy">
-              <p class="drill-name">Повторить</p>
-              <p class="drill-note">То, что пора освежить. Порция дня — 10 заданий.</p>
-            </div>
-          </div>
-          <div class="drill drill-speed">
-            <div class="drill-top">
-              <span class="drill-icon" aria-hidden="true"><Icon name="lightning" /></span>
-              <span class="drill-count">90 с</span>
-            </div>
-            <div class="drill-copy">
-              <p class="drill-name">Скорость</p>
-              <p class="drill-note">Знакомые слова на время: до 20 заданий за 90 секунд.</p>
-            </div>
-          </div>
-          <div class="drill drill-hard">
-            <div class="drill-top">
-              <span class="drill-icon" aria-hidden="true"><Icon name="warning" /></span>
-              <span class="drill-count">2</span>
-            </div>
-            <div class="drill-copy">
-              <p class="drill-name">Разобрать ошибки</p>
-              <p class="drill-note">Слова, в которых вы ошиблись. Один верный ответ закрывает ошибку.</p>
-            </div>
-          </div>
-          <div class="drill drill-listen">
-            <div class="drill-top">
-              <span class="drill-icon" aria-hidden="true"><Icon name="ear" /></span>
-              <span class="drill-count">8</span>
-            </div>
-            <div class="drill-copy">
-              <p class="drill-name">Аудирование</p>
-              <p class="drill-note">Только на слух, без текста на экране.</p>
-            </div>
-          </div>
-        </div>
-        <div class="drill-words" data-appear>
-          <span class="drill-words-icon" aria-hidden="true"><Icon name="book-open" /></span>
-          <p class="about-p">Под тренировками — «Мои слова»: темы, слова из уроков и ваши собственные. Тему можно пройти тестом или повторять карточками в инструменте «Анки».</p>
-        </div>
-      </section>
-
-      <!-- ═══ Инструменты ══════════════════════════════════════════════
-           Плитки повторяют TOOL_FEATURES из mobile/src/features/tools/ToolsScreen.tsx:
-           тот же порядок, названия и подписи, цвета — из toolAccent. -->
-      <section class="about-section" id="tools" aria-labelledby="tools-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="tools-title">Девять инструментов вместо вкладок в браузере</h2>
-          <p class="about-p">Всё, ради чего обычно уходят из урока в поиск: перевести фразу, расставить огласовки, проспрягать глагол, найти родственные слова, услышать произношение. Спряжение, Семья слов и Анки работают без интернета.</p>
-        </div>
-
-        <ToolsScroll />
-      </section>
-
-      <!-- ═══ Ассистент ════════════════════════════════════════════════ -->
-      <section class="about-section" id="assistant" aria-labelledby="assistant-title">
-        <div class="about-showcase about-showcase-tall about-showcase-integrated">
-          <div class="about-section-head" data-appear>
-            <h2 class="about-h" id="assistant-title">Спросите так, как спросили бы преподавателя</h2>
-            <p class="about-p">Спросите «Что такое лунные буквы?», и ИИ-учитель ответит по-русски: правило, примеры с огласовками, исключения. Он учитывает, какой модуль вы проходите и где чаще ошибаетесь.</p>
-          </div>
-          <div class="about-showcase-copy" data-appear>
-            <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Глубину ответа выбираете вы:</strong> «Кратко», «Подробно» или «Глубоко».</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Можно потренировать разговор.</strong> Напишите по-арабски, и ассистент ответит как собеседник: по-арабски, с русским переводом ниже.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Арабский в ответах всегда с огласовками,</strong> поэтому пример можно сразу прочитать вслух.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>10 запросов в день бесплатно, 100 в Premium.</strong> Диалоги хранятся на вашем устройстве.</li>
-            </ul>
-          </div>
-          <div class="shot about-showcase-figure" data-appear>
-            <img src="/assets/about/assistant-2026-10.webp" alt="Ассистент отвечает на вопрос «Что такое лунные буквы?» с примерами" width="620" height="1276" loading="lazy">
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══ Библиотека ═══════════════════════════════════════════════ -->
-      <section class="about-section" id="library" aria-labelledby="library-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="library-title">Книги для чтения и всё, что вы сохранили</h2>
-          <p class="about-p">В Библиотеке четыре раздела: «Книги», «Картинки», «Глаголы» и «Аудио». Книги стоят на полке сразу, остальное собирается из инструментов, пока вы учитесь.</p>
-        </div>
-
-        <div class="about-showcase about-showcase-flip">
-          <div class="about-showcase-copy" data-appear>
-            <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>«аль-Кироату ар-Рашида» с переводом по нажатию.</strong> Нажмите на слово, и появится его перевод в этом месте текста. В книге 90 коротких текстов, первые пять открыты бесплатно.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Учебники в PDF:</strong> «Байна ядайк» в восьми частях и «Арабский в рифмах». Скачайте книгу один раз, и она откроется без интернета, с закладками.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Картинки:</strong> акварельные карточки слов с подписями по-арабски и по-русски.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Глаголы</strong> из «Спряжения» с тестом на формы из 10 вопросов.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Аудио</strong> из «Озвучки»: фразы можно переслушать медленнее.</li>
-            </ul>
-          </div>
-          <div class="shot about-showcase-figure" data-appear>
-            <img src="/assets/about/library-books.webp" alt="Библиотека, раздел «Книги»: «аль-Кироату ар-Рашида», «Арабский в рифмах» и «Байна ядайк»" width="620" height="1276" loading="lazy">
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══ Серия ════════════════════════════════════════════════════ -->
-      <section class="about-section" id="streak" aria-labelledby="streak-title">
-        <div class="about-showcase about-showcase-integrated">
-          <div class="about-section-head" data-appear>
-            <h2 class="about-h" id="streak-title">Огонёк</h2>
-            <p class="about-p">День засчитывается, когда вы прошли урок или тренировку. Огласовки и вопросы ассистенту серию не продлевают. Пропущенный день закроет заморозка: на старте их две у всех.</p>
-          </div>
-          <div class="about-showcase-copy" data-appear>
-            <ul class="about-points">
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Неделя на главном экране.</strong> Огонёк отмечает день с занятием, снежинка — день, который закрыла заморозка.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Календарь «Ритм занятий»</strong> в профиле показывает каждый месяц целиком.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Заморозки тратятся сами.</strong> В Premium запас пополняется на одну каждый понедельник, но не больше двух.</li>
-              <li><Icon name="check-circle" class="about-check" sprite /><strong>Серия хранится в аккаунте</strong> и восстанавливается после переустановки.</li>
-            </ul>
-          </div>
-          <div class="shot about-showcase-figure streak-video" data-appear>
-            <video src="/assets/about/streak-week.mp4" poster="/assets/about/streak-week-poster.webp" width="540" height="806" muted loop playsinline preload="none" aria-label="Огонёк загорается, счётчик растёт с 6 до 7 дней подряд, неделя заполняется огоньками, и огонёк продолжает покачиваться"></video>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══ Друзья и аккаунт ═════════════════════════════════════════ -->
-      <section class="about-section" id="profile" aria-labelledby="profile-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="profile-title">Учитесь вместе с друзьями</h2>
-          <p class="about-p">Найдите друга по ID профиля и отправьте заявку. Когда он её примет, вы будете видеть прогресс друг друга.</p>
-        </div>
-
-        <div class="about-facts" data-appear-group>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="users" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Прогресс друга</h3>
-              <p>Уровень, серия, пройденные уроки, статистика и календарь занятий. Изменения видны сразу.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="gift" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Premium в подарок</h3>
-              <p>Подарите другу Premium из его профиля: на месяц, год или навсегда. Срок прибавится к его текущему.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="push-pin" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Темы слов на витрине</h3>
-              <p>Закрепите в профиле до четырёх тем из «Моих слов». Друзья смогут открыть их и скопировать себе.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="hash" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Скидка по приглашению</h3>
-              <p>У каждого есть код приглашения. Друг получит скидку 15% на первую покупку Premium, а вы — от 7 до 60 дней Premium.</p>
-            </div>
-          </article>
-        </div>
-
-        <div class="shot-row" data-appear tabindex="0" role="group" aria-label="Экраны друзей, прокручиваются по горизонтали">
-          <figure>
-            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friends-list.webp" alt="Лист «Друзья»: поиск по ID и список из пяти друзей с уровнями" width="620" height="1276" loading="lazy"></div>
-            <figcaption><strong>Список друзей</strong>Поиск по ID профиля, заявки и все друзья с уровнем.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-profile.webp" alt="Профиль друга: серия, уроки, опыт, Premium и календарь занятий за месяц" width="620" height="1276" loading="lazy"></div>
-            <figcaption><strong>Профиль друга</strong>Серия, уроки, опыт и «Ритм занятий» друга.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-topic.webp" alt="Тема друга «Еда»: пять слов и кнопка «Скопировать в мои темы»" width="620" height="1276" loading="lazy"></div>
-            <figcaption><strong>Темы друга</strong>Тему с витрины друга можно скопировать к себе.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-gift.webp" alt="Подарок для друга: выбор тарифа Premium и кнопка «Подарить год»" width="620" height="1276" loading="lazy"></div>
-            <figcaption><strong>Premium в подарок</strong>Подарок оплачивается из профиля друга.</figcaption>
-          </figure>
-          <figure>
-            <div class="shot shot-crop shot-crop-sheet"><img src="/assets/about/friend-received.webp" alt="Лист «Подарки»: друг подарил вам год Premium" width="620" height="1276" loading="lazy"></div>
-            <figcaption><strong>Полученный подарок</strong>Подарки друзей собираются в отдельном листе.</figcaption>
-          </figure>
-        </div>
-
-        <h3 class="about-subhead" data-appear>Аккаунт</h3>
-        <div class="about-facts" data-appear-group>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="device-mobile" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Один аккаунт на всех устройствах</h3>
-              <p>Прогресс, серия, «Мои слова» и Библиотека синхронизируются между iPhone, iPad и Android, в бесплатной версии тоже.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="envelope-simple" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Почту можно указать позже</h3>
-              <p>После первого запуска у вас уже есть аккаунт с ID. Когда привяжете почту, прогресс и Premium останутся.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="cloud-check" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Без связи ничего не теряется</h3>
-              <p>Если интернет пропал посреди урока, прогресс сохранится на устройстве и отправится, когда связь вернётся.</p>
-            </div>
-          </article>
-          <article class="card card-plain about-fact">
-            <span class="icon-badge" aria-hidden="true"><Icon name="text-aa" /></span>
-            <div class="about-fact-copy">
-              <h3 class="t-headline">Крупный шрифт</h3>
-              <p>Если в настройках телефона увеличен шрифт, текст в приложении тоже станет крупнее, а экраны перестроятся.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- ═══ Карта арабского мира ═══════════════════════════════════════ -->
-      <ArabicWorldMap />
-
-      <!-- ═══ Free и Premium ═══════════════════════════════════════════
-           Лимиты — те же, что в таблице на /buy и в PremiumPaywall.tsx. -->
-      <section class="about-section" id="plans" aria-labelledby="plans-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="plans-title">Что доступно бесплатно</h2>
-          <p class="about-p">Бесплатная версия не заканчивается через неделю: первые шесть модулей открыты без срока. Premium открывает всю программу и поднимает дневные лимиты инструментов.</p>
-        </div>
-
-        <!-- Карточки повторяют MiniPlanHeader и PremiumCard: Free — обводка lineStrong,
-             Premium — золотая обводка, корона и кнопка покупки PurchaseTile. -->
-        <div class="about-plans" data-appear-group>
-          <article class="card about-plan about-plan-free">
-            <header class="about-plan-head">
-              <span class="about-plan-badge" aria-hidden="true"><Icon name="graduation-cap" /></span>
-              <div class="about-plan-copy">
-                <p class="about-plan-kicker">Free</p>
-                <h3>Первые 6 модулей целиком</h3>
-              </div>
-            </header>
-            <ul class="about-plan-list">
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="target" /></span><span>39 уроков со всеми упражнениями и озвучкой.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="cards" /></span><span>Быстрые тренировки, «Мои слова» и Анки.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="snowflake" /></span><span>Серия с двумя заморозками и синхронизация между устройствами.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="sparkle" /></span><span>Все 9 инструментов и ассистент с дневными лимитами.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="books" /></span><span>PDF-учебники и начало «аль-Кироату ар-Рашида».</span></li>
-            </ul>
-          </article>
-          <article class="card about-plan about-plan-premium">
-            <header class="about-plan-head">
-              <span class="about-plan-badge" aria-hidden="true"><Icon name="crown" /></span>
-              <div class="about-plan-copy">
-                <p class="about-plan-kicker">Premium</p>
-                <h3>Все 81 модуль и высокие лимиты</h3>
-              </div>
-            </header>
-            <ul class="about-plan-list">
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="target" /></span><span>Вся программа: 663 урока от алфавита до сложной грамматики.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="sparkle" /></span><span>Ассистент: 100 запросов в день вместо 10.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="globe" /></span><span>Перевод и огласовки: 30 000 символов в день вместо 1 000.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="list-bullets" /></span><span>Слова по теме, примеры и картинки без дневного лимита.</span></li>
-              <li><span class="icon-badge" aria-hidden="true"><Icon name="snowflake" /></span><span>Вся книга «аль-Кироату ар-Рашида» и новая заморозка каждую неделю.</span></li>
-            </ul>
-            <a class="btn btn-outline-premium btn-block" href="/buy/"><Icon name="crown" />Полное сравнение и оплата</a>
-            <p class="about-plan-price">Premium стоит 399&nbsp;₽ в месяц, 2&nbsp;990&nbsp;₽ в год или 6&nbsp;490&nbsp;₽ один раз навсегда. Оплата разовая, без автопродления.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- ═══ Статьи ══════════════════════════════════════════════════════ -->
-      <section class="about-section" id="guides" aria-labelledby="guides-title">
-        <div class="about-section-head" data-appear>
-          <h2 class="about-h" id="guides-title">Если вы только начинаете</h2>
-          <p class="about-p">Короткие статьи о первых шагах: какой арабский выбрать, как читать буквы и огласовки, как заниматься, чтобы не бросить.</p>
-        </div>
-        <nav class="home-guides" aria-label="Статьи об арабском языке">
-          {GUIDES.map((guide) => (
-            <a href={guide.href}><span>{guide.kicker}</span><strong>{guide.title}</strong><p>{guide.summary}</p></a>
-          ))}
-        </nav>
-        <p class="about-link-row" data-appear><a class="about-action" href="/articles/">Все статьи<Icon name="arrow-right" /></a></p>
-      </section>
-
-      <!-- ═══ Отзывы из магазинов ═══════════════════════════════════════ -->
-      <Reviews />
-
-      <!-- ═══ Призыв: карточка RaisedTileSurface, кнопки магазинов — .store-link ═══ -->
-      <section class="card about-cta" aria-labelledby="cta-title" data-appear>
-        <h2 id="cta-title">Начните с первых шести модулей</h2>
-        <p>Бесплатно и без срока. Прогресс хранится в аккаунте и доступен на всех ваших устройствах.</p>
-        <StoreLinks />
-      </section>
-
+<PageLayout section="home" title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 81 модуль от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 81 модуля, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema, appSchema]} floatingHeader>
+<!-- ═══ Первый экран: фраза и три магазина ═════════════════════════════ -->
+<section class="home-hero" aria-labelledby="home-title">
+  <div class="home-hero-copy">
+    <div class="hero-words">
+      {HERO_WORDS.map((w) => (
+        <span class="hero-word-slot">
+          <button type="button" class="hero-word" data-audio={w.audio} aria-label={`Слушать: ${w.reading}, «${w.ru}»`} hidden>
+            <Icon name="speaker-high" />
+            <span class="hero-word-text"><span class="hero-word-ar" lang="ar" dir="rtl">{w.ar}</span><small>{w.ru}</small></span>
+          </button>
+        </span>
+      ))}
     </div>
-<script src="../scripts/home-polish.ts"></script>
+    <h1 class="home-hero-title" id="home-title">Арабский язык<br><span>ближе, чем кажется</span></h1>
+    <p class="home-hero-lead">От 28 букв до разговора и чтения книг. Самые нужные инструменты — в одном месте.</p>
+    <StoreLinks class="home-hero-stores" centered />
+    <p class="home-hero-note">Для iPhone, iPad и Android</p>
+  </div>
+</section>
+<script src="../scripts/phrase-audio.ts"></script>
+
+<!-- ═══ Второй экран: оценки, отзывы, урок вдвоём и призыв ═══════════════ -->
+<SocialTrust />
+
+<!-- ═══ Третий экран: путь от букв до книг на скринах приложения ════════ -->
+<LearningPath />
 </PageLayout>

@@ -1,0 +1,163 @@
+---
+/**
+ * Второй экран главной — доверие: оценки трёх магазинов, бегущая лента отзывов,
+ * урок вдвоём с другом и призыв «Присоединяйтесь» с кнопками магазинов.
+ *
+ * Оценки и отзывы — data/store-reviews.ts (дословно, со страниц магазинов).
+ * Оценки и лента пока не показываются (SHOW_REVIEWS): владелец вернётся к ним позже.
+ *
+ * Урок вдвоём — симуляция задания с общим выбором из парного урока
+ * (mobile/src/features/fusha/pair/PairChoiceExercise.tsx): у плитки левая
+ * половина золотая — выбор «Вы», правая синяя — выбор друга; ответ проверяется,
+ * только когда обе половины на одной плитке. Ходы пальцев — scripts/pair-sim.ts;
+ * без скрипта и при prefers-reduced-motion видно итоговое состояние.
+ *
+ * Лента — две одинаковые дорожки подряд, сдвиг на половину даёт бесшовную
+ * петлю; вторая скрыта от чтения с экрана. Движение только в CSS (trust.css):
+ * пауза при наведении и фокусе, при prefers-reduced-motion лента листается рукой.
+ * Классы блока начинаются с `tr-`.
+ */
+import Icon from "../Icon.astro";
+import IconSprite from "../IconSprite.astro";
+import StoreLinks from "../StoreLinks.astro";
+import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL, RUSTORE_URL, STORE_GLYPHS } from "../../lib/stores";
+import { STORE_RATINGS, STORE_REVIEWS, type RatedStore } from "../../data/store-reviews";
+
+const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+const formatDate = (iso: string) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return `${day} ${MONTHS[(month ?? 1) - 1] ?? ""} ${year}`;
+};
+const formatRating = (rating: number) => rating.toFixed(1).replace(".", ",");
+const initial = (name: string) => (Array.from(name.trim())[0] ?? "").toUpperCase();
+
+const STORE_HREF: Record<RatedStore, string> = {
+  "App Store": APP_STORE_PAGE_URL,
+  RuStore: RUSTORE_URL,
+  "Google Play": GOOGLE_PLAY_URL,
+};
+const STARS = [1, 2, 3, 4, 5];
+
+/** Варианты задания на «مَرْحَبًا»; верный — «Привет». Порядок — как сетка 2×2. */
+const PAIR_OPTIONS = ["Спасибо", "Привет", "Как дела?", "До свидания"];
+const PAIR_CORRECT = 1;
+/** Отзывы и оценки вернутся позже — разметка и данные остаются. */
+const SHOW_REVIEWS = false;
+---
+
+<section class="tr" id="reviews" aria-labelledby="trust-title">
+  {SHOW_REVIEWS && <IconSprite names={["star"]} />}
+
+  <!-- Экран «вместе»: ровно в окно, к нему мягко притягивает прокрутка (trust.css). -->
+  <div class="tr-screen">
+    <div class="tr-pair">
+      <div class="tr-pair-head">
+        <h2 class="tr-title" id="trust-title">Арабский учат <span>вместе</span></h2>
+        <p class="tr-lead">Проходите уроки с другом и отвечайте вместе — в реальном времени.</p>
+      </div>
+      <div class="tr-pair-body">
+        <ul class="tr-pair-list" role="list">
+          <li><Icon name="users" />Находите друзей по ID и смотрите их статистику</li>
+          <li><Icon name="lightning" />Выбор друга виден сразу</li>
+          <li><Icon name="check-circle" />Ответ — когда вы сошлись</li>
+        </ul>
+      </div>
+      <div class="tr-phone-slot">
+        <div class="tr-phone">
+          <span class="tr-island" aria-hidden="true"></span>
+          <div class="tr-sim is-static" role="img" aria-label="Пример урока вдвоём: на слово «мархабан» вы и друг сначала выбираете разные переводы, затем оба выбираете «Привет», и ответ засчитывается верным.">
+            <div class="tr-status" aria-hidden="true">
+              <span class="tr-status-time">9:41</span>
+              <span class="tr-status-icons">
+                <svg viewBox="0 0 18 12" focusable="false"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5.5" width="3" height="6.5" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+                <svg viewBox="0 0 16 12" focusable="false"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .4 10.4 10.4 0 0 0 .8 3.3L2 4.6a8.6 8.6 0 0 1 6-2.4Zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.7 6.7 0 0 0 8 4a6.7 6.7 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3Zm0 3.5c-.5 0-1 .2-1.3.5L8 11.2l1.3-1.4c-.3-.3-.8-.5-1.3-.5Z" /></svg>
+                <svg class="tr-status-battery" viewBox="0 0 27 13" focusable="false"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".4" /><rect x="2" y="2" width="20" height="9" rx="2" /><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" opacity=".45" /></svg>
+              </span>
+            </div>
+            <div class="tr-sim-nav" aria-hidden="true">
+              <span class="tr-sim-close"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 3.5l9 9m0-9l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></span>
+              <span class="tr-ava is-you"><img src="/assets/avatars/pair-you.webp" alt="" width="32" height="32" loading="lazy" decoding="async" /></span>
+              <span class="tr-ava is-friend"><img src="/assets/avatars/pair-friend.webp" alt="" width="32" height="32" loading="lazy" decoding="async" /></span>
+            </div>
+            <div class="tr-sim-prompt" aria-hidden="true">
+              <p class="tr-sim-sub">Выберите перевод</p>
+              <p class="tr-sim-phrase"><span class="tr-sim-word" lang="ar" dir="rtl">مَرْحَبًا</span><span class="tr-sim-speak"><Icon name="speaker-high" /></span></p>
+            </div>
+            <div class="tr-sim-legend" aria-hidden="true">
+              <span class="is-you">Вы</span>
+              <span class="is-friend">Ахмад</span>
+            </div>
+            <div class="tr-sim-options" aria-hidden="true">
+              {PAIR_OPTIONS.map((text, i) => (
+                <span class="tr-opt" data-opt={i} data-correct={i === PAIR_CORRECT ? "" : undefined}>
+                  <span class="tr-opt-face">
+                    <span class="tr-half is-you"></span>
+                    <span class="tr-half is-friend"></span>
+                    <span class="tr-opt-text">{text}</span>
+                  </span>
+                </span>
+              ))}
+            </div>
+            <div class="tr-sim-dock" aria-hidden="true">
+              <div class="tr-sim-dock-card">
+                <p class="tr-sim-dock-title">Верно</p>
+                <span class="tr-sim-next"><span class="tr-opt-face">Далее</span></span>
+              </div>
+            </div>
+            <span class="tr-home-bar" aria-hidden="true"></span>
+            <span class="tr-finger is-you" aria-hidden="true"><img src="/assets/avatars/pair-you.webp" alt="" width="34" height="34" /></span>
+            <span class="tr-finger is-friend" aria-hidden="true"><img src="/assets/avatars/pair-friend.webp" alt="" width="34" height="34" /></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {SHOW_REVIEWS && <div class="tr-head">
+    <p class="tr-lead">Оценки и отзывы — со страниц Acrab в магазинах, дословно.</p>
+  </div>}
+
+  {SHOW_REVIEWS && <ul class="tr-scores" role="list">
+    {STORE_RATINGS.map((item) => (
+      <li>
+        <a class="tr-score" href={STORE_HREF[item.store]} target="_blank" rel="noopener" aria-label={`Acrab в ${item.store}: оценка ${formatRating(item.rating)} из 5`}>
+          <svg class="tr-score-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={STORE_GLYPHS[item.store]} /></svg>
+          <span class="tr-score-num">{formatRating(item.rating)}</span>
+          <span class="tr-stars" aria-hidden="true">{STARS.map(() => <Icon name="star" sprite />)}</span>
+          <span class="tr-score-name">{item.store}</span>
+        </a>
+      </li>
+    ))}
+  </ul>}
+
+  {SHOW_REVIEWS && <div class="tr-marquee" role="region" aria-label="Отзывы из магазинов" tabindex="0">
+    <div class="tr-track">
+      {[false, true].map((clone) => (
+        <ul class="tr-set" role={clone ? undefined : "list"} aria-hidden={clone ? "true" : undefined} inert={clone}>
+          {STORE_REVIEWS.map((review) => (
+            <li class="tr-card">
+              <div class="tr-card-head">
+                <span class="tr-avatar" aria-hidden="true">{initial(review.author)}</span>
+                <span class="tr-who">
+                  <span class="tr-author">{review.author}</span>
+                  <span class="tr-stars" role="img" aria-label={`Оценка ${review.rating} из 5`}>{STARS.slice(0, review.rating).map(() => <Icon name="star" sprite />)}</span>
+                </span>
+              </div>
+              {review.title && <p class="tr-card-title">{review.title}</p>}
+              <p class="tr-card-text">{review.text}</p>
+              <p class="tr-card-meta">{review.store} · <time datetime={review.date}>{formatDate(review.date)}</time></p>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>}
+
+  <div class="tr-cta">
+    <h3 class="tr-cta-title">Присоединяйтесь</h3>
+    <p class="tr-cta-text">Скачайте Acrab бесплатно и позовите друга.</p>
+    <StoreLinks class="tr-stores" centered />
+  </div>
+</section>
+
+<script src="../../scripts/pair-sim.ts"></script>
