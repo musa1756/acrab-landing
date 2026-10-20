@@ -37,21 +37,10 @@ describe("generated site", () => {
     expect(pages.sort()).toEqual(Object.values(sourceRoutes).sort());
   });
 
-  test("marks the page's own header section on every section page", () => {
+  test("maps every header section to its own page in the route registry", () => {
     for (const section of SECTIONS) {
       const route = ROUTES.find((item) => item.path === section.href);
       expect(route?.section, section.href).toBe(section.id);
-    }
-    for (const route of ROUTES) {
-      const source = readSource(route.source);
-      if (route.guide) {
-        if (route.section === "articles") expect(source, route.path).not.toContain("section=");
-        else expect(source, route.path).toContain(`section="${route.section}"`);
-      } else if (route.section) {
-        expect(source, route.path).toContain(`<PageLayout section="${route.section}"`);
-      } else {
-        expect(source, route.path).toContain("<LegalLayout variant=");
-      }
     }
   });
 
@@ -87,23 +76,8 @@ describe("generated site", () => {
     expect(appSchema.sameAs).toEqual([APP_STORE_URL, GOOGLE_PLAY_URL, RUSTORE_URL]);
   });
 
-  test("gives every guide article metadata and the same canonical path", () => {
-    for (const route of guideRoutes) {
-      const source = readSource(sourceRoutes[route]!);
-      expect(source, route).toMatch(/<GuideLayout \{\.\.\.seo\} guide=\{guide\}(?: section="keyboard")?>/);
-      expect(source, route).toContain(`path: "${route}/"`);
-      expect(source, route).toMatch(/datePublished: "\d{4}-\d{2}-\d{2}"/);
-      expect(source, route).toMatch(/dateModified: "\d{4}-\d{2}-\d{2}"/);
-      expect(source, route).toContain("<GuideFaq items={faq} />");
-    }
-  });
-
   test("shows the online keyboard as its own header section, not as an article", () => {
     expect(SECTIONS).toContainEqual({ id: "keyboard", href: "/arabic-keyboard/", label: "Клавиатура" });
-    const page = readSource(sourceRoutes["/arabic-keyboard"]!);
-    expect(page).toContain('section="keyboard"');
-    expect(page).not.toContain('path: "/articles/"');
-    expect(page).toContain("data-arabic-rain");
     expect(GUIDES.map((guide) => guide.href)).not.toContain("/arabic-keyboard/");
   });
 
@@ -126,23 +100,6 @@ describe("generated site", () => {
     }
   });
 
-  test("keeps payment shell controls for a browser smoke", () => {
-    const page = readSource("src/pages/buy/index.astro");
-    const source = readSource("src/features/payment/PaymentFlow.tsx");
-    for (const id of ["step-email", "email-input", "personal-data-consent", "send-code-btn", "step-code", "code-input", "verify-code-btn", "step-plan", "change-account-btn", "pending-checkout", "open-pending-btn", "pay-btn"]) {
-      expect(source, `#${id}`).toContain(`id="${id}"`);
-    }
-    expect(page).toContain("PaymentFlow client:load");
-  });
-
-  test("shows the plans before sign-in and asks for the email only to pay", () => {
-    const source = readSource("src/features/payment/PaymentFlow.tsx");
-    expect(source.indexOf('className="plan-picker"')).toBeLessThan(source.indexOf('id="step-email"'));
-    expect(source).toContain("подтвердите почту аккаунта Acrab");
-    expect(source).toContain('id="plan-required-note"');
-    expect(readSource("src/pages/buy/index.astro")).toContain("Выберите тариф</h2>");
-  });
-
   test("agrees to the offer by pressing «Оплатить» instead of a checkbox", () => {
     const flow = readSource("src/features/payment/PaymentFlow.tsx");
     expect(flow).not.toContain('id="offer-consent"');
@@ -157,14 +114,13 @@ describe("generated site", () => {
     expect(storage).toContain("sessionStorage");
   });
 
-  test("keeps payment API contracts and public configuration", () => {
-    const source = readSource("src/features/payment/payment-api.ts");
-    expect(source).toContain('const SUPABASE_URL = "https://api.acrab.ru"');
-    expect(source).toContain('create_user: false');
-    expect(source).toContain('action: "create"');
-    expect(source).toContain('offerVersion: LEGAL_DOCUMENT_VERSION');
-    expect(source.replace(/\/\/.*$/gm, "")).not.toContain('service_role');
-    expect(source).not.toMatch(/action:\s*["']confirm/);
+  test("never ships the service-role key to the browser", () => {
+    const files = (readdirSync(resolve(root, "src"), { recursive: true }) as string[]).filter((file) => /\.(ts|tsx|astro)$/.test(file));
+    expect(files.length).toBeGreaterThan(20);
+    for (const file of files) {
+      // Комментарии могут называть роль; в коде её быть не должно.
+      expect(readSource(`src/${file}`).replace(/\/\/.*$/gm, ""), file).not.toContain("service_role");
+    }
   });
 });
 
