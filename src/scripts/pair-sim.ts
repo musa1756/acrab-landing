@@ -1,5 +1,5 @@
 /**
- * Симуляция урока вдвоём на главной (components/home/SocialTrust.astro, стили — trust.css).
+ * Симуляция урока вдвоём на главной (components/home/PairDemo.astro, стили — trust.css).
  *
  * Два «пальца» — Вы и Друг — по очереди нажимают плитки: сначала разные, потом
  * оба «Привет», и плитка становится верной, как в задании с общим выбором
@@ -27,20 +27,14 @@ const sim = document.querySelector<HTMLElement>(".tr-sim");
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 /* Телефон нарисован в размере iPhone 414 × 868 (с корпусом) и уменьшается
-   целиком, чтобы экран «вместе» помещался в окно: на компьютере — по высоте окна,
-   на телефоне — по остатку под заголовком. */
-const PHONE_W = 414, PHONE_H = 868;
-const screen = document.querySelector<HTMLElement>(".tr-screen");
+   целиком до ширины своей ячейки в сцене (`.sc-phone`, ширина --pw). */
+const PHONE_W = 414;
 const slot = document.querySelector<HTMLElement>(".tr-phone-slot");
 let phoneScale = 0.7;
 const fitPhone = () => {
-  if (!screen || !slot) return;
-  const narrow = window.matchMedia("(max-width: 760px)").matches;
-  const pad = parseFloat(getComputedStyle(screen).paddingBottom) || 0;
-  const top = narrow ? slot.getBoundingClientRect().top - screen.getBoundingClientRect().top : pad;
-  const height = window.innerHeight - top - pad;
-  const width = narrow ? screen.clientWidth : Math.min(460, screen.clientWidth * 0.45);
-  phoneScale = Math.max(0.42, Math.min(1, height / PHONE_H, width / PHONE_W));
+  const width = slot?.parentElement?.clientWidth ?? 0;
+  if (!slot || !width) return;
+  phoneScale = Math.max(0.3, Math.min(1, width / PHONE_W));
   slot.style.setProperty("--phone-scale", phoneScale.toFixed(3));
 };
 fitPhone();

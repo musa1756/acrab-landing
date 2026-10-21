@@ -2,8 +2,17 @@
 import PageLayout from "../layouts/PageLayout.astro";
 import Icon from "../components/Icon.astro";
 import StoreLinks from "../components/StoreLinks.astro";
-import SocialTrust from "../components/home/SocialTrust.astro";
-import LearningPath from "../components/home/LearningPath.astro";
+import Sheet from "../components/home/Sheet.astro";
+import Statement from "../components/home/Statement.astro";
+import Feature from "../components/home/Feature.astro";
+import ToolCards from "../components/home/ToolCards.astro";
+import StoreMarquee from "../components/home/StoreMarquee.astro";
+import StackCards from "../components/home/StackCards.astro";
+import ReviewCards from "../components/home/ReviewCards.astro";
+import PairDemo from "../components/home/PairDemo.astro";
+import FreeVsFull from "../components/home/FreeVsFull.astro";
+import HomeFaq from "../components/home/HomeFaq.astro";
+import { HOME_FAQ } from "../data/app-faq";
 import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import "../styles/page-home.css";
 
@@ -42,9 +51,76 @@ const HERO_WORDS = [
 </section>
 <script src="../scripts/phrase-audio.ts"></script>
 
-<!-- ═══ Второй экран: оценки, отзывы, урок вдвоём и призыв ═══════════════ -->
-<SocialTrust />
+<!-- ═══ Лист 1: фраза и четыре ряда о занятиях ═══════════════════════ -->
+<Sheet labelledby="st-path">
+  <Statement id="st-path" kicker="Acrab" text="Арабский язык в одном приложении: от первых букв до чтения книг" />
+  <Feature
+    id="ft-path"
+    tone="gold"
+    title="Программа по шагам"
+    text="81 модуль идут по порядку: каждый урок опирается на прошлый, и всегда видно, что учить дальше. Начинаете с алфавита, заканчиваете чтением."
+    link={{ href: "/learn-arabic/", label: "Как учить арабский с нуля" }}
+    shot={{ src: "/assets/about/program-path.webp", width: 620, height: 1250, alt: "Экран «Программа»: модули по порядку с процентом прохождения" }}
+  />
+  <Feature
+    id="ft-lesson"
+    flip
+    tone="purple"
+    title="Правило, потом практика"
+    text="Короткая теория по-русски с огласовками, затем задания: собирайте фразы из плиток, выбирайте перевод, слушайте озвучку."
+    link={{ href: "/fusha/", label: "Что такое фусха" }}
+    shot={{ src: "/assets/about/lesson-build.webp", width: 576, height: 1168, alt: "Задание «Соберите предложение»: фраза «Погода сегодня холодная» из арабских плиток" }}
+  />
+  <Feature
+    id="ft-friends"
+    tone="blue"
+    title="Учитесь с друзьями"
+    text="Проходите урок вдвоём: вы оба выбираете ответ, выбор друга виден сразу, и ответ засчитывается, когда вы сошлись. Друзей можно найти по ID."
+    link={{ href: "/arabic-app/", label: "Всё о приложении" }}
+  >
+    <div class="ft-pair" slot="visual"><PairDemo /></div>
+  </Feature>
+  <Feature
+    id="ft-review"
+    flip
+    tone="pink"
+    title="Слова не забываются"
+    text="Интервальное повторение возвращает выученное вовремя. Анки по вашим темам и быстрые тренировки помогают не терять ритм."
+    link={{ href: "/arabic-app/", label: "Как устроено повторение" }}
+    shot={{ src: "/assets/about/tool-anki.webp", width: 620, height: 1252, alt: "Анки: карточка с глаголом и кнопки «Знаю» и «Не знаю»" }}
+  />
+</Sheet>
 
-<!-- ═══ Третий экран: путь от букв до книг на скринах приложения ════════ -->
-<LearningPath />
+<!-- ═══ Лист 2: девять инструментов лентой ════════════════════════════ -->
+<Sheet labelledby="st-tools">
+  <Statement id="st-tools" kicker="Инструменты" text="Девять инструментов рядом с уроком, чтобы не искать их в других программах" />
+  <ToolCards />
+</Sheet>
+
+<StoreMarquee />
+
+<!-- ═══ Лист 3: ассистент, книги, бесплатный старт стопкой ════════════ -->
+<Sheet labelledby="st-more">
+  <Statement id="st-more" kicker="Для людей" text="Арабский для тех, кто хочет понимать, а не только заучивать" />
+  <StackCards />
+</Sheet>
+
+<!-- ═══ Лист 4: отзывы ════════════════════════════════════════════════ -->
+<Sheet labelledby="st-voices">
+  <Statement id="st-voices" kicker="Отзывы" text="Не верите? Послушайте тех, кто уже учит" />
+  <ReviewCards />
+</Sheet>
+
+<!-- ═══ Лист 5: бесплатно и вопросы ═══════════════════════════════════ -->
+<Sheet id="free" labelledby="fv-title">
+  <FreeVsFull />
+  <HomeFaq items={HOME_FAQ} />
+</Sheet>
+
+<section class="fin" aria-labelledby="fin-title">
+  <h2 class="fin-title" id="fin-title">Начните с первого урока</h2>
+  <p class="fin-text">Скачайте Acrab бесплатно и позовите друга.</p>
+  <StoreLinks class="fin-stores" centered />
+</section>
+<script src="../scripts/statement.ts"></script>
 </PageLayout>

@@ -1,0 +1,30 @@
+---
+/**
+ * Частые вопросы главной: вопросы на странице и разметка FAQPage строятся из
+ * одного списка (data/app-faq.ts), поэтому разойтись не могут.
+ * Классы — `hf-`, стили — scene.css.
+ */
+import { richArabic } from "../../lib/rich-arabic";
+import { faqSchema, type FaqItem } from "../../seo/schema";
+
+interface Props {
+  items: FaqItem[];
+}
+const { items } = Astro.props;
+---
+
+<section class="hf" id="faq" aria-labelledby="hf-title">
+  <div class="hf-head" data-appear>
+    <p class="sc-kicker">Вопросы</p>
+    <h2 class="sc-title" id="hf-title">Частые вопросы</h2>
+  </div>
+  <div class="hf-list" data-appear>
+    {items.map((item) => (
+      <div class="hf-item">
+        <h3 class="hf-q" set:html={richArabic(item.question)} />
+        <p class="hf-a" set:html={richArabic(item.answer)} />
+      </div>
+    ))}
+  </div>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema(items))} />
+</section>

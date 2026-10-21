@@ -1,0 +1,75 @@
+/* Общие заголовки и блоки «Бесплатно» и «Вопросы» главной (FreeVsFull, HomeFaq).
+   Листы и ряды — sheets.css. */
+
+.sc-kicker {
+  margin: 0 0 8px;
+  color: var(--c-brand-text);
+  font-family: var(--font-rounded);
+  font-size: 16px;
+  font-weight: 700;
+}
+.sc-title {
+  margin: 0 0 14px;
+  color: var(--c-text);
+  font-size: clamp(30px, 3.8vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.sc-lead { margin: 0 0 28px; color: var(--c-text-secondary); font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; }
+
+/* ── Бесплатно и в полной версии ─────────────────────────────────────── */
+.fv, .hf { width: var(--page); max-width: 860px; margin: 0 auto clamp(72px, 10vw, 130px); }
+.fv-head, .hf-head { margin: 0 0 clamp(20px, 3vw, 32px); }
+.fv-table {
+  border: var(--b-emphasis, 2px) solid var(--c-line-strong);
+  border-radius: var(--r-surface, 20px);
+  background: var(--c-surface);
+  box-shadow: 0 3px 0 var(--c-line-strong);
+  overflow: hidden;
+}
+.fv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 20px;
+  color: var(--c-text);
+  font-size: 16px;
+  line-height: 1.35;
+}
+.fv-row + .fv-row { border-top: 1px solid var(--c-hairline); }
+.fv-row-head { color: var(--c-text-secondary); font-size: 14px; font-weight: 700; background: var(--c-surface-warm); }
+.fv-row-head span:last-child { color: var(--c-brand-text, var(--c-brand-strong)); }
+.fv-name { font-weight: 700; }
+.fv-free { color: var(--c-text-secondary); }
+.fv-full { font-weight: 600; }
+.fv-note { margin: 16px 4px 0; color: var(--c-text-secondary); font-size: 14px; line-height: 1.5; }
+.fv-note a { color: var(--c-brand-text, var(--c-brand-strong)); font-weight: 700; }
+
+/* ── Частые вопросы ──────────────────────────────────────────────────── */
+.hf-list {
+  border: var(--b-emphasis, 2px) solid var(--c-line-strong);
+  border-radius: var(--r-surface, 20px);
+  background: var(--c-surface);
+}
+.hf-item { padding: 18px 22px; }
+.hf-item + .hf-item { border-top: 1px solid var(--c-hairline); }
+.hf-q { margin: 0 0 6px; color: var(--c-text); font-size: 18px; line-height: 1.3; }
+.hf-a { margin: 0; color: var(--c-text-secondary); font-size: 16px; line-height: 1.5; }
+
+/* ── Финал ───────────────────────────────────────────────────────────── */
+.fin { width: var(--page); margin: 0 auto clamp(72px, 10vw, 130px); text-align: center; }
+.fin-title { margin: 0 0 8px; color: var(--c-text); font-size: clamp(32px, 4vw, 48px); line-height: 1.1; letter-spacing: -0.02em; }
+.fin-text { margin: 0 0 22px; color: var(--c-text-secondary); font-size: 18px; }
+.fin-stores { justify-content: center; }
+.fin-stores .store-link { border-color: var(--brand); background: var(--c-surface); box-shadow: 0 var(--press-depth) 0 var(--brand); }
+.fin-stores .store-link svg { color: var(--brand); }
+.fin-stores .store-link:active { box-shadow: 0 0 0 var(--brand); }
+
+@media (max-width: 760px) {
+  .fv-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 12px 16px; }
+  .fv-row-head span:first-child { display: none; }
+  .fv-name { grid-column: 1 / -1; }
+  .fv-row-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hf-item { padding-inline: 18px; }
+}
+

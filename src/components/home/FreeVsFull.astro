@@ -1,0 +1,40 @@
+---
+/**
+ * Что бесплатно и что в полной версии. Строки — из таблицы /buy/ (она повторяет
+ * экран «Преимущества Premium» в приложении); число уроков здесь не называем.
+ * Лимиты приложение берёт из ai_daily_quota_limits: при правке на сервере
+ * правятся и эти строки. Классы — `fv-`, стили — scene.css.
+ */
+const ROWS = [
+  { title: "Уроки фусхи", free: "Первые 4 модуля, без срока", full: "Вся программа" },
+  { title: "Ассистент", free: "10 вопросов в день", full: "100 вопросов в день" },
+  { title: "Перевод", free: "1 000 знаков в день", full: "30 000 знаков в день" },
+  { title: "Огласовки текста", free: "1 000 знаков в день", full: "30 000 знаков в день" },
+  { title: "Озвучка", free: "175 знаков в день", full: "500 знаков в день" },
+  { title: "Слова по теме и примеры", free: "5 запросов в день", full: "Без лимита" },
+  { title: "Анки, спряжение, семья слов", free: "Без лимита", full: "Без лимита" },
+];
+---
+
+<section class="fv" aria-labelledby="fv-title">
+  <div class="fv-head" data-appear>
+    <p class="sc-kicker">Бесплатно</p>
+    <h2 class="sc-title" id="fv-title">Что бесплатно, а что в полной версии</h2>
+    <p class="sc-lead">Бесплатная версия не ограничена по времени: можно начать и проверить, подходит ли вам Acrab.</p>
+  </div>
+  <div class="fv-table" role="table" aria-label="Сравнение бесплатной и полной версии" data-appear>
+    <div class="fv-row fv-row-head" role="row">
+      <span role="columnheader">Возможность</span>
+      <span role="columnheader">Бесплатно</span>
+      <span role="columnheader">Premium</span>
+    </div>
+    {ROWS.map((row) => (
+      <div class="fv-row" role="row">
+        <span class="fv-name" role="rowheader">{row.title}</span>
+        <span class="fv-free" role="cell">{row.free}</span>
+        <span class="fv-full" role="cell">{row.full}</span>
+      </div>
+    ))}
+  </div>
+  <p class="fv-note">Лимиты обновляются каждый день в 03:00 по Москве; когда лимит исчерпан, уроки работают как обычно. <a href="/buy/">Как оплатить Premium</a></p>
+</section>

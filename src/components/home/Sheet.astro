@@ -1,0 +1,15 @@
+---
+/**
+ * Белый лист главной: скруглённый блок на общем фоне страницы (как листы на
+ * slush.app, только на нашем фоне). Стили — sheets.css, классы `sheet`, `sh-`.
+ */
+interface Props {
+  id?: string;
+  labelledby?: string;
+}
+const { id, labelledby } = Astro.props;
+---
+
+<section class="sheet" id={id} aria-labelledby={labelledby}>
+  <slot />
+</section>

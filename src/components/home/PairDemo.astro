@@ -1,0 +1,66 @@
+---
+/**
+ * Урок вдвоём в рамке телефона: симуляция задания с общим выбором из парного
+ * урока (mobile/src/features/fusha/pair/PairChoiceExercise.tsx). У плитки левая
+ * половина золотая — выбор «Вы», правая синяя — выбор друга; ответ проверяется,
+ * только когда обе половины на одной плитке. Ходы пальцев — scripts/pair-sim.ts;
+ * без скрипта и при prefers-reduced-motion видно итоговое состояние.
+ * Стили — trust.css (классы `tr-`). Стоит в сцене «Вместе» главной.
+ */
+import Icon from "../Icon.astro";
+
+/** Варианты задания на «مَرْحَبًا»; верный — «Привет». Порядок — как сетка 2×2. */
+const PAIR_OPTIONS = ["Спасибо", "Привет", "Как дела?", "До свидания"];
+const PAIR_CORRECT = 1;
+---
+
+<div class="tr-phone-slot">
+        <div class="tr-phone">
+          <span class="tr-island" aria-hidden="true"></span>
+          <div class="tr-sim is-static" role="img" aria-label="Пример урока вдвоём: на слово «мархабан» вы и друг сначала выбираете разные переводы, затем оба выбираете «Привет», и ответ засчитывается верным.">
+            <div class="tr-status" aria-hidden="true">
+              <span class="tr-status-time">9:41</span>
+              <span class="tr-status-icons">
+                <svg viewBox="0 0 18 12" focusable="false"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5.5" width="3" height="6.5" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+                <svg viewBox="0 0 16 12" focusable="false"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .4 10.4 10.4 0 0 0 .8 3.3L2 4.6a8.6 8.6 0 0 1 6-2.4Zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.7 6.7 0 0 0 8 4a6.7 6.7 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3Zm0 3.5c-.5 0-1 .2-1.3.5L8 11.2l1.3-1.4c-.3-.3-.8-.5-1.3-.5Z" /></svg>
+                <svg class="tr-status-battery" viewBox="0 0 27 13" focusable="false"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".4" /><rect x="2" y="2" width="20" height="9" rx="2" /><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" opacity=".45" /></svg>
+              </span>
+            </div>
+            <div class="tr-sim-nav" aria-hidden="true">
+              <span class="tr-sim-close"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 3.5l9 9m0-9l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></span>
+              <span class="tr-ava is-you"><img src="/assets/avatars/pair-you.webp" alt="" width="32" height="32" loading="lazy" decoding="async" /></span>
+              <span class="tr-ava is-friend"><img src="/assets/avatars/pair-friend.webp" alt="" width="32" height="32" loading="lazy" decoding="async" /></span>
+            </div>
+            <div class="tr-sim-prompt" aria-hidden="true">
+              <p class="tr-sim-sub">Выберите перевод</p>
+              <p class="tr-sim-phrase"><span class="tr-sim-word" lang="ar" dir="rtl">مَرْحَبًا</span><span class="tr-sim-speak"><Icon name="speaker-high" /></span></p>
+            </div>
+            <div class="tr-sim-legend" aria-hidden="true">
+              <span class="is-you">Вы</span>
+              <span class="is-friend">Ахмад</span>
+            </div>
+            <div class="tr-sim-options" aria-hidden="true">
+              {PAIR_OPTIONS.map((text, i) => (
+                <span class="tr-opt" data-opt={i} data-correct={i === PAIR_CORRECT ? "" : undefined}>
+                  <span class="tr-opt-face">
+                    <span class="tr-half is-you"></span>
+                    <span class="tr-half is-friend"></span>
+                    <span class="tr-opt-text">{text}</span>
+                  </span>
+                </span>
+              ))}
+            </div>
+            <div class="tr-sim-dock" aria-hidden="true">
+              <div class="tr-sim-dock-card">
+                <p class="tr-sim-dock-title">Верно</p>
+                <span class="tr-sim-next"><span class="tr-opt-face">Далее</span></span>
+              </div>
+            </div>
+            <span class="tr-home-bar" aria-hidden="true"></span>
+            <span class="tr-finger is-you" aria-hidden="true"><img src="/assets/avatars/pair-you.webp" alt="" width="34" height="34" /></span>
+            <span class="tr-finger is-friend" aria-hidden="true"><img src="/assets/avatars/pair-friend.webp" alt="" width="34" height="34" /></span>
+          </div>
+        </div>
+      </div>
+
+<script src="../../scripts/pair-sim.ts"></script>

@@ -1,0 +1,30 @@
+---
+/**
+ * Ряд листа: слева цветная карточка со скрином приложения, справа большой
+ * заголовок, абзац и кнопка (зеркалится через `flip`). Вместо скрина в слот
+ * `visual` можно положить своё. Классы `ft-`, цвета — `tone-*` в sheets.css.
+ */
+interface Props {
+  id: string;
+  tone: "gold" | "purple" | "blue" | "pink" | "green" | "orange";
+  title: string;
+  text: string;
+  link: { href: string; label: string };
+  flip?: boolean;
+  shot?: { src: string; width: number; height: number; alt: string };
+}
+const { id, tone, title, text, link, flip = false, shot } = Astro.props;
+---
+
+<article class:list={["ft", { "ft-flip": flip }]} aria-labelledby={id}>
+  <div class={`ft-card tone-${tone}`}>
+    <slot name="visual">
+      {shot && <img class="ft-shot" src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" />}
+    </slot>
+  </div>
+  <div class="ft-copy" data-appear>
+    <h3 class="ft-title" id={id}>{title}</h3>
+    <p class="ft-text">{text}</p>
+    <a class="btn ft-btn" href={link.href}>{link.label}</a>
+  </div>
+</article>

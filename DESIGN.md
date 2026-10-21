@@ -61,16 +61,22 @@ motion:
   значка, плитка с ребром, карточка, чип, метки, значок строки, появление.
 - `src/styles/base.css` — фон, шапка, заголовки, подвал, ссылки на магазины.
 - Файлы разделов: `changelog.css`, `panels.css`, `buy.css`, `support.css`,
-  `home.css`, `guides.css`, `guide-tiles.css`, `keyboard.css`. Страница
+  `sheets.css`, `scene.css`, `guides.css`, `guide-tiles.css`, `keyboard.css`. Страница
   получает их через свой вход `page-*.css` (начинается с `global.css`: токены,
   kit, base); порядок импорта во входе — порядок каскада. Рамка скриншота
   `.shot` — в kit.css.
-- Блоки главной с собственным поведением — компоненты `src/components/home/`,
-  у каждого свой файл стилей и скрипт с префиксом классов: `ToolsScroll`
-  (`tools-scroll.*`, `ts-`), `ArabicWorldMap` (`world-map.*`, `wm-`),
-  `Reviews` (`reviews.*`, `rv-`); счётчики героя и блик карточки Premium —
-  `home-polish.*` (`hp-`). Данные — `src/data/` (точки карты генерирует
-  `tools/build-arabic-world-dots.ts`, отзывы собраны вручную).
+- Главная после первого экрана собрана из белых листов на общем фоне
+  (композиция по мотивам slush.app, цвета и шрифт приложения): `Sheet`,
+  `Statement` (фраза, слова загораются при прокрутке, `statement.ts`), `Feature`
+  (цветная карточка со скрином и заголовок), `ToolCards` и `ReviewCards`
+  (лента карточек), `StoreMarquee` (бегущие строки), `StackCards` (стопка
+  больших карточек), `FreeVsFull`, `HomeFaq` (вопросы и FAQPage из
+  `src/data/app-faq.ts`), `PairDemo` (урок вдвоём, `pair-sim.ts`, `trust.css`).
+  Стили — `sheets.css` (классы `sheet`, `sh-`, `ft-`, `tc-`, `mq-`, `sk-`,
+  `rc-`, `tone-*`) и `scene.css`. Остальные блоки с собственным поведением:
+  `ArabicWorldMap` (`world-map.*`, `wm-`); счётчики героя и блик карточки
+  Premium — `home-polish.*` (`hp-`). Данные — `src/data/` (точки карты
+  генерирует `tools/build-arabic-world-dots.ts`, отзывы собраны вручную).
 - `src/components/Icon.astro` и `src/lib/phosphor.ts` — значки.
 - `src/scripts/appear.ts` — появление блоков при прокрутке.
 

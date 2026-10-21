@@ -1,0 +1,42 @@
+---
+/**
+ * Три большие карточки, которые при прокрутке ложатся стопкой (sticky):
+ * ассистент, книги и бесплатный старт. Классы `sk-`.
+ */
+const CARDS = [
+  {
+    tone: "gold",
+    title: "Спросите ассистента",
+    text: "Объясняет грамматику и слова по-русски. В бесплатной версии можно задать 10 вопросов в день.",
+    link: { href: "/arabic-app/#tools", label: "Что умеет ассистент" },
+    shot: { src: "/assets/about/assistant-2026-10.webp", w: 620, h: 1276, alt: "ИИ-ассистент Acrab объясняет арабскую грамматику по-русски" },
+  },
+  {
+    tone: "purple",
+    title: "Читайте книги",
+    text: "Читалка встроена в приложение. Нажмите «+» у слова, и оно попадёт в ваши слова для повторения.",
+    link: { href: "/arabic-app/#library", label: "Книги в Acrab" },
+    shot: { src: "/assets/about/library-books.webp", w: 620, h: 1276, alt: "Библиотека: обложки книг на арабском" },
+  },
+  {
+    tone: "green",
+    title: "Начните бесплатно",
+    text: "Первые четыре модуля бесплатны и без срока: можно проверить, подходит ли вам Acrab.",
+    link: { href: "#free", label: "Что бесплатно" },
+    shot: { src: "/assets/about/program-home.webp", w: 620, h: 1276, alt: "Главный экран программы Acrab" },
+  },
+] as const;
+---
+
+<div class="sk">
+  {CARDS.map((c, i) => (
+    <article class={`sk-card tone-${c.tone} sk-${i}`}>
+      <div class="sk-copy">
+        <h3 class="sk-title">{c.title}</h3>
+        <p class="sk-text">{c.text}</p>
+        <a class="btn sk-btn" href={c.link.href}>{c.link.label}</a>
+      </div>
+      <img class="sk-shot" src={c.shot.src} alt={c.shot.alt} width={c.shot.w} height={c.shot.h} loading="lazy" decoding="async" />
+    </article>
+  ))}
+</div>

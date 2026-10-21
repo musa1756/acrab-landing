@@ -1,0 +1,34 @@
+---
+/**
+ * Отзывы из магазинов: цветные карточки в горизонтальной ленте. Тексты —
+ * data/store-reviews.ts дословно; оценки магазинов — там же.
+ */
+import { STORE_RATINGS, STORE_REVIEWS } from "../../data/store-reviews";
+import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL, RUSTORE_URL } from "../../lib/stores";
+
+const HREF = { "App Store": APP_STORE_PAGE_URL, "Google Play": GOOGLE_PLAY_URL, RuStore: RUSTORE_URL } as const;
+const TONES = ["purple", "gold", "blue", "green", "pink", "orange"];
+const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+const date = (iso: string) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  return `${d} ${MONTHS[(m ?? 1) - 1]} ${y}`;
+};
+const rate = (n: number) => n.toFixed(1).replace(".", ",");
+---
+
+<ul class="rc-scores" role="list">
+  {STORE_RATINGS.map((r) => (
+    <li><a class="rc-score" href={HREF[r.store]} target="_blank" rel="noopener" aria-label={`Acrab в ${r.store}: оценка ${rate(r.rating)} из 5`}><strong>{rate(r.rating)}</strong> {r.store}</a></li>
+  ))}
+</ul>
+<div class="tc" role="region" aria-label="Отзывы из магазинов, листаются по горизонтали" tabindex="0">
+  <ul class="tc-track" role="list">
+    {STORE_REVIEWS.map((r, i) => (
+      <li class={`rc-card tone-${TONES[i % TONES.length]}`}>
+        {r.title && <h3 class="rc-title">{r.title}</h3>}
+        <p class="rc-text">{r.text}</p>
+        <p class="rc-meta">{r.author} · {r.store} · <time datetime={r.date}>{date(r.date)}</time> · оценка {r.rating} из 5</p>
+      </li>
+    ))}
+  </ul>
+</div>

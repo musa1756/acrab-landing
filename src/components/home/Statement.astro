@@ -1,0 +1,20 @@
+---
+/**
+ * Крупная фраза листа: слова загораются по мере прокрутки (scripts/statement.ts).
+ * Без скрипта и при prefers-reduced-motion все слова сразу тёмные.
+ */
+interface Props {
+  id: string;
+  kicker?: string;
+  text: string;
+}
+const { id, kicker, text } = Astro.props;
+const words = text.split(" ");
+---
+
+<div class="sh-statement" data-statement>
+  {kicker && <p class="sh-kicker">{kicker}</p>}
+  <h2 class="sh-statement-text" id={id}>
+    {words.map((w) => <span class="sh-word">{w}{" "}</span>)}
+  </h2>
+</div>

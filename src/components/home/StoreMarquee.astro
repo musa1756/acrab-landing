@@ -1,0 +1,22 @@
+---
+/**
+ * Две бегущие строки «Скачать Acrab» цветными плашками (на общем фоне, между
+ * листами). Только украшение: скрыты от чтения с экрана; ссылки на магазины —
+ * кнопки под строками. Движение — CSS, при prefers-reduced-motion стоит.
+ */
+import StoreLinks from "../StoreLinks.astro";
+const TONES = ["gold", "blue", "purple", "green", "pink", "orange"];
+---
+
+<section class="mq" aria-label="Скачать Acrab">
+  {[0, 1].map((row) => (
+    <div class:list={["mq-row", { "mq-rev": row === 1 }]} aria-hidden="true">
+      <div class="mq-track">
+        {[0, 1].map(() => TONES.map((_, i) => (
+          <span class={`mq-chip tone-${TONES[(i + row * 3) % TONES.length]}`}>Скачать Acrab</span>
+        )))}
+      </div>
+    </div>
+  ))}
+  <StoreLinks class="mq-stores" centered />
+</section>
