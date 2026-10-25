@@ -70,7 +70,8 @@ bun run test:browser
 ## Маршруты и SEO
 
 Сохраняются маршруты `/`, `/about`, `/articles`, `/learn-arabic`, `/arabic-alphabet`,
-`/arabic-vowels`, `/sun-moon-letters`, `/fusha`, `/arabic-app`, `/buy`,
+`/arabic-vowels`, `/sun-moon-letters`, `/arabic-hello`, `/arabic-thank-you`,
+`/arabic-keyboard`, `/fusha`, `/arabic-app`, `/buy`,
 `/support`, `/privacy`, `/offer`, `/consent`, `/get` и `/404.html`. Сборка использует directory-style output, поэтому
 `/buy` остаётся совместим с directory redirect на `/buy/`.
 

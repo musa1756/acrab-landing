@@ -74,9 +74,9 @@ motion:
   `src/data/app-faq.ts`), `PairDemo` (урок вдвоём, `pair-sim.ts`, `trust.css`).
   Стили — `sheets.css` (классы `sheet`, `sh-`, `ft-`, `tc-`, `mq-`, `sk-`,
   `rc-`, `tone-*`) и `scene.css`. Остальные блоки с собственным поведением:
-  `ArabicWorldMap` (`world-map.*`, `wm-`); счётчики героя и блик карточки
-  Premium — `home-polish.*` (`hp-`). Данные — `src/data/` (точки карты
-  генерирует `tools/build-arabic-world-dots.ts`, отзывы собраны вручную).
+  `ArabicGlobe` (`arabic-globe.*`, `ag-`); счётчики героя и блик карточки
+  Premium — `home-polish.*` (`hp-`). Данные — `src/data/` (точки глобуса
+  генерирует `tools/build-arabic-globe.ts`, отзывы собраны вручную).
 - `src/components/Icon.astro` и `src/lib/phosphor.ts` — значки.
 - `src/scripts/appear.ts` — появление блоков при прокрутке.
 
