@@ -1,4 +1,20 @@
-import { DEFAULT_ANNUAL_LIFETIME_PRICE, DEFAULT_PRICES, isPlan, LEGAL_DOCUMENT_VERSION, type PaymentResponse, type Plan, type Pricing, type Prices, type PricingRow, type SubscriptionRow, type VerifyResponse } from "./payment-model";
+import {
+  decodePromoCheckResponse,
+  DEFAULT_ANNUAL_LIFETIME_PRICE,
+  DEFAULT_PRICES,
+  isPlan,
+  LEGAL_DOCUMENT_VERSION,
+  normalizePromoCodeInput,
+  type PaymentResponse,
+  type Plan,
+  type Pricing,
+  type Prices,
+  type PricingRow,
+  type PromoCheckResult,
+  type SubscriptionRow,
+  type VerifyResponse,
+} from "./payment-model";
+import type { PaymentAttributionPayload } from "../../scripts/traffic-attribution";
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbnR5eXhheWtmcWlpZHRicnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mzc5NTUsImV4cCI6MjA4OTQxMzk1NX0.67LqXrXubiNGeI36qsO0NLgwoNhQJsRwGLDOz1AdlhQ";
 const SUPABASE_URL = "https://api.acrab.ru";
@@ -74,6 +90,19 @@ export async function loadSubscription(accessToken: string): Promise<Subscriptio
   } catch { return null; }
 }
 
+/** Проверяет промокод друга или блогера через RPC `check_promo_code`. */
+export async function checkPromoCode(code: string, accessToken?: string | null): Promise<PromoCheckResult> {
+  const normalized = normalizePromoCodeInput(code);
+  const headers: Record<string, string> = {};
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+  const raw = await supabaseFetch<unknown>("/rest/v1/rpc/check_promo_code", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ p_code: normalized }),
+  });
+  return decodePromoCheckResponse(raw, normalized);
+}
+
 // Та же проверка, что `decodePaymentSession` в приложении: ссылка приходит от
 // нашей функции tochka-payment, поэтому достаточно HTTPS без логина и пароля.
 // Список доменов «Точки» здесь не держим: платёжные страницы банка живут не на
@@ -88,11 +117,54 @@ export function isSecurePaymentLink(value: unknown): value is string {
 
 export interface CreatedPayment { paymentLink: string; expiresAt: string | null; }
 
-export async function createPayment(accessToken: string, plan: Plan): Promise<CreatedPayment> {
+export interface CreatePaymentOptions {
+  promoCode?: string | null;
+  attribution?: PaymentAttributionPayload | null;
+}
+
+function compactAttribution(attribution: PaymentAttributionPayload | null | undefined): PaymentAttributionPayload | null {
+  if (!attribution) return null;
+  const result: PaymentAttributionPayload = {};
+  if (attribution.utmSource) result.utmSource = attribution.utmSource;
+  if (attribution.utmMedium) result.utmMedium = attribution.utmMedium;
+  if (attribution.utmCampaign) result.utmCampaign = attribution.utmCampaign;
+  if (attribution.utmContent) result.utmContent = attribution.utmContent;
+  if (attribution.clickId) result.clickId = attribution.clickId;
+  if (attribution.slug) result.slug = attribution.slug;
+  return Object.keys(result).length > 0 ? result : null;
+}
+
+export function buildCreatePaymentBody(plan: Plan, options: CreatePaymentOptions = {}): Record<string, unknown> {
+  const body: Record<string, unknown> = {
+    action: "create",
+    plan,
+    legalAcceptance: {
+      offerVersion: LEGAL_DOCUMENT_VERSION,
+      personalDataConsentVersion: LEGAL_DOCUMENT_VERSION,
+      source: "web-checkout",
+    },
+  };
+  const promo = options.promoCode ? normalizePromoCodeInput(options.promoCode) : "";
+  if (promo) {
+    body.promoCode = promo;
+    body.referralCode = promo;
+  }
+  const attribution = compactAttribution(options.attribution);
+  if (attribution) {
+    body.attribution = attribution;
+  }
+  return body;
+}
+
+export async function createPayment(
+  accessToken: string,
+  plan: Plan,
+  options: CreatePaymentOptions = {},
+): Promise<CreatedPayment> {
   const result = await supabaseFetch<PaymentResponse>("/functions/v1/tochka-payment", {
     method: "POST",
     headers: { Authorization: `Bearer ${accessToken}` },
-    body: JSON.stringify({ action: "create", plan, legalAcceptance: { offerVersion: LEGAL_DOCUMENT_VERSION, personalDataConsentVersion: LEGAL_DOCUMENT_VERSION, source: "web-checkout" } }),
+    body: JSON.stringify(buildCreatePaymentBody(plan, options)),
   });
   if (!result || !isSecurePaymentLink(result.paymentLink)) throw new PaymentApiError("Missing or insecure paymentLink", 500);
   return { paymentLink: result.paymentLink, expiresAt: typeof result.expiresAt === "string" ? result.expiresAt : null };

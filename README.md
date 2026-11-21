@@ -53,9 +53,9 @@ bun run test:browser
 - `src/layouts/` — `BaseLayout` (`<head>` и общие скрипты), `PageLayout` (каркас страницы: «К содержанию», шапка с выбранным разделом, `<main id="main">`, подвал), на нём `GuideLayout` (статья: крошки, canonical из `guide.path`, Article и BreadcrumbList) и `LegalLayout` (служебная страница с короткой шапкой). Тип SEO-полей один — `src/seo/page-meta.ts`.
 - `src/components/` — SEO, шапка, подвал, крошки (`Breadcrumbs`), кнопки магазинов (`StoreLinks`: подвал, призыв статей, главная и `/get`; адреса — `src/lib/stores.ts`), соцсети и релизы.
 - `src/content/changelog/` — структурированные JSON-записи changelog.
-- `src/features/payment/` — чистые модели, сообщения и API платежей.
-- `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow.
-- `src/scripts/store-redirect.ts` — платформенный redirect `/get`.
+- `src/features/payment/` — чистые модели, сообщения, проверка промокодов (`check_promo_code`) и API платежей.
+- `src/features/payment/PaymentFlow.tsx` — запуск клиентского payment flow (тарифы, промокод, вход по коду почты и переход в банк).
+- `src/scripts/traffic-attribution.ts` и `src/scripts/store-redirect.ts` (`store-redirect-model.ts`) — first-touch атрибуция (`acrab.traffic.v1`), обезличенный 152-ФЗ маяк `site-track` и платформенный redirect `/get` (с передачей `referrer` в Google Play, `ct` в App Store и поддержкой `?store=rustore`).
 - `src/styles/` — дизайн-система приложения на сайте (описание — `DESIGN.md`): `tokens.css` — токены из `mobile/src/components/acrab/tokens.ts` и `semanticTokens.ts`, `kit.css` — компоненты приложения (кнопка с ребром `.btn`, плитка `.tile`, карточка `.card`, чип, метки, появление), `base.css` — фон, шапка, подвал, ссылки на магазины; остальные файлы — разделы сайта. Каждая страница подключает ровно один файл-вход `page-*.css`: он начинается с `global.css` (токены, kit, base) и добавляет только свои разделы — `page-home.css` (главная), `page-guide.css` (`GuideLayout` и `/articles/`), `page-legal.css` (`LegalLayout` и 404), `page-buy.css`, `page-support.css`, `page-updates.css` (`/about/`). Порядок импорта во входе — порядок каскада. Отдельные стили раздела не импортируются из страниц и компонентов рядом со входом: Astro ставит такие файлы раньше общего и ломает каскад (исключение — `keyboard.css` у `ArabicKeyboard`, он и раньше шёл первым). Новая страница импортирует подходящий вход или заводит свой; `tools/check_site.py` падает, если у собранной страницы нет стилей. Классы разделов не должны совпадать между файлами.
 - `src/components/Icon.astro` и `src/lib/phosphor.ts` — значки Phosphor (MIT) вместо SF Symbols приложения; значок, который на странице повторяется десятки раз (звёзды отзывов, галочки списков главной), рисуется `<Icon … sprite />` ссылкой на один контур из `IconSprite.astro` той же страницы, `tools/check_site.py` проверяет, что у каждого `<use href="#…">` есть цель; `src/scripts/appear.ts` — появление блоков при прокрутке (`data-appear`, `data-appear-group`). Шрифт Nunito (OFL) для устройств без SF Pro Rounded — `public/assets/fonts/`, фон страниц — `public/assets/mesh-lesson.webp` из сетчатого градиента приложения.
 - `src/seo/schema.ts` — разметка schema.org: организация и сайт на главной, `Article` и `BreadcrumbList` статей (`GuideLayout` строит их из объекта `guide`), `FAQPage` вопросов.
@@ -107,16 +107,10 @@ Timeweb не отдаёт `Cache-Control`, и браузер по своей э�
 
 ## Аналитика
 
-Яндекс Метрика, счётчик `113252004` в аккаунте владельца; данные принимаются только
-с acrab.ru. Подключает `src/scripts/site-analytics.ts` (из `BaseLayout` и `/privacy`,
-новая страница вне `BaseLayout` подключает его так же). Скрипт сам загружает `tag.js`
-и при нажатии на ссылку магазина шлёт цель `store_appstore`, `store_googleplay` или
-`store_rustore` и общую `store_click`; в Метрике это цели типа «JavaScript-событие»
-с теми же идентификаторами. Вебвизор выключен на `/buy/`. Адреса Метрики разрешены
-в CSP (`astro.config.mjs`: `script-src`, `img-src`, `connect-src` с `wss://`,
-`frame-src`/`child-src` с `blob:`); после правки CSP открыть собранную страницу и
-проверить консоль на нарушения. Состав данных Метрики описан в разделе 8 `/privacy`.
-Установку приложения Метрика не видит — это App Store Connect и Play Console.
+1. **Яндекс Метрика**, счётчик `113252004` в аккаунте владельца; данные принимаются только с acrab.ru. Подключает `src/scripts/site-analytics.ts` (из `BaseLayout` и `/privacy`, новая страница вне `BaseLayout` подключает его так же). Скрипт сам загружает `tag.js` и при нажатии на ссылку магазина шлёт цель `store_appstore`, `store_googleplay` или `store_rustore` и общую `store_click`; в Метрике это цели типа «JavaScript-событие» с теми же идентификаторами. Вебвизор выключен на `/buy/`.
+2. **Первичная атрибуция `ProTraffic` (152-ФЗ):** `src/scripts/traffic-attribution.ts` сохраняет first-touch `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `click_id` (UUID v4), `slug`, `promo` и внешний `referer_host` в `sessionStorage` и `localStorage` (`acrab.traffic.v1`), отправляет обезличенный маяк `POST https://api.acrab.ru/functions/v1/site-track` (`navigator.sendBeacon` с `text/plain` JSON Blob и запасным `fetch`, без IP и сырого User-Agent) один раз на посадку (`site_visit`) и при клике на магазин (`store_click`), а при взаимодействии с кнопками сторов и на `/get/` дописывает `&referrer=` для Google Play и `?ct=…&mt=8` для App Store, не меняя статический HTML.
+
+Адреса `https://api.acrab.ru` и Метрики разрешены в CSP (`astro.config.mjs`: `script-src`, `img-src`, `connect-src` с `wss://`, `frame-src`/`child-src` с `blob:`); после правки CSP открыть собранную страницу и проверить консоль на нарушения. Состав данных Метрики описан в разделе 8 `/privacy`.
 
 ## Тексты
 
@@ -147,15 +141,7 @@ Timeweb не отдаёт `Cache-Control`, и браузер по своей э�
 
 ## Оплата
 
-`/buy` остаётся статическим Astro shell с React island. Сценарий: тарифы и
-публичные цены видны сразу, без входа; выбор тарифа, затем email OTP
-существующего аккаунта (код уходит только после отдельной галочки согласия на обработку персональных данных) и проверка кода только ради оплаты, чтение своей
-подписки после кода, создание платежа кнопкой «Оплатить» и переход по
-HTTPS-ссылке, которую вернула функция `tochka-payment`. Отдельного чекбокса оферты нет: нажатие «Оплатить» означает
-принятие оферты, политики конфиденциальности и согласия на обработку данных —
-тот же текст, что под кнопкой в приложении. Домен ссылки не проверяется по
-списку: платёжные страницы банка живут не на `tochka.com`, проверяется только
-HTTPS без логина и пароля, как в `decodePaymentSession` приложения.
+`/buy` остаётся статическим Astro shell с React island. Сценарий: тарифы, публичные цены и блок «Промокод» видны сразу, без входа (принимает 6–8-значные коды друзей на 15% и 3–20-символьные промокоды блогеров с произвольной скидкой через `POST /rest/v1/rpc/check_promo_code`, автоматически подставляет `?promo=` или код из `acrab.traffic.v1` и перепроверяет право на первую покупку после входа; с льготным переходом с года на «Навсегда» промокоды не суммируются); выбор тарифа, затем email OTP существующего аккаунта (код уходит только после отдельной галочки согласия на обработку персональных данных) и проверка кода только ради оплаты, чтение своей подписки после кода, создание платежа кнопкой «Оплатить» (в `tochka-payment` уходят `promoCode`/`referralCode`, `attribution` и `legalAcceptance` с `source: "web-checkout"`, а при HTTP `422` промокод снимается с показом текста сервера) и переход по HTTPS-ссылке, которую вернула функция `tochka-payment`. Отдельного чекбокса оферты нет: нажатие «Оплатить» означает принятие оферты, политики конфиденциальности и согласия на обработку данных — тот же текст, что под кнопкой в приложении. Домен ссылки не проверяется по списку: платёжные страницы банка живут не на `tochka.com`, проверяется только HTTPS без логина и пароля, как в `decodePaymentSession` приложения.
 
 Как и приложение, страница позволяет создавать оплату сколько угодно раз.
 Вход и последняя ссылка «Точки» хранятся в `sessionStorage` вкладки (ключи

@@ -1,4 +1,24 @@
 import { asPaymentApiError } from "./payment-api";
+import type { PromoCodeStatus } from "./payment-model";
+
+const PROMO_REJECTION_MESSAGES: Record<Exclude<PromoCodeStatus, "ok">, string> = {
+  invalid: "Такого промокода нет. Проверьте код.",
+  expired: "Срок действия этого промокода истёк или лимит исчерпан.",
+  own: "Этот промокод нельзя применить: он ваш или на этом телефоне уже входили в аккаунт его владельца.",
+  not_eligible: "У вас уже был Premium, а промокод действует только на первую покупку.",
+};
+
+export function promoCodeErrorMessage(status: Exclude<PromoCodeStatus, "ok">): string {
+  return PROMO_REJECTION_MESSAGES[status];
+}
+
+export function checkPromoErrorMessage(error: unknown): string {
+  const apiError = asPaymentApiError(error);
+  if (!apiError.status) return "Не удалось проверить промокод. Проверьте связь и попробуйте ещё раз.";
+  if (apiError.status === 429) return "Слишком много проверок подряд. Подождите минуту и попробуйте ещё раз.";
+  if (/[\u0400-\u04FF]/.test(apiError.message)) return apiError.message;
+  return "Не удалось проверить промокод. Попробуйте ещё раз через минуту.";
+}
 
 export function sendCodeErrorMessage(error: unknown): string {
   const apiError = asPaymentApiError(error);

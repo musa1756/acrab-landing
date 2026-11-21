@@ -1,5 +1,20 @@
 export type Plan = "monthly" | "annual" | "lifetime";
 export type PaymentStep = "email" | "code" | "plan";
+export type PromoCodeStatus = "ok" | "invalid" | "own" | "not_eligible" | "expired";
+export type PromoCodeKind = "referral" | "blogger";
+
+export interface AppliedPromo {
+  code: string;
+  discountPercent: number;
+  kind: PromoCodeKind;
+}
+
+export interface PromoCheckResult {
+  status: PromoCodeStatus;
+  kind: PromoCodeKind | null;
+  code: string;
+  discountPercent: number | null;
+}
 
 export interface PricingRow { plan?: unknown; amount?: unknown; currency?: unknown; }
 export interface VerifyResponse { access_token?: unknown; expires_in?: unknown; expires_at?: unknown; }
@@ -14,6 +29,7 @@ export interface Pricing { prices: Prices; annualLifetimePrice: number; }
 
 export const DEFAULT_PRICES: Prices = { monthly: 399, annual: 2990, lifetime: 6490 };
 export const DEFAULT_ANNUAL_LIFETIME_PRICE = 3500;
+export const DEFAULT_PROMO_DISCOUNT_PERCENT = 15;
 export const DEFAULT_PRICING: Pricing = { prices: DEFAULT_PRICES, annualLifetimePrice: DEFAULT_ANNUAL_LIFETIME_PRICE };
 /** Редакция оферты и согласия на обработку данных, которые принимает покупатель (обе — 25 августа 2026). */
 export const LEGAL_DOCUMENT_VERSION = "2026-08-25";
@@ -49,11 +65,96 @@ export function hasActiveAnnualPremium(subscription: SubscriptionRow | null): bo
   return Number.isFinite(periodEnd) && periodEnd > Date.now();
 }
 
-/** Сумма, которую спишет банк за выбранный тариф. */
+/** Сумма, которую спишет банк за выбранный тариф (без промокода). */
 export function planAmount(plan: Plan, pricing: Pricing, subscription: SubscriptionRow | null): number {
   if (plan !== "lifetime" || !hasActiveAnnualPremium(subscription)) return pricing.prices[plan];
   const upgrade = pricing.annualLifetimePrice;
   return upgrade > 0 && upgrade < pricing.prices.lifetime ? upgrade : pricing.prices.lifetime;
+}
+
+export function hasLifetimeUpgrade(pricing: Pricing, subscription: SubscriptionRow | null): boolean {
+  return hasActiveAnnualPremium(subscription) && planAmount("lifetime", pricing, subscription) < pricing.prices.lifetime;
+}
+
+const FRIEND_CODE_RE = /^[1-9][0-9]{5,7}$/;
+const BLOGGER_CODE_RE = /^(?=.*[A-Z])[A-Z0-9_-]{3,20}$/;
+const PROMO_STATUSES: readonly PromoCodeStatus[] = ["ok", "invalid", "own", "not_eligible", "expired"];
+
+export function normalizePromoCodeInput(input: string): string {
+  return input.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
+}
+
+export function isFriendPromoCode(code: string): boolean {
+  return FRIEND_CODE_RE.test(code);
+}
+
+export function isBloggerPromoCode(code: string): boolean {
+  return BLOGGER_CODE_RE.test(code);
+}
+
+export function isValidPromoCodeFormat(code: string): boolean {
+  return isFriendPromoCode(code) || isBloggerPromoCode(code);
+}
+
+export function discountedAmount(amount: number, discountPercent = DEFAULT_PROMO_DISCOUNT_PERCENT): number {
+  if (!Number.isFinite(discountPercent) || discountPercent <= 0 || discountPercent >= 100) return amount;
+  return Math.floor((amount * (100 - discountPercent)) / 100);
+}
+
+/** Итоговая сумма тарифа с учётом применённого промокода (не суммируется с переходом на «Навсегда»). */
+export function effectivePlanAmount(
+  plan: Plan,
+  pricing: Pricing,
+  subscription: SubscriptionRow | null,
+  appliedPromo: AppliedPromo | null,
+): number {
+  const base = planAmount(plan, pricing, subscription);
+  if (!appliedPromo || hasLifetimeUpgrade(pricing, subscription)) return base;
+  return discountedAmount(base, appliedPromo.discountPercent);
+}
+
+function isPromoCodeStatus(value: unknown): value is PromoCodeStatus {
+  return typeof value === "string" && (PROMO_STATUSES as readonly string[]).includes(value);
+}
+
+function isPromoCodeKind(value: unknown): value is PromoCodeKind {
+  return value === "referral" || value === "blogger";
+}
+
+export function decodePromoCheckResponse(raw: unknown, fallbackCode: string): PromoCheckResult {
+  const normalizedFallback = normalizePromoCodeInput(fallbackCode);
+  if (isPromoCodeStatus(raw)) {
+    const inferredKind: PromoCodeKind | null = isFriendPromoCode(normalizedFallback)
+      ? "referral"
+      : isBloggerPromoCode(normalizedFallback)
+        ? "blogger"
+        : null;
+    return {
+      status: raw,
+      kind: raw === "ok" ? (inferredKind ?? "referral") : inferredKind,
+      code: normalizedFallback,
+      discountPercent: raw === "ok" ? DEFAULT_PROMO_DISCOUNT_PERCENT : null,
+    };
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return { status: "invalid", kind: null, code: normalizedFallback, discountPercent: null };
+  }
+  const row = raw as Record<string, unknown>;
+  const status: PromoCodeStatus = isPromoCodeStatus(row.status) ? row.status : "invalid";
+  const kind: PromoCodeKind | null = isPromoCodeKind(row.kind) ? row.kind : null;
+  const code = typeof row.code === "string" && row.code.trim().length > 0
+    ? normalizePromoCodeInput(row.code)
+    : normalizedFallback;
+  const rawDiscount = row.discount_percent;
+  const validDiscount = typeof rawDiscount === "number" && Number.isInteger(rawDiscount) && rawDiscount >= 1 && rawDiscount <= 90
+    ? rawDiscount
+    : null;
+  return {
+    status,
+    kind,
+    code,
+    discountPercent: status === "ok" ? (validDiscount ?? DEFAULT_PROMO_DISCOUNT_PERCENT) : null,
+  };
 }
 
 export function formatRub(amount: number): string {

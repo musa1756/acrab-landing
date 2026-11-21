@@ -96,6 +96,15 @@
   transition: color var(--spring-micro-duration) var(--spring-micro);
 }
 .plan-option.is-selected .plan-price { color: var(--c-brand-strong); }
+.plan-price-old {
+  color: var(--c-text-tertiary);
+  font-family: var(--font-rounded);
+  font-size: var(--t-footnote);
+  font-weight: 600;
+  line-height: var(--lh-footnote);
+  font-variant-numeric: tabular-nums;
+  text-decoration: line-through;
+}
 .plan-note {
   color: var(--c-text-secondary);
   font-size: var(--t-caption);
@@ -107,6 +116,71 @@
    внешнего края плитки (рамка 2 в отсчёте от внутреннего). */
 .plan-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); pointer-events: none; }
 
+
+/* ── Промокод: ReferralCodeCard ─────────────────────────────────────────── */
+
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 14px;
+  border: var(--b-emphasis) solid var(--c-brand);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.promo-card.is-applied { border-color: var(--c-brand-strong); }
+.promo-label { margin-bottom: -2px; }
+.promo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.promo-input {
+  min-width: 0;
+  flex: 1;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: var(--r-control);
+  background: var(--c-surface);
+  font-family: var(--font-rounded);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.promo-input.has-value { letter-spacing: 0.08em; }
+.promo-btn { flex: 0 0 auto; min-height: 45px; border-radius: var(--r-control); }
+.promo-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+}
+.promo-status strong { color: var(--c-text); font-weight: 700; }
+.promo-error {
+  margin: 0;
+  color: var(--c-danger-text);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+}
+.promo-upgrade-hint {
+  margin: -8px 0 18px;
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .promo-row { flex-direction: column; }
+  .promo-btn { width: 100%; }
+}
 
 /* ── Таблица сравнения: ComparisonTable ──────────────────────────────────── */
 

@@ -1,6 +1,16 @@
-import { storeTarget } from "./store-redirect-model";
+import { captureTrafficAttribution, sendSiteVisitOnce, sendStoreClickBeacon } from "./traffic-attribution";
+import { resolveStoreRedirect } from "./store-redirect-model";
 
-const target = storeTarget(navigator.userAgent || "", navigator.maxTouchPoints);
+const { attribution } = captureTrafficAttribution();
+const resolved = resolveStoreRedirect(navigator.userAgent || "", navigator.maxTouchPoints, {
+  search: window.location.search,
+  attribution,
+});
 
-// replace keeps the redirect page out of browser history.
-if (target) window.location.replace(target);
+// Отправляем beacon до window.location.replace, чтобы визиты и клики на /get/ не терялись.
+if (resolved) {
+  sendSiteVisitOnce(attribution, window.location.pathname);
+  sendStoreClickBeacon(resolved.store, attribution, window.location.pathname);
+  // replace keeps the redirect page out of browser history.
+  window.location.replace(resolved.url);
+}

@@ -1,9 +1,30 @@
-import { useEffect, useRef, useState, type ReactElement } from "react";
-import { createPayment, loadPricing, loadSubscription, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
-import { createPaymentErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "./payment-messages";
-import { DEFAULT_PRICING, formatRub, hasActiveAnnualPremium, isActiveLifetimePremium, isPendingCheckoutActive, pendingCheckoutDeadline, planAmount, PLAN_ORDER, sessionExpiry, type PaymentStep, type PendingCheckout, type Plan, type Pricing, type SubscriptionRow } from "./payment-model";
+import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactElement } from "react";
+import { checkPromoCode, createPayment, loadPricing, loadSubscription, PaymentApiError, requestOtp, verifyOtp } from "./payment-api";
+import { checkPromoErrorMessage, createPaymentErrorMessage, promoCodeErrorMessage, sendCodeErrorMessage, verifyCodeErrorMessage } from "./payment-messages";
+import {
+  DEFAULT_PRICING,
+  DEFAULT_PROMO_DISCOUNT_PERCENT,
+  effectivePlanAmount,
+  formatRub,
+  hasLifetimeUpgrade,
+  isActiveLifetimePremium,
+  isPendingCheckoutActive,
+  isValidPromoCodeFormat,
+  normalizePromoCodeInput,
+  pendingCheckoutDeadline,
+  planAmount,
+  PLAN_ORDER,
+  sessionExpiry,
+  type AppliedPromo,
+  type PaymentStep,
+  type PendingCheckout,
+  type Plan,
+  type Pricing,
+  type SubscriptionRow,
+} from "./payment-model";
 import { PHOSPHOR, type PhosphorName } from "../../lib/phosphor";
 import { clearCheckoutSession, clearPendingCheckout, readCheckoutSession, readPendingCheckout, writeCheckoutSession, writePendingCheckout } from "./payment-storage";
+import { captureTrafficAttribution, readTrafficAttribution, toPaymentAttribution } from "../../scripts/traffic-attribution";
 
 // A meta CSP cannot express frame-ancestors. This guard runs as soon as the
 // payment island is evaluated and prevents checkout controls in a hostile frame.
@@ -11,7 +32,7 @@ if (typeof window !== "undefined" && window.top !== window.self) {
   window.top!.location.href = window.self.location.href;
 }
 
-type PendingAction = "send-code" | "verify-code" | "create-payment" | "open-checkout" | null;
+type PendingAction = "send-code" | "verify-code" | "check-promo" | "create-payment" | "open-checkout" | null;
 
 const PLAN_TITLE: Record<Plan, string> = { annual: "Год", monthly: "Месяц", lifetime: "Навсегда" };
 const PLAN_NOTE: Record<Plan, string> = { annual: "за год", monthly: "в месяц", lifetime: "разовый платёж" };
@@ -46,6 +67,9 @@ export default function PaymentFlow(): ReactElement {
   const [pricing, setPricing] = useState<Pricing>(DEFAULT_PRICING);
   const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
   const [pending, setPending] = useState<PendingCheckout | null>(null);
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<AppliedPromo | null>(null);
+  const [promoError, setPromoError] = useState("");
   const [personalDataConsent, setPersonalDataConsent] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [emailError, setEmailError] = useState("");
@@ -57,13 +81,43 @@ export default function PaymentFlow(): ReactElement {
   // Premium «Навсегда» не продлевают и не покупают дважды: сервер отклоняет
   // такую оплату, поэтому кнопки тарифов для этого аккаунта не показываем.
   const lifetimeActive = isActiveLifetimePremium(subscription);
-  const lifetimeUpgrade = hasActiveAnnualPremium(subscription) &&
-    planAmount("lifetime", pricing, subscription) < pricing.prices.lifetime;
+  const lifetimeUpgrade = hasLifetimeUpgrade(pricing, subscription);
 
-  async function loadAccount(token: string): Promise<void> {
+  async function verifyPromoSilently(code: string, token: string | null): Promise<void> {
+    if (!isValidPromoCodeFormat(code)) return;
+    try {
+      const result = await checkPromoCode(code, token);
+      if (result.status === "ok") {
+        setAppliedPromo({
+          code: result.code,
+          discountPercent: result.discountPercent ?? DEFAULT_PROMO_DISCOUNT_PERCENT,
+          kind: result.kind ?? "blogger",
+        });
+        setPromoInput(result.code);
+        setPromoError("");
+      } else {
+        setAppliedPromo(null);
+        setPromoError(promoCodeErrorMessage(result.status));
+      }
+    } catch {
+      // При фоновой автопроверке из ?promo= оставляем код в поле, чтобы можно было нажать «Применить».
+    }
+  }
+
+  async function loadAccount(token: string, promoToRevalidate?: string | null): Promise<void> {
     const [nextPricing, nextSubscription] = await Promise.all([loadPricing(), loadSubscription(token)]);
     setPricing(nextPricing);
     setSubscription(nextSubscription);
+
+    if (isActiveLifetimePremium(nextSubscription) || hasLifetimeUpgrade(nextPricing, nextSubscription)) {
+      setAppliedPromo(null);
+      setPromoError("");
+      return;
+    }
+
+    if (promoToRevalidate) {
+      await verifyPromoSilently(promoToRevalidate, token);
+    }
   }
 
   // Вернувшись со страницы банка, человек сразу видит тарифы: вход и ссылка
@@ -72,15 +126,25 @@ export default function PaymentFlow(): ReactElement {
   // пока не истекла. Возврат через bfcache восстанавливает страницу вместе с
   // занятой кнопкой — pageshow её отпускает.
   useEffect(() => {
+    const { attribution } = captureTrafficAttribution();
+    const urlPromo = new URLSearchParams(window.location.search).get("promo");
+    const initialPromo = normalizePromoCodeInput(urlPromo || attribution.promo || "");
+    if (initialPromo) {
+      setPromoInput(initialPromo);
+    }
+
     const session = readCheckoutSession();
     if (session) {
       setEmail(session.email);
       setAccessToken(session.accessToken);
       setStep("plan");
-      void loadAccount(session.accessToken);
+      void loadAccount(session.accessToken, initialPromo || null);
     } else {
       // Тарифы видны до входа: цены публичные, подписка читается после кода.
       void loadPricing().then(setPricing);
+      if (initialPromo && isValidPromoCodeFormat(initialPromo)) {
+        void verifyPromoSilently(initialPromo, null);
+      }
     }
     const storedPending = readPendingCheckout();
     if (storedPending) {
@@ -96,6 +160,56 @@ export default function PaymentFlow(): ReactElement {
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
+
+  function handlePromoInputChange(event: ChangeEvent<HTMLInputElement>): void {
+    const next = normalizePromoCodeInput(event.currentTarget.value);
+    if (appliedPromo) setAppliedPromo(null);
+    setPromoInput(next);
+    setPromoError("");
+  }
+
+  async function handleApplyPromo(): Promise<void> {
+    const code = normalizePromoCodeInput(promoInput);
+    if (!isValidPromoCodeFormat(code) || pendingAction !== null || lifetimeUpgrade) return;
+    setPromoError("");
+    setPlanError("");
+    setPendingAction("check-promo");
+    try {
+      const result = await checkPromoCode(code, accessToken);
+      if (result.status === "ok") {
+        setAppliedPromo({
+          code: result.code,
+          discountPercent: result.discountPercent ?? DEFAULT_PROMO_DISCOUNT_PERCENT,
+          kind: result.kind ?? "blogger",
+        });
+        setPromoInput(result.code);
+        clearPendingCheckout();
+        setPending(null);
+      } else {
+        setAppliedPromo(null);
+        setPromoError(promoCodeErrorMessage(result.status));
+      }
+    } catch (error) {
+      setPromoError(checkPromoErrorMessage(error));
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
+  function handlePromoKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      void handleApplyPromo();
+    }
+  }
+
+  function handleClearPromo(): void {
+    setAppliedPromo(null);
+    setPromoInput("");
+    setPromoError("");
+    clearPendingCheckout();
+    setPending(null);
+  }
 
   async function handleSendCode(): Promise<void> {
     const normalizedEmail = email.trim();
@@ -138,6 +252,8 @@ export default function PaymentFlow(): ReactElement {
     setPlan(null);
     setPlanError("");
     setCodeError("");
+    setAppliedPromo(null);
+    setPromoError("");
     setSubscription(null);
     setPending(null);
     setStep("email");
@@ -166,7 +282,7 @@ export default function PaymentFlow(): ReactElement {
       writeCheckoutSession({ email, accessToken: token, expiresAt: sessionExpiry(result) });
       setAccessToken(token);
       setStep("plan");
-      await loadAccount(token);
+      await loadAccount(token, appliedPromo?.code ?? null);
     } catch (error) {
       setCodeError(verifyCodeErrorMessage(error));
     } finally {
@@ -185,7 +301,9 @@ export default function PaymentFlow(): ReactElement {
 
     setPendingAction("create-payment");
     try {
-      const created = await createPayment(accessToken, plan);
+      const promoCode = !lifetimeUpgrade && appliedPromo ? appliedPromo.code : null;
+      const attribution = toPaymentAttribution(readTrafficAttribution());
+      const created = await createPayment(accessToken, plan, { promoCode, attribution });
       const nextPending: PendingCheckout = { plan, paymentLink: created.paymentLink, createdAt: Date.now(), expiresAt: created.expiresAt };
       writePendingCheckout(nextPending);
       setPending(nextPending);
@@ -197,6 +315,11 @@ export default function PaymentFlow(): ReactElement {
         // Токен входа истёк: назад к почте, как просит текст ошибки.
         resetAccount();
         setEmailError(message);
+        return;
+      }
+      if (error instanceof PaymentApiError && error.status === 422) {
+        setAppliedPromo(null);
+        setPlanError(message);
         return;
       }
       setPlanError(message);
@@ -220,24 +343,74 @@ export default function PaymentFlow(): ReactElement {
   // активным «Навсегда» выбор убирается после входа.
   const picker = lifetimeActive ? null : (
     <div className="plan-picker" role="group" aria-label="Выбор тарифа">
-      {PLAN_ORDER.map((option) => (
-        <button key={option} className={`tile plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
-          <span className="plan-crown"><Icon name="crown" /></span>
-          <span className="plan-copy">
-            <span className="plan-title">{PLAN_TITLE[option]}</span>
-            {option === "annual" ? <span className="badge plan-badge">Выгоднее</span> : null}
-            <span className="plan-price" id={`price-${option}`}>{formatRub(planAmount(option, pricing, subscription))}</span>
-            <span className="plan-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
-            {option === "annual" ? <span className="plan-note">{`≈ ${formatRub(planAmount(option, pricing, subscription) / 12)}/мес`}</span> : null}
-          </span>
+      {PLAN_ORDER.map((option) => {
+        const baseAmount = planAmount(option, pricing, subscription);
+        const displayAmount = effectivePlanAmount(option, pricing, subscription, appliedPromo);
+        const hasDiscount = displayAmount < baseAmount;
+        return (
+          <button key={option} className={`tile plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
+            <span className="plan-crown"><Icon name="crown" /></span>
+            <span className="plan-copy">
+              <span className="plan-title">{PLAN_TITLE[option]}</span>
+              {option === "annual" ? <span className="badge plan-badge">Выгоднее</span> : null}
+              {hasDiscount ? <span className="plan-price-old">{formatRub(baseAmount)}</span> : null}
+              <span className="plan-price" id={`price-${option}`}>{formatRub(displayAmount)}</span>
+              <span className="plan-note">{option === "lifetime" && lifetimeUpgrade ? "переход с года" : PLAN_NOTE[option]}</span>
+              {option === "annual" ? <span className="plan-note">{`≈ ${formatRub(displayAmount / 12)}/мес`}</span> : null}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const promoBlock = lifetimeActive ? null : lifetimeUpgrade ? (
+    <p id="promo-upgrade-hint" className="promo-upgrade-hint">
+      Промокод не суммируется с льготным переходом на «Навсегда» за {formatRub(planAmount("lifetime", pricing, subscription))}.
+    </p>
+  ) : (
+    <div className={`promo-card${appliedPromo ? " is-applied" : ""}`} id="promo-card">
+      <label className="auth-label promo-label" htmlFor="promo-input">Промокод</label>
+      <div className="promo-row">
+        <input
+          id="promo-input"
+          className={`auth-input promo-input${promoInput ? " has-value" : ""}`}
+          type="text"
+          inputMode="text"
+          autoCapitalize="characters"
+          autoCorrect="off"
+          spellCheck={false}
+          maxLength={20}
+          placeholder="Промокод"
+          value={promoInput}
+          disabled={busy}
+          onChange={handlePromoInputChange}
+          onKeyDown={handlePromoKeyDown}
+        />
+        <button
+          id="apply-promo-btn"
+          className="btn btn-compact promo-btn"
+          type="button"
+          disabled={busy || appliedPromo !== null || !isValidPromoCodeFormat(promoInput)}
+          onClick={handleApplyPromo}
+        >
+          {pendingAction === "check-promo" ? "Проверяем…" : appliedPromo ? "Применено" : "Применить"}
         </button>
-      ))}
+      </div>
+      {appliedPromo ? (
+        <p id="promo-applied-note" className="promo-status">
+          <span>Промокод <strong>{appliedPromo.code}</strong> применён — скидка {appliedPromo.discountPercent}%.</span>
+          <button id="clear-promo-btn" className="auth-linklike auth-linklike-inline" type="button" disabled={busy} onClick={handleClearPromo}>Убрать</button>
+        </p>
+      ) : null}
+      {promoError ? <p id="promo-error" className="promo-error" role="alert">{promoError}</p> : null}
     </div>
   );
 
   return (
     <>
       {picker}
+      {promoBlock}
 
       <div id="step-email" className="auth-step" data-step="email" hidden={step !== "email"}>
         <p className="auth-hint">Чтобы оплатить{plan ? ` тариф ${PLAN_ACCUSATIVE[plan]}` : ""}, подтвердите почту аккаунта Acrab: Premium привязывается к нему.</p>
