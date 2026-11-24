@@ -1,14 +1,17 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
+import AudioButton from "../../components/AudioButton.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
+import AlphabetMiniQuiz from "../../components/AlphabetMiniQuiz.astro";
 import { formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
-  "title": "Огласовки в арабском языке: фатха, касра, дамма, сукун | Acrab",
-  "description": "Что такое огласовки (харакаты) в арабском: фатха, касра, дамма, сукун, шадда и танвин с примерами чтения, долгие гласные и тексты без огласовок.",
-  "ogTitle": "Огласовки в арабском языке",
-  "ogDescription": "Фатха, касра, дамма, сукун, шадда и танвин — с примерами и чтением по-русски.",
+  "title": "Огласовки в арабском: фатха, касра, дамма, сукун и шадда | Acrab",
+  "description": "Харакаты в арабском с примерами и озвучкой: фатха, касра, дамма, сукун, шадда и танвин. Как читать слова с огласовками, долгие гласные и тексты без них.",
+  "ogTitle": "Огласовки в арабском языке с примерами и озвучкой",
+  "ogDescription": "Фатха, касра, дамма, сукун, шадда и танвин — с примерами, озвучкой и чтением по-русски.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
 } as const;
@@ -19,7 +22,7 @@ const guide: GuideMeta = {
   path: "/arabic-vowels/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-24",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -75,10 +78,25 @@ const faq = [
         <section id="short">
           <h2>Три короткие гласные: фатха, касра, дамма</h2>
           <p>В арабском всего три коротких гласных. Каждая пишется знаком при той букве, после которой звучит. Сначала произносится согласный, затем гласный: <span class="arabic-inline" lang="ar" dir="rtl">بَ</span> — «ба», а не «аб».</p>
-          <div class="vowel-row vowel-row-3" aria-label="Три короткие гласные" data-appear-group>
-            <div class="tile tile-gold"><span lang="ar" dir="rtl">بَ</span><strong>ба</strong><small>фатха — над буквой</small></div>
-            <div class="tile tile-gold"><span lang="ar" dir="rtl">بِ</span><strong>би</strong><small>касра — под буквой</small></div>
-            <div class="tile tile-gold"><span lang="ar" dir="rtl">بُ</span><strong>бу</strong><small>дамма — над буквой</small></div>
+          <div class="vowel-row vowel-row-3 letter-syllables" aria-label="Три короткие гласные" data-appear-group>
+            <div class="tile tile-gold">
+              <span lang="ar" dir="rtl">بَ</span>
+              <strong>ба</strong>
+              <small>фатха — над буквой</small>
+              <AudioButton src="/assets/audio/letters/ba-a.mp3" label="слог ба с фатхой" />
+            </div>
+            <div class="tile tile-gold">
+              <span lang="ar" dir="rtl">بِ</span>
+              <strong>би</strong>
+              <small>касра — под буквой</small>
+              <AudioButton src="/assets/audio/letters/ba-i.mp3" label="слог би с касрой" />
+            </div>
+            <div class="tile tile-gold">
+              <span lang="ar" dir="rtl">بُ</span>
+              <strong>бу</strong>
+              <small>дамма — над буквой</small>
+              <AudioButton src="/assets/audio/letters/ba-u.mp3" label="слог бу с даммой" />
+            </div>
           </div>
           <p>Фатха после некоторых букв звучит ближе к «а», после других — ближе к «э» или к глубокому «о». Начинающему не нужно заучивать эти оттенки: они приходят вместе с озвучкой слов.</p>
         </section>
@@ -100,6 +118,7 @@ const faq = [
               </tbody>
             </table>
           </div>
+          <AlphabetMiniQuiz title="Попробуйте прочитать слог с огласовкой" subtitle="Четыре быстрых задания со звуком: закрепите огласовки и буквы прямо на странице." />
         </section>
 
         <section id="sukun">
@@ -115,6 +134,7 @@ const faq = [
           <div class="arabic-example" lang="ar" dir="rtl" data-appear-group><span class="tile tile-gold">مُعَلِّمٌ</span><span class="tile tile-gold">أُمٌّ</span></div>
           <p><span class="arabic-inline" lang="ar" dir="rtl">مُعَلِّمٌ</span> читается «му-аль-ли-мун» — «учитель». В <span class="arabic-inline" lang="ar" dir="rtl">أُمٌّ</span> («мать») слышны и удвоение, и танвин: «ум-мун».</p>
           <p>Шадда стоит вместе с огласовкой: фатха и дамма пишутся над шаддой, касра — под буквой или прямо под шаддой. Гласный при шадде относится ко второй, «открывающей» половине удвоенного звука.</p>
+          <GuideMidCta title="Расставьте огласовки в любом тексте" text="В Acrab есть инструмент «Огласовки» для ваших фраз, а первые 6 модулей с чтением и озвучкой бесплатны." />
         </section>
 
         <section id="tanwin">
@@ -151,7 +171,7 @@ const faq = [
           <h2>Где огласовки пишут, а где нет</h2>
           <p>Полная огласовка стоит в учебниках, детских книгах, словарях и поэзии — везде, где важно точное чтение. В новостях, книгах для взрослых, на вывесках и в переписке огласовок обычно нет: их ставят только там, где без них легко ошибиться.</p>
           <p>Начинающему лучше сначала читать тексты с полной огласовкой и сразу запоминать слово с правильным чтением. Чтение без огласовок — отдельный навык: он появляется вместе со словарём и грамматикой.</p>
-          <p>В Acrab слова, примеры и упражнения показаны с полной огласовкой. Для текста не из урока есть инструмент «Огласовки»: вставьте фразу или сфотографируйте страницу, и он расставит знаки.</p>
+          <p>В Acrab слова, примеры и упражнения показаны с полной огласовкой. Для текста не из урока есть инструмент «Огласовки»: вставьте фразу или сфотографируйте страницу, и он расставит знаки. А если нужно быстро набрать слова с огласовками в браузере, используйте <a href="/arabic-keyboard/">арабскую клавиатуру онлайн</a>.</p>
           <GuideCta title="Читайте с огласовками с первого урока" text="Первые шесть модулей Acrab (весь курс «Старт») бесплатны и без срока: алфавит, огласовки, озвучка и упражнения." />
         </section>
 

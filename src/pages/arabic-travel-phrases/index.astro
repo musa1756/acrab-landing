@@ -1,0 +1,259 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import AudioButton from "../../components/AudioButton.astro";
+import { richArabic } from "../../lib/rich-arabic";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Арабский разговорник для ОАЭ и Египта: полезные фразы | Acrab",
+  "description": "Полезные арабские фразы на фусхе для поездки в ОАЭ и Египет: аэропорт, отель, кафе, магазины, цены и вежливые просьбы — с огласовками и озвучкой.",
+  "ogTitle": "Арабский разговорник для поездок в ОАЭ и Египет",
+  "ogDescription": "Фразы на литературном арабском для аэропорта, отеля, кафе, магазинов и цен — с полными огласовками и озвучкой базовых выражений.",
+  "ogImage": "https://acrab.ru/assets/about/lesson-listening.webp",
+  "ogImageAlt": "Упражнение по аудированию арабских фраз в приложении Acrab"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Арабский разговорник для поездок в ОАЭ и Египет: полезные фразы",
+  description: seo.description,
+  path: "/arabic-travel-phrases/",
+  image: seo.ogImage,
+  datePublished: "2026-11-24",
+  dateModified: "2026-11-24",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Разговорник для ОАЭ и Египта", path: "/arabic-travel-phrases/" },
+  ],
+};
+
+interface PhraseRow {
+  ar: string;
+  reading: string;
+  meaning: string;
+  note?: string;
+  audio?: string;
+}
+
+const politePhrases: PhraseRow[] = [
+  { ar: "مَرْحَبًا", reading: "мархабан", meaning: "Привет / Здравствуйте", note: "универсальное приветствие", audio: "/assets/audio/marhaban.mp3" },
+  { ar: "السَّلَامُ عَلَيْكُمْ", reading: "ас-саляму алайкум", meaning: "Мир вам", note: "ответ: وَعَلَيْكُمُ السَّلَامُ", audio: "/assets/audio/as-salamu-alaykum.mp3" },
+  { ar: "صَبَاحُ الْخَيْرِ", reading: "сабаху-ль-хайр", meaning: "Доброе утро", audio: "/assets/audio/sabah-al-khayr.mp3" },
+  { ar: "مَسَاءُ الْخَيْرِ", reading: "масау-ль-хайр", meaning: "Добрый вечер", audio: "/assets/audio/masa-al-khayr.mp3" },
+  { ar: "مِنْ فَضْلِكَ", reading: "мин фадлика", meaning: "Пожалуйста (просьба)", note: "мужчине; женщине — мин фадлики" },
+  { ar: "شُكْرًا", reading: "шукран", meaning: "Спасибо", audio: "/assets/audio/shukran.mp3" },
+  { ar: "شُكْرًا جَزِيلًا", reading: "шукран джазилян", meaning: "Большое спасибо", audio: "/assets/audio/shukran-jazilan.mp3" },
+  { ar: "عَفْوًا", reading: "афван", meaning: "Извините / Не за что", note: "перед вопросом или в ответ на «спасибо»", audio: "/assets/audio/afwan.mp3" },
+];
+
+const airportHotel: PhraseRow[] = [
+  { ar: "أَيْنَ الْمَطَارُ؟", reading: "айна-ль-матару?", meaning: "Где аэропорт?" },
+  { ar: "أُرِيدُ سَيَّارَةَ أُجْرَةٍ", reading: "уриду сайярата уджратин", meaning: "Мне нужно такси" },
+  { ar: "إِلَى الْفُنْدُقِ مِنْ فَضْلِكَ", reading: "иля-ль-фундуки мин фадлика", meaning: "В отель, пожалуйста" },
+  { ar: "تَذْكِرَةٌ ذَهَابًا وَإِيَابًا", reading: "тазкиратун захабан ва ийабан", meaning: "Билет туда и обратно" },
+  { ar: "لَدَيَّ حَجْزٌ", reading: "ладаййа хаджзун", meaning: "У меня есть бронь" },
+  { ar: "أَيْنَ غُرْفَتِي؟", reading: "айна гурфати?", meaning: "Где мой номер?" },
+  { ar: "مِفْتَاحُ الْغُرْفَةِ مِنْ فَضْلِكَ", reading: "мифтаху-ль-гурфати мин фадлика", meaning: "Ключ от номера, пожалуйста" },
+];
+
+const cafeShop: PhraseRow[] = [
+  { ar: "قَائِمَةُ الطَّعَامِ مِنْ فَضْلِكَ", reading: "каимату-т-таами мин фадлика", meaning: "Меню, пожалуйста" },
+  { ar: "أُرِيدُ مَاءً بَارِدًا", reading: "уриду маан баридан", meaning: "Я хочу холодной воды" },
+  { ar: "قَهْوَةٌ مِنْ فَضْلِكَ", reading: "кахватун мин фадлика", meaning: "Кофе, пожалуйста" },
+  { ar: "الْحِسَابُ مِنْ فَضْلِكَ", reading: "аль-хисабу мин фадлика", meaning: "Счёт, пожалуйста" },
+  { ar: "بِكَمْ هَذَا؟", reading: "би-кам хаза?", meaning: "Сколько это стоит?" },
+  { ar: "كَمْ سِعْرُ هَذَا؟", reading: "кам сиру хаза?", meaning: "Какова цена этого?" },
+  { ar: "هَذَا غَالٍ جِدًّا", reading: "хаза галин джиддан", meaning: "Это слишком дорого" },
+  { ar: "هَلْ يُوجَدُ تَخْفِيضٌ؟", reading: "халь йуджаду тахфидун?", meaning: "Есть ли скидка?" },
+];
+
+const helpPhrases: PhraseRow[] = [
+  { ar: "لَا أَفْهَمُ", reading: "ля афхаму", meaning: "Я не понимаю" },
+  { ar: "تَكَلَّمْ بِتَمَهُّلٍ مِنْ فَضْلِكَ", reading: "такаллам би-тамаххулин мин фадлика", meaning: "Говорите помедленнее, пожалуйста" },
+  { ar: "أَيْنَ الْمَخْرَجُ؟", reading: "айна-ль-махраджу?", meaning: "Где выход?" },
+  { ar: "أَيْنَ الصَّيْدَلِيَّةُ؟", reading: "айна-с-сайдалийяту?", meaning: "Где аптека?" },
+  { ar: "أَحْتَاجُ إِلَى مُسَاعَدَةٍ", reading: "ахтаджу иля мусаадатин", meaning: "Мне нужна помощь" },
+];
+
+const faq = [
+  {
+    question: "Поймут ли меня в ОАЭ и Египте, если я скажу фразу на фусхе?",
+    answer: "Да. Литературный арабский (фусха) — общий язык вывесок, меню, новостей и образования во всех арабских странах. В ОАЭ и Египте фразы на фусхе понимают повсюду, хотя в быту местные жители могут ответить на своём диалекте или по-английски.",
+  },
+  {
+    question: "Как спросить цену по-арабски в магазине или на рынке?",
+    answer: "Самый естественный вопрос на фусхе — بِكَمْ هَذَا؟ («би-кам хаза?» — «Сколько это стоит?») или كَمْ سِعْرُ هَذَا؟ («кам сиру хаза?» — «Какова цена этого?»). Для понимания ответа пригодятся восточные цифры ٠–٩.",
+  },
+  {
+    question: "Чем уличная речь в Дубае и Каире отличается от фусхи?",
+    answer: "В странах Залива (включая ОАЭ) звучит диалект халиджи, а в Египте — египетский диалект: в них часть слов короче, а отдельные звуки произносятся мягче (например, в Каире букву ج часто произносят как «г»). При этом вывески, указатели и официальные объявления везде написаны на фусхе.",
+  },
+  {
+    question: "Как вежливо обратиться к женщине вместо мужчины?",
+    answer: "В просьбе مِنْ فَضْلِكَ («пожалуйста») меняется только последняя гласная: мужчине говорят «мин фадлика», женщине — مِنْ فَضْلِكِ («мин фадлики»). Сами слова شُكْرًا, عَفْوًا и مَرْحَبًا одинаковы для всех.",
+  },
+  {
+    question: "Можно ли подготовиться к поездке заранее по приложению?",
+    answer: "Да. Даже если до поездки несколько недель, полезно выучить приветствия, числа, чтение вывесок и базовые бытовые фразы. В Acrab стартовый курс с алфавитом, приветствиями и озвучкой бесплатен без ограничения по сроку.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+  <header class="guide-hero">
+    <p class="eyebrow">Фразы в дорогу</p>
+    <h1 class="page-title">Арабский разговорник для поездок в ОАЭ и Египет</h1>
+    <p class="guide-lead">В ОАЭ и Египте вывески, названия станций, меню и объявления написаны на литературном арабском (<a href="/fusha/">фусхе</a>). Ниже — рабочие фразы на фусхе с полными огласовками, которые понимают в аэропорту, отеле, кафе и магазинах обеих стран.</p>
+    <div class="phrase-hero tile tile-gold">
+      <span class="phrase-hero-ar" lang="ar" dir="rtl">بِكَمْ هَذَا؟</span>
+      <div class="phrase-hero-meta"><strong>би-кам хаза?</strong><small>«Сколько это стоит?»</small></div>
+    </div>
+    <div class="guide-answer card"><strong>Коротко:</strong> базовый минимум в поездке — <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span> («привет»), <span class="arabic-inline" lang="ar" dir="rtl">مِنْ فَضْلِكَ</span> («пожалуйста»), <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا</span> («спасибо»), <span class="arabic-inline" lang="ar" dir="rtl">عَفْوًا</span> («извините / не за что»), <span class="arabic-inline" lang="ar" dir="rtl">بِكَمْ هَذَا؟</span> («сколько стоит?») и <span class="arabic-inline" lang="ar" dir="rtl">الْحِسَابُ مِنْ فَضْلِكَ</span> («счёт, пожалуйста»).</div>
+    <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+  </header>
+
+  <div class="guide-layout">
+    <aside class="guide-toc" aria-label="Содержание статьи">
+      <strong>В этой статье</strong>
+      <a href="#polite">Приветствие и вежливость</a>
+      <a href="#airport">Аэропорт, такси и отель</a>
+      <a href="#cafe">Кафе, магазины и цены</a>
+      <a href="#help">Ориентация и помощь</a>
+      <a href="#dialects">Фусха vs речь в ОАЭ и Египте</a>
+      <a href="#faq">Частые вопросы</a>
+    </aside>
+
+    <article class="guide-content">
+      <section id="polite">
+        <h2>Приветствие и вежливые слова</h2>
+        <p>Даже несколько вежливых слов на арабском сразу располагают собеседника. Базовые фразы из этой таблицы озвучены:</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">По-арабски</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Значение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {politePhrases.map((item) => (
+                <tr>
+                  <th scope="row" class:list={["ar", { "ar-small": item.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.reading}</strong>{item.audio && <AudioButton src={item.audio} label={item.reading} />}</td>
+                  <td>{item.meaning}{item.note && <><br /><small set:html={richArabic(item.note)} /></>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
+      </section>
+
+      <section id="airport">
+        <h2>Аэропорт, транспорт и отель</h2>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">По-арабски</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Значение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {airportHotel.map((item) => (
+                <tr>
+                  <th scope="row" class:list={["ar", { "ar-small": item.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.reading}</strong></td>
+                  <td>{item.meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="guide-note card card-neutral card-warm">
+          <strong>Потренируйте базовые фразы на слух перед поездкой:</strong> в Acrab приветствия, вежливые формулы и чтение вывесок входят в бесплатный старт без срока.
+          <div class="hero-downloads"><a class="btn btn-compact" href="/get/">Попробовать Acrab бесплатно</a></div>
+        </div>
+      </section>
+
+      <section id="cafe">
+        <h2>Кафе, магазины и цены</h2>
+        <p>Чтобы понимать ценники на рынках и в небольших лавках, полезно заодно посмотреть <a href="/arabic-numbers/">цифры и числа от 0 до 100</a> — особенно восточные знаки <span class="arabic-inline" lang="ar" dir="rtl">٠–٩</span>.</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">По-арабски</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Значение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cafeShop.map((item) => (
+                <tr>
+                  <th scope="row" class:list={["ar", { "ar-small": item.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.reading}</strong></td>
+                  <td>{item.meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="help">
+        <h2>Если нужна помощь или нужно сориентироваться</h2>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">По-арабски</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Значение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {helpPhrases.map((item) => (
+                <tr>
+                  <th scope="row" class:list={["ar", { "ar-small": item.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.reading}</strong></td>
+                  <td>{item.meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="dialects">
+        <h2>Фусха и уличная речь в ОАЭ и Египте</h2>
+        <p>Все фразы выше — на литературном арабском (<a href="/fusha/">фусхе</a>). Это честная универсальная база: её понимают в обеих странах и именно на ней написаны таблички в метро, аэропортах, торговых центрах и ресторанах.</p>
+        <div class="comparison-pair" data-appear-group>
+          <div class="card card-plain">
+            <span class="comparison-label">ОАЭ</span>
+            <h3>Диалект Залива и английский</h3>
+            <p>В туристических местах Дубая и Абу-Даби персонал свободно говорит по-английски, а местные жители в быту используют диалект халиджи. Вывески, меню и указатели продублированы на фусхе.</p>
+          </div>
+          <div class="card card-plain">
+            <span class="comparison-label">Египет</span>
+            <h3>Египетский диалект на улице</h3>
+            <p>На рынках и в такси звучит египетская разговорная речь (например, <span class="arabic-inline" lang="ar" dir="rtl">ج</span> часто произносится как твёрдое «г»). Фразы на фусхе египтяне понимают хорошо, просто могут ответить в разговорном стиле.</p>
+          </div>
+        </div>
+        <GuideCta title="Подготовьтесь к поездке и читайте вывески сами" text="В Acrab вы начнёте с алфавита, огласовок и базовых фраз с озвучкой — бесплатный старт без ограничения по сроку." />
+      </section>
+
+      <GuideFaq items={faq} />
+    </article>
+  </div>
+
+  <nav class="related-guides" data-appear-group aria-label="Другие статьи">
+    <a href="/arabic-hello/"><span>Приветствия</span><strong>Привет на арабском →</strong></a>
+    <a href="/arabic-numbers/"><span>Цены и счёт</span><strong>Цифры и числа 0–100 →</strong></a>
+    <a href="/fusha/"><span>Литературный язык</span><strong>Что такое фусха →</strong></a>
+  </nav>
+</GuideLayout>

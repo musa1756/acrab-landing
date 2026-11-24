@@ -4,7 +4,7 @@ import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import StoreLinks from "../../components/StoreLinks.astro";
-import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import { APP_ID, formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
   "title": "Приложение для изучения арабского языка с нуля | Acrab",
@@ -21,7 +21,8 @@ const guide: GuideMeta = {
   path: "/arabic-app/",
   image: seo.ogImage,
   datePublished: "2026-08-08",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-24",
+  aboutId: APP_ID,
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -38,7 +39,8 @@ const faq = APP_FAQ;
         <p class="eyebrow">Acrab для iPhone, iPad и Android</p>
         <h1 class="page-title">Приложение для изучения арабского языка с нуля</h1>
         <p class="guide-lead">Acrab учит литературному арабскому на русском языке: от алфавита до чтения текстов с огласовками. Теория, упражнения, аудирование, повторение и инструменты собраны в одном приложении.</p>
-        <div class="hero-downloads"><StoreLinks /></div>
+        <div class="guide-answer card"><strong>Коротко:</strong> 86 последовательных модулей фусхи на русском, полная огласовка, 9 учебных инструментов, ИИ-ассистент и Библиотека. Первые 6 модулей (17 уроков) бесплатны без срока.</div>
+        <div class="hero-downloads"><StoreLinks placement="arabic-app-hero" /></div>
         <p class="hero-fineprint">Первые 6 из 86 модулей бесплатны и без срока.</p>
         <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
       </div>
@@ -46,12 +48,29 @@ const faq = APP_FAQ;
     </header>
 
     <div class="guide-layout">
-      <aside class="guide-toc" aria-label="Содержание статьи"><strong>На этой странице</strong><a href="#criteria">Как выбрать приложение</a><a href="#program">Программа Acrab</a><a href="#practice">Как проходит урок</a><a href="#tools">Инструменты</a><a href="#library">Книги</a><a href="#free">Что бесплатно</a><a href="#faq">Частые вопросы</a></aside>
+      <aside class="guide-toc" aria-label="Содержание статьи"><strong>На этой странице</strong><a href="#criteria">Как выбрать приложение</a><a href="#specs">Характеристики Acrab</a><a href="#program">Программа Acrab</a><a href="#practice">Как проходит урок</a><a href="#tools">Инструменты</a><a href="#library">Книги</a><a href="#free">Что бесплатно</a><a href="#faq">Частые вопросы</a></aside>
       <article class="guide-content">
         <section id="criteria">
           <h2>На что смотреть при выборе приложения</h2>
           <p>Число карточек и яркий интерфейс не говорят о том, чему вы научитесь. Проверьте пять вещей:</p>
           <ul class="guide-checklist"><li><strong>Есть ли программа по порядку.</strong> Следующий урок должен опираться на предыдущий.</li><li><strong>Объясняют ли грамматику.</strong> Правило нужно понять до того, как вас проверят.</li><li><strong>Показаны ли огласовки.</strong> Начинающему нужно видеть, как точно читается новое слово.</li><li><strong>Есть ли работа на слух.</strong> Узнавать слово глазами на карточке ещё не значит понимать его в речи.</li><li><strong>Возвращаются ли забытые слова.</strong> Повторение должно учитывать ошибки и время, а не листать один и тот же список.</li></ul>
+        </section>
+
+        <section id="specs">
+          <h2>Характеристики приложения Acrab</h2>
+          <div class="guide-table-scroll card card-plain" data-appear>
+            <table class="guide-table">
+              <thead><tr><th scope="col">Параметр</th><th scope="col">Что внутри Acrab</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Платформы</th><td>iPhone, iPad (App Store) и Android (Google Play, RuStore)</td></tr>
+                <tr><th scope="row">Язык обучения</th><td>Литературный арабский (фусха) с объяснениями на русском</td></tr>
+                <tr><th scope="row">Программа</th><td>86 модулей от алфавита до грамматики и чтения текстов</td></tr>
+                <tr><th scope="row">Бесплатный старт</th><td>Первые 6 модулей (17 уроков), быстрые тренировки и Анки без срока</td></tr>
+                <tr><th scope="row">Инструменты</th><td>9 встроенных инструментов (перевод, огласовки, озвучка, спряжение, корень, Анки и др.) и ИИ-ассистент</td></tr>
+                <tr><th scope="row">Тарифы Premium</th><td>399 ₽/мес, 2 990 ₽/год или 6 490 ₽ навсегда — разовая оплата без автосписаний (<a href="/buy/">подробнее</a>)</td></tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section id="program">

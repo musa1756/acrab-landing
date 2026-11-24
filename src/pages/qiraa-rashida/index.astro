@@ -1,0 +1,207 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Аль-Кироату ар-Рашида: чтение с огласовками и переводом | Acrab",
+  "description": "Книга «Аль-Кироату ар-Рашида» (الْقِرَاءَةُ الرَّاشِدَةُ) для первого чтения на арабском: отрывок с огласовками, пословный перевод и 90 текстов в Acrab.",
+  "ogTitle": "Аль-Кироату ар-Рашида: чтение с огласовками и переводом",
+  "ogDescription": "Почему «аль-Кироату ар-Рашида» подходит для первого чтения на арабском, интерактивный разбор первого отрывка и 90 текстов в Acrab.",
+  "ogImage": "https://acrab.ru/assets/about/library-books.webp",
+  "ogImageAlt": "Библиотека приложения Acrab с книгой «аль-Кироату ар-Рашида»"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Аль-Кироату ар-Рашида: чтение на арабском с огласовками и переводом",
+  description: seo.description,
+  path: "/qiraa-rashida/",
+  image: seo.ogImage,
+  datePublished: "2026-11-24",
+  dateModified: "2026-11-24",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Аль-Кироату ар-Рашида", path: "/qiraa-rashida/" },
+  ],
+};
+
+// Дословный отрывок и авторский пословный перевод из первого текста книги
+// «الْقِرَاءَةُ الرَّاشِدَةُ» («كَيْفَ أَقْضِي يَوْمِي») в Библиотеке Acrab.
+const excerpt = [
+  {
+    sentence: "Я рано ложусь спать и рано встаю утром",
+    tokens: [
+      { ar: "أَنَامُ", gloss: "я ложусь спать" },
+      { ar: "مُبَكِّراً", gloss: "рано" },
+      { ar: "فِي", gloss: "(в)" },
+      { ar: "اللَّيْلِ", gloss: "ночью" },
+      { ar: "وَأَقُومُ", gloss: "и встаю" },
+      { ar: "مُبَكِّراً", gloss: "рано" },
+      { ar: "فِي", gloss: "(в)" },
+      { ar: "الصَّبَاحِ", gloss: "утром" },
+    ],
+  },
+  {
+    sentence: "Просыпаюсь с именем Аллаhа и поминанием Его",
+    tokens: [
+      { ar: "أَسْتَيْقِظُ", gloss: "просыпаюсь" },
+      { ar: "عَلَى", gloss: "с" },
+      { ar: "اسْمِ", gloss: "именем" },
+      { ar: "اللَّهِ", gloss: "Аллаhа" },
+      { ar: "وَذِكْرِهِ", gloss: "и поминанием Его" },
+    ],
+  },
+] as const;
+
+const allTokens = excerpt.flatMap((line) =>
+  line.tokens.map((token) => ({ ...token, sentence: line.sentence })),
+);
+
+const faq = [
+  {
+    question: "С какого уровня можно начинать читать «аль-Кироату ар-Рашида»?",
+    answer: "Книгу можно открывать сразу после того, как вы освоили алфавит, соединения букв и основные огласовки. Первые тексты короткие, с простыми глаголами настоящего времени и повседневной лексикой.",
+  },
+  {
+    question: "Кто автор книги «الْقِرَاءَةُ الرَّاشِدَةُ»?",
+    answer: "Автор сборника — Абуль-Хасан Али ан-Надви. Книга задумывалась как книга для постепенного чтения на чистом литературном арабском: от коротких рассказов о распорядке дня и природе к более содержательным историям.",
+  },
+  {
+    question: "Сколько текстов в «аль-Кироату ар-Рашида» в Acrab?",
+    answer: "В Библиотеке Acrab собрано 90 текстов книги с полными огласовками. У каждого слова есть перевод в контексте конкретного предложения, а у каждого предложения — цельный русский перевод.",
+  },
+  {
+    question: "Как работает пословный перевод в приложении?",
+    answer: "Во время чтения вы нажимаете на любое незнакомое арабское слово и сразу видите его значение именно в этом месте текста, не переключаясь на отдельный словарь. Полезное слово можно сохранить в «Мои слова» и повторять в Анки.",
+  },
+  {
+    question: "Что лучше выбрать первым: «Байна ядайк» или «аль-Кироату ар-Рашида»?",
+    answer: "Эти книги дополняют друг друга. «Байна ядайк» — большой учебник с диалогами и упражнениями, а «аль-Кироату ар-Рашида» — лёгкое связное чтение коротких рассказов. Многие проходят программу и параллельно читают по одному короткому тексту из «Рашиды».",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+  <header class="guide-hero">
+    <p class="eyebrow">Книга для первого чтения</p>
+    <h1 class="page-title">Аль-Кироату ар-Рашида: чтение с огласовками и переводом</h1>
+    <p class="guide-lead"><strong>«Аль-Кироату ар-Рашида»</strong> (<span class="arabic-inline" lang="ar" dir="rtl">الْقِرَاءَةُ الرَّاشِدَةُ</span> — «Правильное чтение») — классический сборник коротких рассказов Абуль-Хасана Али ан-Надви. Это одна из самых удобных книг для перехода от отдельных слов к настоящим арабским текстам.</p>
+    <div class="fusha-word tile tile-gold" lang="ar" dir="rtl"><span>الْقِرَاءَةُ الرَّاشِدَةُ</span><small><bdi lang="ru">аль-кироату ар-рашида — книга для первого чтения на фусхе</bdi></small></div>
+    <div class="guide-answer card"><strong>Коротко:</strong> «аль-Кироату ар-Рашида» состоит из 90 коротких текстов с нарастающей сложностью — о распорядке дня, семье, природе и исламской культуре. В Acrab каждый текст набран с огласовками и переводом любого слова по нажатию.</div>
+    <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+  </header>
+
+  <div class="guide-layout">
+    <aside class="guide-toc" aria-label="Содержание статьи">
+      <strong>В этой статье</strong>
+      <a href="#why">Почему эта книга удобна</a>
+      <a href="#excerpt">Отрывок с переводом по нажатию</a>
+      <a href="#breakdown">Пословный разбор</a>
+      <a href="#library">Как устроены 90 текстов в Acrab</a>
+      <a href="#method">Как читать эффективно</a>
+      <a href="#faq">Частые вопросы</a>
+    </aside>
+
+    <article class="guide-content">
+      <section id="why">
+        <h2>Почему «аль-Кироату ар-Рашида» подходит для первого чтения</h2>
+        <p>После <a href="/arabic-alphabet/">алфавита</a> и <a href="/arabic-vowels/">огласовок</a> многие сталкиваются с разрывом: учебные карточки уже кажутся простыми, а новости и обычные книги ещё слишком сложны. Сборник Абуль-Хасана Али ан-Надви закрывает именно этот шаг:</p>
+        <ul class="guide-checklist">
+          <li><strong>Чистая литературная фусха.</strong> Короткие, ясные фразы без искусственных канцеляризмов и без смешения с диалектом.</li>
+          <li><strong>Естественное повторение слов.</strong> Ключевые глаголы и существительные многократно встречаются в соседних предложениях, поэтому запоминаются в контексте.</li>
+          <li><strong>Полные огласовки.</strong> Начинающему не приходится угадывать гласные — можно сосредоточиться на смысле и ритме чтения.</li>
+          <li><strong>Небольшой объём каждого рассказа.</strong> Один текст реально прочитать за 10–15 минут без усталости.</li>
+        </ul>
+      </section>
+
+      <section id="excerpt" data-tap-preview>
+        <h2>Отрывок из первого текста: нажмите на слово</h2>
+        <p>Первый рассказ книги называется <span class="arabic-inline" lang="ar" dir="rtl">كَيْفَ أَقْضِي يَوْمِي</span> («Как провожу мой день»). Ниже — первые два предложения с огласовками и пословным переводом из Библиотеки Acrab. Нажмите на любое слово, чтобы увидеть его значение:</p>
+        {excerpt.map((line, index) => (
+          <div class="card card-plain guide-note">
+            <div class="hero-downloads" dir="rtl" role="group" aria-label={`Предложение ${index + 1}: нажмите на слово для перевода`}>
+              {line.tokens.map((token) => (
+                <button
+                  type="button"
+                  class="btn btn-outline btn-dense"
+                  data-tap-word={token.ar}
+                  data-tap-gloss={token.gloss}
+                  data-tap-sentence={line.sentence}
+                  aria-pressed="false"
+                >
+                  <span class="arabic-inline" lang="ar" dir="rtl">{token.ar}</span>
+                </button>
+              ))}
+            </div>
+            <p><small>Перевод предложения: «{line.sentence}».</small></p>
+          </div>
+        ))}
+        <div class="guide-note card card-neutral card-warm" data-tap-output aria-live="polite">
+          <strong>Подсказка:</strong> нажмите на любое арабское слово выше, чтобы увидеть его точный перевод в контексте предложения.
+        </div>
+        <script src="../../scripts/tap-preview.ts"></script>
+      </section>
+
+      <section id="breakdown">
+        <h2>Пословный перевод отрывка в таблице</h2>
+        <p>Если вы читаете страницу без нажатий или хотите сверить сразу все слова подряд, полный разбор двух предложений собран в таблице:</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">Слово</th>
+                <th scope="col">Перевод в контексте</th>
+                <th scope="col">Предложение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allTokens.map((item) => (
+                <tr>
+                  <th scope="row" class="ar" lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.gloss}</strong></td>
+                  <td><small>{item.sentence}</small></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="guide-note card card-neutral card-warm">
+          <strong>Читайте всю книгу в таком же формате:</strong> в Библиотеке Acrab собраны все 90 текстов «аль-Кироату ар-Рашида» с переводом каждого слова по нажатию.
+          <div class="hero-downloads"><a class="btn btn-compact" href="/get/">Открыть книгу в Acrab</a></div>
+        </div>
+      </section>
+
+      <section id="library">
+        <h2>Как устроены все 90 текстов в Библиотеке Acrab</h2>
+        <p>Обычно при чтении бумажной или PDF-книги ученик тратит половину времени на поиск слов в словаре. В текстовом издании Acrab чтение не прерывается:</p>
+        <div class="principle-grid" data-appear-group>
+          <div class="card card-plain"><strong>Перевод слова в одно касание</strong><p>Показывается значение именно в этой фразе, с учётом предлогов и времени глагола.</p></div>
+          <div class="card card-plain"><strong>Перевод всего предложения</strong><p>Можно проверить себя целиком после того, как вы разобрали отдельные слова.</p></div>
+          <div class="card card-plain"><strong>Сохранение в «Мои слова»</strong><p>Новые слова из рассказа уходят в личный словарь и повторяются карточками Анки.</p></div>
+          <div class="card card-plain"><strong>Закладка и прогресс</strong><p>Приложение запоминает, на каком тексте вы остановились, и синхронизирует чтение между устройствами.</p></div>
+        </div>
+      </section>
+
+      <section id="method">
+        <h2>Как читать книгу, чтобы слова оставались в памяти</h2>
+        <ol class="learning-steps compact-steps">
+          <li><div><strong>Сначала прочитайте абзац вслух</strong><p>Следите за огласовками, артиклем <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> и <a href="/sun-moon-letters/">солнечными буквами</a> (например, <span class="arabic-inline" lang="ar" dir="rtl">الصَّبَاحِ</span> и <span class="arabic-inline" lang="ar" dir="rtl">اللَّيْلِ</span>).</p></div></li>
+          <li><div><strong>Нажимайте только на незнакомые слова</strong><p>Не открывайте перевод каждого слова сразу — пробуйте сначала догадаться из контекста и проверить себя.</p></div></li>
+          <li><div><strong>Перечитайте текст без подсказок на следующий день</strong><p>Повторное чтение через сутки закрепляет лексику гораздо лучше, чем попытка вызубрить список за один вечер.</p></div></li>
+          <li><div><strong>Совмещайте с основной программой</strong><p>Чтение расширяет словарь, а упражнения программы и <a href="/bayna-yadayk/">учебник «Байна ядайк»</a> выстраивают грамматику.</p></div></li>
+        </ol>
+        <GuideCta title="Читайте «аль-Кироату ар-Рашида» в Acrab" text="90 текстов с огласовками и переводом слова по нажатию в Библиотеке, плюс программа фусхи, Анки и ИИ-ассистент." />
+      </section>
+
+      <GuideFaq items={faq} />
+    </article>
+  </div>
+
+  <nav class="related-guides" data-appear-group aria-label="Другие статьи">
+    <a href="/bayna-yadayk/"><span>Учебник</span><strong>Аль-Арабийя байна ядайк →</strong></a>
+    <a href="/how-to-read-arabic/"><span>Техника чтения</span><strong>Как научиться читать по-арабски →</strong></a>
+    <a href="/islamic-phrases/"><span>Словарь и смысл</span><strong>Исламские фразы на арабском →</strong></a>
+  </nav>
+</GuideLayout>

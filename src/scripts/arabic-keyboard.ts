@@ -4,10 +4,20 @@
  * Раскладка и правки текста — в `arabic-keyboard-model.ts`. Текст остаётся в
  * поле страницы: ничего не отправляется и не сохраняется.
  */
+import { trackGoal } from "./analytics-goals";
 import { ARABIC_KEYS_BY_CODE, backspaceRange, charForCode, keyCaption, transliterate } from "./arabic-keyboard-model";
 
 const NEW_LINE = String.fromCharCode(10);
 const STATUS_MS = 2600;
+const KBD_TYPE_SENT_KEY = "acrab.kbd_type.sent.v1";
+
+function trackKeyboardTypeOnce(): void {
+  try {
+    if (window.sessionStorage.getItem(KBD_TYPE_SENT_KEY) === "1") return;
+    window.sessionStorage.setItem(KBD_TYPE_SENT_KEY, "1");
+  } catch { /* storage unavailable */ }
+  trackGoal("kbd_type");
+}
 
 // execCommand помечен устаревшим, но только он сохраняет отмену по Ctrl+Z и копирует без разрешений.
 function exec(command: string, value?: string): boolean {
@@ -155,8 +165,14 @@ function init(root: HTMLElement): void {
     renderLayer();
   });
 
-  textarea.addEventListener("input", renderTranslit);
-  translitToggle?.addEventListener("change", renderTranslit);
+  textarea.addEventListener("input", () => {
+    if (textarea.value.trim().length > 0) trackKeyboardTypeOnce();
+    renderTranslit();
+  });
+  translitToggle?.addEventListener("change", () => {
+    if (translitToggle.checked) trackGoal("kbd_translit");
+    renderTranslit();
+  });
 
   copyButton?.addEventListener("click", async () => {
     const text = textarea.value;
@@ -166,6 +182,7 @@ function init(root: HTMLElement): void {
     }
     try {
       await navigator.clipboard.writeText(text);
+      trackGoal("kbd_copy");
       setStatus("Текст скопирован.");
       return;
     } catch {
@@ -175,6 +192,7 @@ function init(root: HTMLElement): void {
     textarea.select();
     const copied = exec("copy");
     textarea.setSelectionRange(selectionStart, selectionEnd);
+    if (copied) trackGoal("kbd_copy");
     setStatus(copied ? "Текст скопирован." : "Не удалось скопировать. Выделите текст и скопируйте его вручную.");
   });
 

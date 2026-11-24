@@ -6,9 +6,10 @@ import { APP_STORE_PAGE_URL, GOOGLE_PLAY_URL, RUSTORE_URL, STORE_GLYPHS } from "
 interface Props {
   centered?: boolean;
   class?: string;
+  placement?: string;
 }
 
-const { centered = false, class: className } = Astro.props;
+const { centered = false, class: className, placement } = Astro.props;
 const stores = [
   { href: APP_STORE_PAGE_URL, kicker: "Загрузите в", name: "App Store", label: "Скачать Acrab в App Store для iPhone и iPad", icon: STORE_GLYPHS["App Store"] },
   { href: RUSTORE_URL, kicker: "Доступно в", name: "RuStore", label: "Скачать Acrab в RuStore для Android", icon: STORE_GLYPHS["RuStore"] },
@@ -16,7 +17,7 @@ const stores = [
 ];
 ---
 
-<div class:list={[className, "store-links", { "store-links-centered": centered }]} aria-label="Скачать Acrab">
+<div class:list={[className, "store-links", { "store-links-centered": centered }]} data-cta-placement={placement} aria-label="Скачать Acrab">
   {stores.map((store) => (
     <a class="store-link" href={store.href} target="_blank" rel="noopener" aria-label={store.label}>
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={store.icon} /></svg>

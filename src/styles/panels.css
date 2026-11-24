@@ -19,8 +19,35 @@
   box-shadow: var(--shadow-high);
 }
 /* /get кладёт панель прямо в main, без обёртки с полями. */
-.legal-page > .panel { width: min(600px, calc(100% - 32px)); }
+.legal-page > .panel { width: min(640px, calc(100% - 32px)); }
+.get-panel { display: grid; gap: 22px; }
+.get-qr {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--c-hairline);
+}
+.get-qr[hidden] { display: none; }
+.get-qr-box {
+  padding: 10px;
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+}
+.get-qr-svg { display: block; width: 100%; height: auto; border-radius: var(--r-sm); }
+.get-qr-copy { display: grid; gap: 10px; }
+.get-qr-title { margin: 0; font-size: var(--t-title-small); line-height: var(--lh-title-small); }
+.get-qr-lead { margin: 0; color: var(--c-text-secondary); font-size: var(--t-callout); line-height: var(--lh-callout); }
+.get-qr-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.get-qr-status { min-height: 1.2em; margin: 0; color: var(--c-brand-text); font-size: var(--t-footnote); font-weight: 600; }
+.get-stores { display: grid; gap: 12px; }
+.get-store-note { margin: 0; color: var(--c-text-secondary); font-size: var(--t-footnote); line-height: var(--lh-footnote); text-align: center; }
+
 @media (max-width: 640px) {
+  .get-qr { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .get-qr-box { width: 184px; }
+  .get-qr-actions { justify-content: center; }
   /* Три магазина в две колонки: последний встаёт по центру нижней строки. */
   .panel .store-links > .store-link:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; }
 }

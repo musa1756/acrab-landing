@@ -22,19 +22,23 @@ const ROWS = [
     <h2 class="sc-title" id="fv-title">Что бесплатно, а что в полной версии</h2>
     <p class="sc-lead">Бесплатная версия не ограничена по времени: можно начать и проверить, подходит ли вам Acrab.</p>
   </div>
-  <div class="fv-table" role="table" aria-label="Сравнение бесплатной и полной версии" data-appear>
-    <div class="fv-row fv-row-head" role="row">
-      <span role="columnheader">Возможность</span>
-      <span role="columnheader">Бесплатно</span>
-      <span role="columnheader">Premium</span>
-    </div>
-    {ROWS.map((row) => (
-      <div class="fv-row" role="row">
-        <span class="fv-name" role="rowheader">{row.title}</span>
-        <span class="fv-free" role="cell">{row.free}</span>
-        <span class="fv-full" role="cell">{row.full}</span>
-      </div>
-    ))}
-  </div>
+  <table class="fv-table" aria-label="Сравнение бесплатной и полной версии" data-appear>
+    <thead>
+      <tr class="fv-row fv-row-head">
+        <th scope="col">Возможность</th>
+        <th scope="col">Бесплатно</th>
+        <th scope="col">Premium</th>
+      </tr>
+    </thead>
+    <tbody>
+      {ROWS.map((row) => (
+        <tr class="fv-row">
+          <th class="fv-name" scope="row">{row.title}</th>
+          <td class="fv-free">{row.free}</td>
+          <td class="fv-full">{row.full}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
   <p class="fv-note">Лимиты обновляются каждый день в 03:00 по Москве; когда лимит исчерпан, уроки работают как обычно. <a href="/buy/">Как оплатить Premium</a></p>
 </section>

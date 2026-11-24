@@ -1,0 +1,5 @@
+/* Единый CSS-вход для /arabic-keyboard/: объединяет стили статей и клавиатуры
+   в один файл без дублирующих блокирующих <link rel="stylesheet">. */
+
+@import "./page-guide.css";
+@import "./keyboard.css";

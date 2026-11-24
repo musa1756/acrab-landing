@@ -7,7 +7,7 @@ import "../../styles/page-updates.css";
 const releases = (await getCollection("changelog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<PageLayout section="updates" title="Обновления Acrab: что нового в приложении для арабского" description="История версий Acrab, приложения для изучения литературного арабского на русском: книги в Библиотеке, друзья, Анки, новые уроки и исправления." canonical="https://acrab.ru/about/" ogTitle="Обновления Acrab" ogDescription="Что изменилось в каждой версии Acrab: новинки, улучшения и исправления." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
+<PageLayout section="updates" title="Обновления Acrab: что нового в приложении для арабского" description="История версий Acrab, приложения для изучения литературного арабского на русском: книги в Библиотеке, друзья, Анки, новые уроки и исправления." canonical="https://acrab.ru/about/" robots="index, follow, max-image-preview:large" ogTitle="Обновления Acrab" ogDescription="Что изменилось в каждой версии Acrab: новинки, улучшения и исправления." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg">
     <div class="page-head page-head-centered">
       <div class="page-head-inner">
         <p class="eyebrow">Обновления</p>

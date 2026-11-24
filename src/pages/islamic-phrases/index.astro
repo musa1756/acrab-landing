@@ -1,0 +1,253 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import AudioButton from "../../components/AudioButton.astro";
+import { richArabic } from "../../lib/rich-arabic";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Исламские фразы на арабском: значение, огласовки, смысл | Acrab",
+  "description": "Основные исламские выражения на арабском с полными огласовками и точным переводом: бисмилляh, альхамдулилляh, ин шаа Аллаh, ма шаа Аллаh и другие.",
+  "ogTitle": "Исламские фразы на арабском языке",
+  "ogDescription": "Точный смысл, полные огласовки и ситуации употребления для 11 основных исламских выражений на арабском.",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Учебный экран с арабскими фразами и полными огласовками в Acrab"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Исламские фразы на арабском: значение, огласовки и когда говорить",
+  description: seo.description,
+  path: "/islamic-phrases/",
+  image: seo.ogImage,
+  datePublished: "2026-11-24",
+  dateModified: "2026-11-24",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Исламские фразы на арабском", path: "/islamic-phrases/" },
+  ],
+};
+
+// Озвучка подключается только для фраз, аудиофайлы которых есть в public/assets/audio/.
+const phrases = [
+  {
+    ar: "بِسْمِ اللَّهِ",
+    reading: "бисми-Лляh",
+    meaning: "Начинаю с Именем Аллаhа",
+    when: "Перед началом любого благого дела, едой, учёбой или выходом из дома.",
+  },
+  {
+    ar: "الْحَمْدُ لِلَّهِ",
+    reading: "аль-хамду ли-Лляh",
+    meaning: "Хвала Аллаhу",
+    when: "В знак благодарности, после еды, при доброй вести или в ответе на вопрос о делах.",
+  },
+  {
+    ar: "إِنْ شَاءَ اللَّهُ",
+    reading: "ин шаа Аллаh",
+    meaning: "если хотел Аллаh",
+    when: "Когда речь идёт о планах и событиях в будущем.",
+  },
+  {
+    ar: "مَا شَاءَ اللَّهُ",
+    reading: "ма шаа Аллаh",
+    meaning: "Так хотел Аллаh",
+    when: "При виде чего-то красивого, радостного или вызывающего восхищение.",
+  },
+  {
+    ar: "سُبْحَانَ اللَّهِ",
+    reading: "субхана-Ллаh",
+    meaning: "пречист Аллаh от всех недостатков",
+    when: "В поминании, при удивлении и размышлении о сотворённом.",
+  },
+  {
+    ar: "أَسْتَغْفِرُ اللَّهَ",
+    reading: "астагфиру-Ллаh",
+    meaning: "Прошу прощения у Аллаhа",
+    when: "При раскаянии, осознании ошибки или в ежедневном поминании.",
+  },
+  {
+    ar: "بَارَكَ اللَّهُ فِيكَ",
+    reading: "барака-Ллаhу фика",
+    meaning: "Да благословит тебя Аллаh",
+    when: "Пожелание блага мужчине; женщине — فِيكِ (фики), нескольким — فِيكُمْ (фикум).",
+  },
+  {
+    ar: "جَزَاكَ اللَّهُ خَيْرًا",
+    reading: "джазака-Ллаhу хайран",
+    meaning: "Пусть Аллаh воздаст тебе добром",
+    when: "Благодарность за помощь или доброе дело (мужчине).",
+    audio: "/assets/audio/jazaka-llahu-khayran.mp3",
+  },
+  {
+    ar: "السَّلَامُ عَلَيْكُمْ",
+    reading: "ас-саляму алайкум",
+    meaning: "мир вам",
+    when: "Приветствие мусульман; ответ — وَعَلَيْكُمُ السَّلَامُ («и вам мир»).",
+    audio: "/assets/audio/as-salamu-alaykum.mp3",
+  },
+  {
+    ar: "عَلَيْهِ السَّلَامُ",
+    reading: "алайhи-с-салям",
+    meaning: "мир ему",
+    when: "После упоминания имён пророков и ангелов.",
+  },
+  {
+    ar: "صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ",
+    reading: "салла-Ллаhу алайhи ва саллам",
+    meaning: "ﷺ",
+    when: "Салават после упоминания имени Пророка Мухаммада ﷺ.",
+  },
+];
+
+const faq = [
+  {
+    question: "В чём разница между «ин шаа Аллаh» и «ма шаа Аллаh»?",
+    answer: "إِنْ شَاءَ اللَّهُ («если хотел Аллаh») говорят о том, что ещё впереди — о планах и намерениях. مَا شَاءَ اللَّهُ («Так хотел Аллаh») говорят о том, что уже произошло или находится перед глазами — например, при радости и восхищении.",
+  },
+  {
+    question: "Как правильно ответить на «جَزَاكَ اللَّهُ خَيْرًا»?",
+    answer: "В ответ говорят وَإِيَّاكَ («ва-иййака» — «и тебе тоже») мужчине, وَإِيَّاكِ («ва-иййаки») женщине и وَإِيَّاكُمْ («ва-иййакум») нескольким людям.",
+  },
+  {
+    question: "Меняются ли окончания в «بَارَكَ اللَّهُ فِيكَ» для женщины и группы людей?",
+    answer: "Да. Мужчине говорят بَارَكَ اللَّهُ فِيكَ («барака-Ллаhу фика»), женщине — بَارَكَ اللَّهُ فِيكِ («барака-Ллаhу фики»), а нескольким людям — بَارَكَ اللَّهُ فِيكُمْ («барака-Ллаhу фикум»).",
+  },
+  {
+    question: "Почему в русском тексте пишется «Аллаh» с латинской буквой h?",
+    answer: "Арабская буква ه в имени اللَّهُ обозначает лёгкий выдох, а не твёрдый русский звук «х». В материалах Acrab для точности произношения и единого стандарта используется написание «Аллаh».",
+  },
+  {
+    question: "Почему после имени Пророка Мухаммада ﷺ ставят знак ﷺ?",
+    answer: "Знак ﷺ — это сокращённая каллиграфическая запись салавата صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ. В русских переводах и текстах Acrab он используется в этом едином виде.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+  <header class="guide-hero">
+    <p class="eyebrow">Словарь и смысл</p>
+    <h1 class="page-title">Исламские фразы на арабском</h1>
+    <p class="guide-lead">В повседневной речи мусульман и в арабских книгах постоянно встречаются короткие выражения, которые часто слышат на слух, но не всегда видят с полными огласовками. Ниже — точное написание, чтение и смысл одиннадцати основных формул.</p>
+    <div class="phrase-hero tile tile-gold">
+      <span class="phrase-hero-ar" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span>
+      <div class="phrase-hero-meta"><strong>ас-саляму алайкум</strong><small>«мир вам»</small></div>
+      <AudioButton large src="/assets/audio/as-salamu-alaykum.mp3" label="ас-саляму алайкум" />
+    </div>
+    <div class="guide-answer card"><strong>Коротко:</strong> <span class="arabic-inline" lang="ar" dir="rtl">بِسْمِ اللَّهِ</span> — «Начинаю с Именем Аллаhа», <span class="arabic-inline" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ</span> — «Хвала Аллаhу», <span class="arabic-inline" lang="ar" dir="rtl">إِنْ شَاءَ اللَّهُ</span> — «если хотел Аллаh», <span class="arabic-inline" lang="ar" dir="rtl">مَا شَاءَ اللَّهُ</span> — «Так хотел Аллаh», <span class="arabic-inline" lang="ar" dir="rtl">سُبْحَانَ اللَّهِ</span> — «пречист Аллаh от всех недостатков».</div>
+    <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+  </header>
+
+  <div class="guide-layout">
+    <aside class="guide-toc" aria-label="Содержание статьи">
+      <strong>В этой статье</strong>
+      <a href="#daily">Начало дела и благодарность</a>
+      <a href="#will">Ин шаа Аллаh и ма шаа Аллаh</a>
+      <a href="#dhikr">Поминание и покаяние</a>
+      <a href="#people">Приветствие и пожелания людям</a>
+      <a href="#prophets">Упоминание пророков</a>
+      <a href="#table">Все фразы в таблице</a>
+      <a href="#faq">Частые вопросы</a>
+    </aside>
+
+    <article class="guide-content">
+      <section id="daily">
+        <h2>Начало дела и благодарность: «бисмилляh» и «альхамдулилляh»</h2>
+        <ul class="guide-checklist">
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">بِسْمِ اللَّهِ</span> («бисми-Лляh»)</strong> — «Начинаю с Именем Аллаhа». Фразу произносят перед началом дела, едой, чтением и дорогой. Обратите внимание на слияние предлога <span class="arabic-inline" lang="ar" dir="rtl">بِـ</span> и слова <span class="arabic-inline" lang="ar" dir="rtl">اسْمٌ</span>: соединительный алиф на письме опускается.</li>
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ</span> («аль-хамду ли-Лляh»)</strong> — «Хвала Аллаhу». Её говорят после еды, при добрых новостях и в обычном ответе на вопрос о делах: <span class="arabic-inline" lang="ar" dir="rtl">الْحَمْدُ لِلَّهِ، أَنَا بِخَيْرٍ</span> — «Хвала Аллаhу, у меня всё хорошо».<AudioButton src="/assets/audio/alhamdulillah-ana-bi-khayr.mp3" label="аль-хамду ли-Лляh, ана би-хайр" /></li>
+        </ul>
+      </section>
+
+      <section id="will">
+        <h2>Планы и радость: «ин шаа Аллаh» и «ма шаа Аллаh»</h2>
+        <p>Эти две формулы часто путают новички, хотя по времени и ситуации они чётко различаются:</p>
+        <div class="comparison-pair" data-appear-group>
+          <div class="card card-plain">
+            <span class="comparison-label">О будущем</span>
+            <h3><span class="arabic-inline" lang="ar" dir="rtl">إِنْ شَاءَ اللَّهُ</span></h3>
+            <p><strong>«если хотел Аллаh»</strong>. Произносят, когда строят планы или говорят о будущих делах: «Встретимся завтра, если хотел Аллаh».</p>
+          </div>
+          <div class="card card-plain">
+            <span class="comparison-label">О свершившемся</span>
+            <h3><span class="arabic-inline" lang="ar" dir="rtl">مَا شَاءَ اللَّهُ</span></h3>
+            <p><strong>«Так хотел Аллаh»</strong>. Произносят при виде чего-то прекрасного, при радости за человека или признании блага, которое уже есть.</p>
+          </div>
+        </div>
+        <div class="guide-note card card-neutral card-warm">
+          <strong>Важно на письме:</strong> в арабском <span class="arabic-inline" lang="ar" dir="rtl">إِنْ شَاءَ اللَّهُ</span> пишется в три отдельных слова (<span class="arabic-inline" lang="ar" dir="rtl">إِنْ</span> + <span class="arabic-inline" lang="ar" dir="rtl">شَاءَ</span> + <span class="arabic-inline" lang="ar" dir="rtl">اللَّهُ</span>), а не слитно.
+        </div>
+      </section>
+
+      <section id="dhikr">
+        <h2>Поминание и просьба о прощении</h2>
+        <ul class="guide-checklist">
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">سُبْحَانَ اللَّهِ</span> («субхана-Ллаh»)</strong> — «пречист Аллаh от всех недостатков». Этим выражением прославляют Аллаhа и подчёркивают Его совершенство, отсутствие каких-либо недостатков и непохожесть на творения.</li>
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">أَسْتَغْفِرُ اللَّهَ</span> («астагфиру-Ллаh»)</strong> — «Прошу прощения у Аллаhа». Глагол стоит в первом лице единственного числа; слово <span class="arabic-inline" lang="ar" dir="rtl">اللَّهَ</span> получает окончание фатхи (винительный падеж).</li>
+        </ul>
+        <div class="guide-note card card-neutral card-warm">
+          <strong>Читайте с огласовками с самого старта:</strong> в Acrab все слова, фразы и книги Библиотеки показаны с точными огласовками и проверенными переводами.
+          <div class="hero-downloads"><a class="btn btn-compact" href="/get/">Попробовать Acrab бесплатно</a></div>
+        </div>
+      </section>
+
+      <section id="people">
+        <h2>Приветствие, благодарность и добрые пожелания</h2>
+        <p>В обращении к людям у формул меняются местоименные окончания в зависимости от того, говорите ли вы мужчине, женщине или группе людей:</p>
+        <div class="vowel-row vowel-row-3 vowel-row-phrases" aria-label="Формы пожелания блага" data-appear-group>
+          <div class="tile tile-gold"><span lang="ar" dir="rtl">بَارَكَ اللَّهُ فِيكَ</span><strong>барака-Ллаhу фика</strong><small>мужчине</small></div>
+          <div class="tile tile-gold"><span lang="ar" dir="rtl">بَارَكَ اللَّهُ فِيكِ</span><strong>барака-Ллаhу фики</strong><small>женщине</small></div>
+          <div class="tile tile-gold"><span lang="ar" dir="rtl">بَارَكَ اللَّهُ فِيكُمْ</span><strong>барака-Ллаhу фикум</strong><small>нескольким людям</small></div>
+        </div>
+        <ul class="guide-checklist">
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">بَارَكَ اللَّهُ فِيكَ</span></strong> — «Да благословит тебя Аллаh». В ответ часто говорят <span class="arabic-inline" lang="ar" dir="rtl">وَفِيكَ بَارَكَ اللَّهُ</span> («и тебя да благословит Аллаh»).</li>
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">جَزَاكَ اللَّهُ خَيْرًا</span></strong> — «Пусть Аллаh воздаст тебе добром».<AudioButton src="/assets/audio/jazaka-llahu-khayran.mp3" label="джазака-Ллаhу хайран" /> Женщине говорят <span class="arabic-inline" lang="ar" dir="rtl">جَزَاكِ اللَّهُ خَيْرًا</span>, нескольким людям — <span class="arabic-inline" lang="ar" dir="rtl">جَزَاكُمُ اللَّهُ خَيْرًا</span>. Подробнее о словах благодарности — в статье <a href="/arabic-thank-you/">«Спасибо на арабском»</a>.</li>
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ عَلَيْكُمْ</span></strong> — «мир вам», в ответ — <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> («и вам мир»).<AudioButton src="/assets/audio/as-salamu-alaykum.mp3" label="ас-саляму алайкум" /> Подробнее о приветствиях — в статье <a href="/arabic-hello/">«Привет на арабском»</a>.</li>
+        </ul>
+      </section>
+
+      <section id="prophets">
+        <h2>Формулы при упоминании пророков</h2>
+        <ul class="guide-checklist">
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">عَلَيْهِ السَّلَامُ</span> («алайhи-с-салям»)</strong> — «мир ему». Произносят после имени пророка или ангела.</li>
+          <li><strong><span class="arabic-inline" lang="ar" dir="rtl">صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ</span> («салла-Ллаhу алайhи ва саллам»)</strong> — салават после упоминания Пророка Мухаммада ﷺ; в русском тексте передаётся знаком <strong>ﷺ</strong>.</li>
+        </ul>
+      </section>
+
+      <section id="table">
+        <h2>Все выражения в одной таблице</h2>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">По-арабски</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Значение и ситуация</th>
+              </tr>
+            </thead>
+            <tbody>
+              {phrases.map((item) => (
+                <tr>
+                  <th scope="row" class:list={["ar", { "ar-small": item.ar.split(" ").length > 2 }]} lang="ar" dir="rtl">{item.ar}</th>
+                  <td><strong>{item.reading}</strong>{item.audio && <AudioButton src={item.audio} label={item.reading} />}</td>
+                  <td><strong>{item.meaning}</strong><br /><small set:html={richArabic(item.when)} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
+        <GuideCta title="Учите арабские фразы и чтение с огласовками" text="В Acrab стартовый курс с буквами, огласовками, приветствиями и базовой лексикой бесплатен без ограничения по сроку." />
+      </section>
+
+      <GuideFaq items={faq} />
+    </article>
+  </div>
+
+  <nav class="related-guides" data-appear-group aria-label="Другие статьи">
+    <a href="/arabic-hello/"><span>Приветствия</span><strong>Привет на арабском →</strong></a>
+    <a href="/arabic-thank-you/"><span>Благодарность</span><strong>Спасибо на арабском →</strong></a>
+    <a href="/qiraa-rashida/"><span>Первое чтение</span><strong>Аль-Кироату ар-Рашида →</strong></a>
+  </nav>
+</GuideLayout>

@@ -1,0 +1,20 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  text: string;
+  ctaLabel?: string;
+}
+
+const { title, text, ctaLabel = "Открыть Acrab" } = Astro.props;
+---
+
+<aside class="guide-mid-cta card card-warm" aria-label="Попробовать в приложении Acrab" data-appear>
+  <span class="icon-badge icon-badge-large"><Icon name="device-mobile" /></span>
+  <div class="guide-mid-cta-copy">
+    <p class="guide-mid-cta-title">{title}</p>
+    <p class="guide-mid-cta-text">{text}</p>
+  </div>
+  <a class="btn btn-compact guide-mid-cta-btn" href="/get/" data-cta-placement="mid-article">{ctaLabel}</a>
+</aside>

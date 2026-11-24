@@ -1,0 +1,295 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import Icon from "../../components/Icon.astro";
+import { pageUrl } from "../../lib/routes";
+import { richArabic } from "../../lib/rich-arabic";
+import {
+  articleSchema,
+  breadcrumbSchema,
+  formatRuDate,
+  webApplicationSchema,
+  type GuideMeta,
+} from "../../seo/schema";
+import {
+  VERB_MODIFIED,
+  VERB_PUBLISHED,
+  VERB_SECTION_PATH,
+  WEB_VERBS,
+  normalizeArabicSearch,
+  verbPath,
+} from "../../data/verbs-web";
+import "../../styles/page-verbs.css";
+
+const canonical = pageUrl(VERB_SECTION_PATH);
+
+const seo = {
+  title: "Спряжение арабских глаголов онлайн: таблицы с огласовками | Acrab",
+  description:
+    "Бесплатный справочник спряжения арабских глаголов: 58 частотных глаголов I–X пород с полными огласовками, корнем, масдаром и таблицами на 14 строк.",
+  ogTitle: "Спряжение арабских глаголов онлайн",
+  ogDescription:
+    "Полные таблицы прошедшего, настоящего и повелительного времени с огласовками, корнями и породами фусхи.",
+  ogType: "website",
+  ogImage: "https://acrab.ru/assets/about/lesson-theory.webp",
+  ogImageAlt: "Инструменты и теория арабского языка в Acrab",
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Спряжение арабских глаголов онлайн",
+  description: seo.description,
+  path: "/arabic-verbs/",
+  image: seo.ogImage,
+  datePublished: VERB_PUBLISHED,
+  dateModified: VERB_MODIFIED,
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Спряжение глаголов", path: "/arabic-verbs/" },
+  ],
+};
+
+const toolSchema = webApplicationSchema({
+  name: "Спряжение арабских глаголов онлайн — Acrab",
+  description: seo.description,
+  path: VERB_SECTION_PATH,
+});
+
+const form1Count = WEB_VERBS.filter((verb) => verb.form === 1).length;
+const derivedCount = WEB_VERBS.length - form1Count;
+
+const formOverview = [
+  ["I", "فَعَلَ / فَعِلَ / فَعُلَ", "Базовое значение корня", "كَتَبَ — писать"],
+  ["II", "فَعَّلَ", "Усиление или побуждение («заставить, научить»)", "عَلَّمَ — обучать"],
+  ["III", "فَاعَلَ", "Действие, направленное на другого", "سَاعَدَ — помогать"],
+  ["IV", "أَفْعَلَ", "Переходность, побуждение к действию", "أَرْسَلَ — отправлять"],
+  ["V", "تَفَعَّلَ", "Возвратное действие ко II породе", "تَعَلَّمَ — учиться"],
+  ["VI", "تَفَاعَلَ", "Взаимное действие нескольких сторон", "تَعَاوَنَ — сотрудничать"],
+  ["VII", "اِنْفَعَلَ", "Возвратно-страдательное значение", "اِنْطَلَقَ — отправляться"],
+  ["VIII", "اِفْتَعَلَ", "Действие для себя, вовлечённость", "اِشْتَرَى — покупать"],
+  ["X", "اِسْتَفْعَلَ", "Просьба, поиск или оценка действия", "اِسْتَغْفَرَ — просить прощения"],
+] as const;
+
+const faq = [
+  {
+    question: "Почему в таблице спряжения 14 строк, а различающихся арабских форм — 13?",
+    answer:
+      "Полная сетка лиц, чисел и родов даёт 14 строк (1-е, 2-е и 3-е лицо × единственное, двойственное и множественное число × мужской и женский род). При этом во 2-м лице двойственного числа (أَنْتُمَا — «вы двое») форма глагола для мужского и женского рода полностью совпадает, поэтому уникальных арабских форм в таблице ровно 13.",
+  },
+  {
+    question: "Какая форма считается начальной у арабского глагола?",
+    answer:
+      "В арабских словарях нет инфинитива вроде русского «писать». Начальной формой служит прошедшее время 3-го лица единственного числа мужского рода («он сделал»): например, كَتَبَ («он написал») в словаре переводится как «писать».",
+  },
+  {
+    question: "Как искать глагол на этой странице?",
+    answer:
+      "Введите русское значение («читать», «покупать»), арабское слово с огласовками или без них (например, كتب или يكتب) либо три буквы корня (ك ت ب). Список отфильтруется мгновенно без перезагрузки страницы.",
+  },
+  {
+    question: "Чем отличаются I порода и производные II–X породы?",
+    answer:
+      "I порода состоит только из трёх корневых букв и задаёт базовый смысл (عَلِمَ — «знать»). Производные породы II–X добавляют к корню приставки, удвоение или долгий гласный и предсказуемо меняют значение: عَلَّمَ (II) — «обучать», تَعَلَّمَ (V) — «учиться».",
+  },
+  {
+    question: "Где найти спряжение редких глаголов и озвучку форм?",
+    answer:
+      "На сайте собраны 58 самых частотных глаголов фусхи. В мобильном приложении Acrab встроен офлайн-справочник на более чем 1 200 арабских глаголов с поиском по любой форме, корнями и отдельной тренировкой спряжения.",
+  },
+];
+---
+
+<PageLayout
+  {...seo}
+  canonical={canonical}
+  section="articles"
+  jsonLd={[articleSchema(guide), breadcrumbSchema(guide.crumbs), toolSchema]}
+>
+  <div class="guide-page">
+    <Breadcrumbs crumbs={guide.crumbs} />
+
+    <header class="guide-hero">
+      <p class="eyebrow">Бесплатный справочник</p>
+      <h1 class="page-title">Спряжение арабских глаголов онлайн</h1>
+      <p class="guide-lead">
+        {WEB_VERBS.length} частотных глаголов литературного арабского (фусхи) из базы Acrab: полные таблицы прошедшего, настоящего и повелительного времени с огласовками, корнем и масдаром.
+      </p>
+      <div class="guide-answer card">
+        <strong>Коротко:</strong> выберите глагол из списка или найдите его по-русски, по-арабски или по корню. В каждой карточке — 14 строк спряжения (13 различающихся арабских форм), порода (I–X), масдар и подсказка для запоминания.
+      </div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <section class="vb-tool card card-plain" aria-labelledby="vb-finder-heading" data-vb-directory>
+      <h2 class="vb-visually-hidden" id="vb-finder-heading">Поиск арабских глаголов</h2>
+      <div class="vb-controls">
+        <div class="vb-search-wrap">
+          <Icon name="magnifying-glass" class="vb-search-icon" />
+          <label class="vb-visually-hidden" for="vb-search-input">Поиск глагола по-русски, по-арабски или по корню</label>
+          <input
+            id="vb-search-input"
+            type="search"
+            class="vb-search-input ym-disable-keys"
+            placeholder="Найти глагол: писать, كَتَبَ, يكتب или ك ت ب"
+            autocomplete="off"
+            spellcheck="false"
+            data-vb-search
+          />
+          <button type="button" class="vb-clear-btn" aria-label="Очистить поиск" data-vb-clear hidden>
+            <Icon name="x" />
+          </button>
+        </div>
+
+        <div class="vb-filters">
+          <div class="vb-filter-chips" role="group" aria-label="Фильтр по породам">
+            <button type="button" class="chip vb-filter-chip" data-vb-filter="all" aria-pressed="true">
+              Все ({WEB_VERBS.length})
+            </button>
+            <button type="button" class="chip vb-filter-chip" data-vb-filter="1" aria-pressed="false">
+              I порода ({form1Count})
+            </button>
+            <button type="button" class="chip vb-filter-chip" data-vb-filter="derived" aria-pressed="false">
+              II–X породы ({derivedCount})
+            </button>
+          </div>
+          <p class="vb-status" role="status" aria-live="polite" data-vb-status>
+            Показано: {WEB_VERBS.length} глаголов
+          </p>
+        </div>
+      </div>
+
+      <div class="vb-grid" data-vb-grid>
+        {WEB_VERBS.map((verb) => {
+          const arSearch = [
+            verb.plain,
+            verb.present3m,
+            verb.imperative2m,
+            verb.masdar,
+            verb.rootCompact,
+          ]
+            .map(normalizeArabicSearch)
+            .join(" ");
+          return (
+            <a
+              href={verbPath(verb.slug)}
+              class="vb-card tile tile-gold"
+              data-vb-card
+              data-form={verb.form}
+              data-ru={`${verb.russian} ${verb.masdarRu}`}
+              data-ar={arSearch}
+            >
+              <span class="vb-card-top">
+                <span class="vb-card-ar" lang="ar" dir="rtl">{verb.arabic}</span>
+                <span class="vb-card-form">{verb.formRoman} порода</span>
+              </span>
+              <span class="vb-card-ru">{verb.russian}</span>
+              <span class="vb-card-meta">
+                <span class="vb-card-pres" lang="ar" dir="rtl">{verb.present3m}</span>
+                <span>корень <span class="arabic-inline" lang="ar" dir="rtl">{verb.root}</span></span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+
+      <div class="vb-empty card card-neutral card-warm" data-vb-empty hidden>
+        <strong>По этому запросу ничего не найдено</strong>
+        <p>Попробуйте другой вариант перевода, корень из трёх букв или сбросьте фильтр. В приложении Acrab доступны более 1 200 глаголов.</p>
+        <button type="button" class="btn btn-outline btn-small" data-vb-reset>Показать все глаголы</button>
+      </div>
+    </section>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание страницы">
+        <strong>На странице</strong>
+        <a href="#rows-14">14 строк и 13 форм</a>
+        <a href="#roots-forms">Корни и 10 пород</a>
+        <a href="#tenses">Три времени</a>
+        <a href="#app">В приложении Acrab</a>
+        <a href="#faq">Частые вопросы</a>
+      </aside>
+
+      <article class="guide-content">
+        <section id="rows-14">
+          <h2>Почему в таблице 14 строк, но 13 арабских форм</h2>
+          <p>
+            В арабском глаголе переплетаются три категории: <strong>лицо</strong> (1-е, 2-е, 3-е), <strong>число</strong> (единственное, двойственное, множественное) и <strong>род</strong> (мужской и женский). Если выписать все сочетания по порядку, получается полная сетка из <strong>14 строк</strong>:
+          </p>
+          <ul class="guide-checklist">
+            <li><strong>1-е лицо (2 строки):</strong> <span class="arabic-inline" lang="ar" dir="rtl">أَنَا</span> («я») и <span class="arabic-inline" lang="ar" dir="rtl">نَحْنُ</span> («мы») — род в 1-м лице не различается.</li>
+            <li><strong>2-е лицо (6 строк):</strong> мужской и женский род в единственном, двойственном и множественном числе.</li>
+            <li><strong>3-е лицо (6 строк):</strong> мужской и женский род в единственном, двойственном и множественном числе.</li>
+          </ul>
+          <div class="guide-note card card-neutral card-warm">
+            <strong>Важная деталь:</strong> во 2-м лице двойственного числа (<span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمَا</span> — «вы двое») мужская и женская формы полностью совпадают (например, <span class="arabic-inline" lang="ar" dir="rtl">كَتَبْتُمَا</span> и <span class="arabic-inline" lang="ar" dir="rtl">تَكْتُبَانِ</span>). Поэтому при 14 строках таблицы реально различающихся арабских форм — ровно <strong>13</strong>.
+          </div>
+        </section>
+
+        <section id="roots-forms">
+          <h2>Корни и 10 пород арабских глаголов</h2>
+          <p>
+            Большинство арабских глаголов строится из <strong>трёхсогласного корня</strong> — например, <span class="arabic-inline" lang="ar" dir="rtl">ك ت ب</span> (всё, что связано с письмом) или <span class="arabic-inline" lang="ar" dir="rtl">ع ل م</span> (знание). Подставляя корень в разные морфологические модели — <strong>породы</strong> (в европейской традиции их нумеруют римскими цифрами I–X), язык образует новые глаголы с предсказуемым оттенком смысла.
+          </p>
+          <div class="guide-table-scroll card card-plain" data-appear>
+            <table class="guide-table">
+              <caption>Основные породы, представленные в каталоге</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Порода</th>
+                  <th scope="col">Шаблон</th>
+                  <th scope="col">Типичный оттенок смысла</th>
+                  <th scope="col">Пример</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formOverview.map(([roman, pattern, meaning, example]) => (
+                  <tr>
+                    <td><strong>{roman}</strong></td>
+                    <th scope="row" class="ar ar-small" lang="ar" dir="rtl">{pattern}</th>
+                    <td>{meaning}</td>
+                    <td set:html={richArabic(example)} />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="tenses">
+          <h2>Три формы в карточке каждого глагола</h2>
+          <p>
+            В арабской грамматике выделяют два основных времени и повелительное наклонение — их достаточно, чтобы строить высказывания о прошлом, настоящем, будущем и просьбах:
+          </p>
+          <ul class="guide-checklist">
+            <li><strong>Прошедшее время (<span class="arabic-inline" lang="ar" dir="rtl">الْمَاضِي</span>):</strong> изменяется только окончаниями (<span class="arabic-inline" lang="ar" dir="rtl">كَتَبْتُ</span> — «я написал», <span class="arabic-inline" lang="ar" dir="rtl">كَتَبَتْ</span> — «она написала»).</li>
+            <li><strong>Настоящее время (<span class="arabic-inline" lang="ar" dir="rtl">الْمُضَارِعُ</span>):</strong> использует приставки <span class="arabic-inline" lang="ar" dir="rtl">أَ / نَ / تَ / يَ</span> и окончания; добавив перед ним частицу <span class="arabic-inline" lang="ar" dir="rtl">سَـ</span> или <span class="arabic-inline" lang="ar" dir="rtl">سَوْفَ</span>, вы получите будущее время.</li>
+            <li><strong>Повелительное наклонение (<span class="arabic-inline" lang="ar" dir="rtl">الْأَمْرُ</span>):</strong> образуется только для 2-го лица (6 строк, 5 различающихся форм, поскольку <span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمَا</span> совпадает для обоих родов).</li>
+          </ul>
+        </section>
+
+        <section id="app">
+          <h2>Все глаголы и тренировки — в Acrab</h2>
+          <p>
+            На сайте открыты {WEB_VERBS.length} самых частотных глаголов. В мобильном приложении Acrab справочник работает без интернета и хранит более 1 200 глаголов: вы можете ввести любую спряжённую форму вроде <span class="arabic-inline" lang="ar" dir="rtl">نَكْتُبُ</span> или русское слово, открыть семью однокоренных слов и закрепить формы в тренировке спряжения.
+          </p>
+          <GuideCta
+            title="В приложении Acrab — более 1 200 глаголов"
+            text="Офлайн-спряжение, озвучка, поиск по корням и тренировка форм в одном русскоязычном приложении для iPhone, iPad и Android."
+          />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" data-appear-group aria-label="Полезные разделы">
+      <a href="/arabic-test/"><span>Проверка за 2 минуты</span><strong>Тест уровня арабского →</strong></a>
+      <a href="/arabic-keyboard/"><span>Печать с огласовками</span><strong>Арабская клавиатура →</strong></a>
+      <a href="/fusha/"><span>Литературный язык</span><strong>Что такое фусха →</strong></a>
+    </nav>
+  </div>
+
+  <script src="../../scripts/arabic-verbs.ts"></script>
+</PageLayout>

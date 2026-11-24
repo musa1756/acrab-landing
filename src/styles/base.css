@@ -2,6 +2,7 @@
    магазины. Компоненты — kit.css, токены — tokens.css. */
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 html {
   scroll-behavior: smooth;
@@ -248,7 +249,24 @@ p { text-wrap: pretty; }
 }
 .footer-social { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  padding-top: 4px;
+}
+.footer-nav a {
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--fade) ease-out;
+}
+.footer-nav a:hover { color: var(--c-brand-text); }
+
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; }
 .footer-links a {
   color: var(--c-text-secondary);
   font-size: 14px;
@@ -308,8 +326,18 @@ body.page-plain::before { display: none; }
   .site-header-inner { grid-template-columns: 1fr; justify-items: center; padding: 10px 0 8px; gap: 8px; }
   .brand { justify-self: center; }
   /* Шесть разделов шире телефона (424 px при 343–398), поэтому строка
-     прокручивается, а не обрезается; site-nav.ts держит текущий раздел в виду. */
-  .site-nav { justify-content: safe center; gap: 0; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+     прокручивается, а не обрезается; site-nav.ts держит текущий раздел в виду,
+     а мягкая маска по краям подсказывает, что строка листается. */
+  .site-nav {
+    justify-content: safe center;
+    gap: 0;
+    max-width: 100%;
+    padding-inline: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%);
+  }
   /* Кегль чипа 13 (labelSmall). */
   .site-nav a { padding: 6px; font-size: 13px; line-height: 18px; }
   .nav-full { display: none; }

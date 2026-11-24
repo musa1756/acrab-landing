@@ -185,6 +185,98 @@
 .guide-cta h3 { margin: 0 0 4px; color: var(--c-text); font-size: var(--t-title-small); line-height: var(--lh-title-small); }
 .guide-cta p { max-width: 58ch; margin: 0; color: var(--c-text-secondary); }
 
+/* Промежуточный контекстный призыв внутри длинной статьи. */
+.guide-mid-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 28px 0 8px;
+  padding: 16px 18px;
+}
+.guide-mid-cta-copy { flex: 1 1 240px; min-width: 0; }
+.guide-content .guide-mid-cta-title {
+  margin: 0 0 2px;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-headline);
+  font-weight: 700;
+  line-height: var(--lh-headline);
+}
+.guide-content .guide-mid-cta-text {
+  margin: 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-callout);
+  line-height: var(--lh-callout);
+}
+.guide-mid-cta-btn { flex: 0 0 auto; }
+
+/* Нижняя мобильная плашка «Скачать Acrab» (<= 860 px, sticky-cta.ts). */
+.mobile-sticky-cta {
+  position: fixed;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  z-index: 40;
+  transform: translateY(130%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 240ms var(--ease-press), opacity 180ms ease-out;
+}
+.mobile-sticky-cta[hidden] { display: none; }
+.mobile-sticky-cta.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-sticky-cta-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 10px 10px 10px 12px;
+  border: var(--b-emphasis) solid var(--c-brand);
+  border-radius: var(--r-tile);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-overlay);
+}
+.mobile-sticky-cta-icon { width: 36px; height: 36px; flex: 0 0 auto; border-radius: var(--r-sm); }
+.mobile-sticky-cta-text {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--c-text);
+  font-family: var(--font-rounded);
+  font-size: var(--t-footnote);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.mobile-sticky-cta-btn { flex: 0 0 auto; margin-bottom: 0; }
+.mobile-sticky-cta-close {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-text-secondary);
+  cursor: pointer;
+}
+.mobile-sticky-cta-close svg { width: 16px; height: 16px; fill: currentColor; }
+@media (min-width: 861px) {
+  .mobile-sticky-cta { display: none; }
+}
+@media (max-width: 640px) {
+  .guide-mid-cta-btn { width: 100%; }
+}
+
+/* Подсветка целевой буквы внутри арабского слова (сохраняет связное начертание). */
+.letter-mark { color: var(--c-brand-text); }
+
 .related-guides { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: clamp(64px, 9vw, 110px); }
 
 /* Арабская строка алфавита — карточка вопроса урока (Lesson/Prompt card): светлая, арабский текстом. */
@@ -432,7 +524,12 @@
   .guide-faq > div { padding-inline: 18px; }
 }
 
+@media (max-width: 480px) {
+  .proof-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .audio-btn, .audio-btn-large { transition: none; }
   .audio-btn.is-playing, .audio-btn-large:active, .audio-btn-large.is-playing { transform: none; }
+  .mobile-sticky-cta { transition: opacity var(--fade) ease-out; transform: none; }
 }

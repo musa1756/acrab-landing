@@ -34,8 +34,18 @@ REQUIRED_ROUTES = {
     "/articles": "articles/index.html",
     "/learn-arabic": "learn-arabic/index.html",
     "/arabic-alphabet": "arabic-alphabet/index.html",
+    "/how-to-read-arabic": "how-to-read-arabic/index.html",
     "/fusha": "fusha/index.html",
     "/arabic-app": "arabic-app/index.html",
+    "/duolingo-arabic": "duolingo-arabic/index.html",
+    "/ai-arabic-tutor": "ai-arabic-tutor/index.html",
+    "/bayna-yadayk": "bayna-yadayk/index.html",
+    "/qiraa-rashida": "qiraa-rashida/index.html",
+    "/islamic-phrases": "islamic-phrases/index.html",
+    "/arabic-numbers": "arabic-numbers/index.html",
+    "/arabic-travel-phrases": "arabic-travel-phrases/index.html",
+    "/arabic-test": "arabic-test/index.html",
+    "/arabic-verbs": "arabic-verbs/index.html",
     "/arabic-keyboard": "arabic-keyboard/index.html",
     "/arabic-vowels": "arabic-vowels/index.html",
     "/sun-moon-letters": "sun-moon-letters/index.html",
@@ -58,6 +68,19 @@ LETTER_SLUGS = (
 LETTER_ROUTES = tuple(f"/arabic-alphabet/{slug}" for slug in LETTER_SLUGS)
 REQUIRED_ROUTES.update({route: f"{route.lstrip('/')}/index.html" for route in LETTER_ROUTES})
 
+# Страницы глаголов: /arabic-verbs/<slug>/ (58 частотных глаголов I–X пород).
+VERB_SLUGS = (
+    "kataba", "qaraa", "dhahaba", "faala", "alima", "akala", "shariba", "jalasa", "samia", "fataha",
+    "darasa", "amila", "saala", "qala", "kana", "fahima", "kharaja", "dakhala", "rajaa", "nazara",
+    "akhadha", "wajada", "wasala", "badaa", "talaba", "sakana", "arafa", "hafiza", "nama", "raa",
+    "laiba", "shakara", "hamala", "ghasala", "sabara", "allama", "darrasa", "fakkara", "kallama",
+    "safara", "saada", "shahada", "arada", "ahabba", "arsala", "ata", "taallama", "takallama",
+    "tadhakkara", "taawana", "intalaqa", "intazara", "ishtara", "ijtamaa", "istamaa", "istataa",
+    "istakhdama", "istaghfara",
+)
+VERB_ROUTES = tuple(f"/arabic-verbs/{slug}" for slug in VERB_SLUGS)
+REQUIRED_ROUTES.update({route: f"{route.lstrip('/')}/index.html" for route in VERB_ROUTES})
+
 NOINDEX_ROUTES = {"/buy", "/offer", "/consent", "/get"}
 INDEXABLE_ROUTES = {
     route: relative_path
@@ -77,12 +100,22 @@ REQUIRED_FILES = (
 GUIDE_ROUTES = (
     "/learn-arabic",
     "/arabic-alphabet",
+    "/how-to-read-arabic",
     "/arabic-vowels",
     "/sun-moon-letters",
     "/arabic-hello",
     "/arabic-thank-you",
+    "/islamic-phrases",
+    "/arabic-numbers",
+    "/arabic-travel-phrases",
     "/fusha",
     "/arabic-app",
+    "/duolingo-arabic",
+    "/ai-arabic-tutor",
+    "/bayna-yadayk",
+    "/qiraa-rashida",
+    "/arabic-test",
+    "/arabic-verbs",
     "/arabic-keyboard",
 )
 
@@ -99,6 +132,7 @@ SECTION_BY_ROUTE = {
     "/articles": "/articles/",
     "/support": "/support/",
     **{route: "/articles/" for route in GUIDE_ROUTES if route != "/arabic-keyboard"},
+    **{route: "/articles/" for route in VERB_ROUTES},
     "/arabic-keyboard": "/arabic-keyboard/",
 }
 SITE_NAV_RE = re.compile(r'<nav\b[^>]*\bclass\s*=\s*["\']site-nav["\'][^>]*>(.*?)</nav>', re.IGNORECASE | re.DOTALL)
@@ -358,7 +392,23 @@ class SiteChecker:
                 types.add(str(data.get("@type")))
                 if data.get("@type") == "Article" and data.get("mainEntityOfPage") != self.canonical_url(route):
                     self.fail(f"{REQUIRED_ROUTES[route]}: Article указывает не на свой canonical")
-            for required in ("Article", "BreadcrumbList", "FAQPage"):
+            required_types = ("WebPage", "WebApplication", "BreadcrumbList", "FAQPage") if route == "/arabic-keyboard" else ("Article", "BreadcrumbList", "FAQPage")
+            for required in required_types:
+                if required not in types:
+                    self.fail(f"{REQUIRED_ROUTES[route]}: нет JSON-LD {required}")
+
+        for route in VERB_ROUTES:
+            path = self.site_root / REQUIRED_ROUTES[route]
+            if not path.is_file():
+                continue
+            types = set()
+            for block in SCRIPT_JSONLD_RE.findall(path.read_text(encoding="utf-8")):
+                try:
+                    data = json.loads(block)
+                except json.JSONDecodeError:
+                    continue
+                types.add(str(data.get("@type")))
+            for required in ("DefinedTerm", "BreadcrumbList", "FAQPage"):
                 if required not in types:
                     self.fail(f"{REQUIRED_ROUTES[route]}: нет JSON-LD {required}")
 

@@ -1,0 +1,270 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import Icon from "../../components/Icon.astro";
+import StoreLinks from "../../components/StoreLinks.astro";
+import { pageUrl } from "../../lib/routes";
+import {
+  articleSchema,
+  breadcrumbSchema,
+  formatRuDate,
+  webApplicationSchema,
+  type GuideMeta,
+} from "../../seo/schema";
+import {
+  PLACEMENT_LEVELS,
+  PLACEMENT_MODIFIED,
+  PLACEMENT_PATH,
+  PLACEMENT_PUBLISHED,
+  PLACEMENT_QUESTIONS,
+  PLACEMENT_SKILLS,
+} from "../../data/placement-web";
+import "../../styles/page-test.css";
+
+const canonical = pageUrl(PLACEMENT_PATH);
+
+const seo = {
+  title: "Онлайн-тест уровня арабского языка: проверка за 2 минуты | Acrab",
+  description:
+    "Бесплатный тест на знание арабского языка онлайн: 10 вопросов с озвучкой от букв и огласовок до фусхи. Мгновенный результат и план следующих шагов.",
+  ogTitle: "Онлайн-тест уровня арабского языка",
+  ogDescription:
+    "10 вопросов с озвучкой за 2 минуты: узнайте свой уровень от «С нуля» до «Базовая фусха» и получите понятный план занятий.",
+  ogType: "website",
+  ogImage: "https://acrab.ru/assets/about/lesson-theory.webp",
+  ogImageAlt: "Определение уровня арабского языка в Acrab",
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Онлайн-тест уровня арабского языка",
+  description: seo.description,
+  path: "/arabic-test/",
+  image: seo.ogImage,
+  datePublished: PLACEMENT_PUBLISHED,
+  dateModified: PLACEMENT_MODIFIED,
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Тест уровня арабского", path: "/arabic-test/" },
+  ],
+};
+
+const toolSchema = webApplicationSchema({
+  name: "Онлайн-тест уровня арабского языка — Acrab",
+  description: seo.description,
+  path: PLACEMENT_PATH,
+});
+
+const firstQuestion = PLACEMENT_QUESTIONS[0]!;
+
+const faq = [
+  {
+    question: "Сколько времени занимает тест и нужна ли регистрация?",
+    answer:
+      "Около двух минут: в тесте 10 вопросов, регистрация и почта не требуются. Результат с разбором по пяти навыкам и рекомендациями открывается сразу после последнего ответа.",
+  },
+  {
+    question: "Можно ли пройти тест, если вы совсем не знаете арабских букв?",
+    answer:
+      "Да. Тест рассчитан в том числе на новичков: первые вопросы проверяют узнавание букв и звуков на слух, а итог честно подскажет, с какой темы лучше начать.",
+  },
+  {
+    question: "Какой вариант арабского проверяет тест — фусху или диалект?",
+    answer:
+      "Литературный арабский язык (фусху) с полными огласовками. Именно его понимают во всех арабских странах, на нём написаны учебники, новости и классические тексты.",
+  },
+  {
+    question: "Чем тест на сайте отличается от входного теста в приложении Acrab?",
+    answer:
+      "На сайте — быстрый экспресс-тест из 10 фиксированных вопросов, который сразу показывает общую ступень. В приложении Acrab тест адаптивный: он подбирает сложность вопросов под ваши ответы и автоматически открывает нужную точку программы.",
+  },
+];
+---
+
+<PageLayout
+  {...seo}
+  canonical={canonical}
+  section="articles"
+  jsonLd={[articleSchema(guide), breadcrumbSchema(guide.crumbs), toolSchema]}
+>
+  <div class="guide-page">
+    <Breadcrumbs crumbs={guide.crumbs} />
+
+    <header class="guide-hero">
+      <p class="eyebrow">Бесплатная проверка · 2 минуты</p>
+      <h1 class="page-title">Онлайн-тест уровня арабского языка</h1>
+      <p class="guide-lead">
+        10 вопросов с озвучкой и мгновенным разбором: от узнавания букв и огласовок до согласования и глаголов литературного арабского (фусхи).
+      </p>
+      <div class="guide-answer card">
+        <strong>Коротко:</strong> пройдите 10 заданий без регистрации и сразу узнайте свою ступень — «С нуля», «Знакомы с буквами», «Читаете слова» или «Базовая фусха» — вместе с разбором по пяти навыкам.
+      </div>
+      <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+    </header>
+
+    <section class="tst-shell card card-plain" aria-labelledby="tst-app-heading" data-tst-app>
+      <h2 class="tst-visually-hidden" id="tst-app-heading">Интерактивный тест уровня арабского</h2>
+
+      <div class="tst-header">
+        <div class="tst-step-meta">
+          <span class="chip" data-tst-skill>{PLACEMENT_SKILLS[0]!.label}</span>
+          <span class="tst-counter" data-tst-counter>Вопрос 1 из {PLACEMENT_QUESTIONS.length}</span>
+        </div>
+        <p class="tst-audio-caption">Озвучка синтезированная, та же, что в приложении</p>
+      </div>
+
+      <div class="tst-progress" aria-hidden="true">
+        {PLACEMENT_QUESTIONS.map((_, idx) => (
+          <span class:list={["tst-seg", { "is-current": idx === 0 }]} data-tst-seg></span>
+        ))}
+      </div>
+
+      <div class="tst-stage" data-tst-stage>
+        <div class="tst-question-card">
+          <p class="tst-prompt" data-tst-prompt>{firstQuestion.prompt}</p>
+
+          <div class="tst-cue-row" data-tst-cue-row>
+            <span class="tst-cue-arabic" lang="ar" dir="rtl" data-tst-cue-ar hidden></span>
+            <button
+              type="button"
+              class="btn btn-soft btn-compact tst-audio-btn"
+              data-tst-audio
+              aria-label={`Слушать: ${firstQuestion.audioLabel ?? "озвучку"}`}
+              aria-pressed="false"
+            >
+              <Icon name="speaker-high" />
+              <span>Слушать</span>
+            </button>
+          </div>
+
+          <div class="tst-options" data-tst-options role="group" aria-label="Варианты ответа">
+            {firstQuestion.options.map((option) => (
+              <button
+                type="button"
+                class:list={["tst-option", "tile", "tile-gold", { "tst-option-ar": option.isArabic }]}
+                lang={option.isArabic ? "ar" : undefined}
+                dir={option.isArabic ? "rtl" : undefined}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          <div class="tst-feedback" role="status" aria-live="polite" data-tst-feedback hidden>
+            <p class="tst-feedback-title" data-tst-feedback-title></p>
+            <p class="tst-feedback-text" data-tst-feedback-text></p>
+          </div>
+
+          <div class="tst-actions">
+            <button type="button" class="btn" data-tst-next hidden>Следующий вопрос</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tst-result" data-tst-result tabindex="-1" hidden>
+        <div class="tst-result-head">
+          <div>
+            <span class="badge" data-tst-res-badge>Результат</span>
+            <h3 class="tst-result-title" data-tst-res-title>Ваш уровень</h3>
+          </div>
+          <div class="tst-result-score">
+            <strong data-tst-res-score>0 / 10</strong>
+            <span>верных ответов</span>
+          </div>
+        </div>
+
+        <p class="tst-result-summary" data-tst-res-summary></p>
+
+        <div class="tst-skills-grid" data-tst-res-skills aria-label="Разбор по навыкам"></div>
+
+        <div class="tst-next-box card card-neutral card-warm">
+          <h3>Что делать дальше</h3>
+          <ul class="guide-checklist" data-tst-res-steps></ul>
+          <p data-tst-res-track></p>
+        </div>
+
+        <div class="guide-cta card">
+          <div class="guide-cta-head">
+            <span class="icon-badge icon-badge-large"><Icon name="device-mobile" /></span>
+            <div>
+              <h3>Начните с подходящего уровня в Acrab</h3>
+              <p>В приложении встроен адаптивный входной тест, озвучка, интервальное повторение и бесплатный стартовый курс.</p>
+            </div>
+          </div>
+          <StoreLinks />
+        </div>
+
+        <div class="tst-result-actions">
+          <a href="/arabic-alphabet/" class="btn btn-outline btn-compact" data-tst-res-guide>Открыть материал по уровню</a>
+          <button type="button" class="btn btn-soft btn-compact" data-tst-restart>Пройти тест ещё раз</button>
+        </div>
+      </div>
+
+      <noscript>
+        <p class="tst-noscript">Чтобы пройти интерактивный тест, включите JavaScript в браузере. Ниже описаны все четыре уровня и темы, которые проверяет тест.</p>
+      </noscript>
+    </section>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание страницы">
+        <strong>На странице</strong>
+        <a href="#levels">Что значит каждый уровень</a>
+        <a href="#skills">Пять проверяемых навыков</a>
+        <a href="#next">Как продолжить обучение</a>
+        <a href="#faq">Частые вопросы</a>
+      </aside>
+
+      <article class="guide-content">
+        <section id="levels">
+          <h2>Что означает каждый уровень теста</h2>
+          <p>
+            Оценка строится по тем же ступеням, по которым выстроена программа фусхи в Acrab. Даже если вы ответили на часть вопросов наугад, разбивка по пяти навыкам сразу покажет, где опора прочная, а где есть пробел.
+          </p>
+          <div class="tst-levels-grid" data-appear-group>
+            {PLACEMENT_LEVELS.map((level) => (
+              <div class="tst-level-card card card-plain">
+                <span class="chip">{level.minScore}–{level.maxScore} из {PLACEMENT_QUESTIONS.length}</span>
+                <h3>{level.title}</h3>
+                <p>{level.summary}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="skills">
+          <h2>Пять навыков, которые проверяют 10 вопросов</h2>
+          <ul class="guide-checklist">
+            <li><strong>Алфавит и формы:</strong> различение похожих букв по точкам на слух и узнавание формы буквы внутри слова.</li>
+            <li><strong>Огласовки и чтение:</strong> чтение коротких гласных (фатха, касра, дамма) и декодирование целого слова.</li>
+            <li><strong>Базовые слова и реплики:</strong> узнавание частых приветствий и живой реакции в коротком диалоге.</li>
+            <li><strong>Артикль и род:</strong> солнечные и лунные буквы с артиклем <span class="arabic-inline" lang="ar" dir="rtl">ال</span> и согласование прилагательных по роду.</li>
+            <li><strong>Фусха и глаголы:</strong> выбор правильного лица в настоящем времени и согласование множественного числа неодушевлённых существительных.</li>
+          </ul>
+        </section>
+
+        <section id="next">
+          <h2>Как продолжить обучение после теста</h2>
+          <p>
+            Экспресс-тест помогает быстро сориентироваться, а системный прогресс держится на регулярной практике. В приложении Acrab адаптивный входной тест точнее определяет вашу точку старта, открывает теорию на русском перед упражнениями и ведёт от алфавита к свободному чтению огласованных текстов.
+          </p>
+          <GuideCta
+            title="Начните с подходящего уровня в Acrab"
+            text="Бесплатный стартовый курс без срока, полная огласовка, озвучка и учебные инструменты в одном приложении."
+          />
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" data-appear-group aria-label="Полезные разделы">
+      <a href="/arabic-alphabet/"><span>Все 28 букв</span><strong>Арабский алфавит →</strong></a>
+      <a href="/arabic-verbs/"><span>58 частых глаголов</span><strong>Спряжение глаголов →</strong></a>
+      <a href="/learn-arabic/"><span>Пошаговый план</span><strong>Как учить арабский с нуля →</strong></a>
+    </nav>
+  </div>
+
+  <script src="../../scripts/arabic-test.ts"></script>
+</PageLayout>

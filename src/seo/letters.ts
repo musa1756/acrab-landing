@@ -1231,9 +1231,14 @@ export const letterHeading = (letter: Letter): string => `Арабская бу�
 /** Последняя крошка: «Буква ха (ح, гортанная)». */
 export const letterCrumb = (letter: Letter): string => `Буква ${letter.name} (${named(letter)})`;
 
-export const letterTitle = (letter: Letter): string => `Буква ${letter.name} (${named(letter)}) в арабском: звук и написание | Acrab`;
+export const letterTitle = (letter: Letter): string => `Буква ${letter.name} (${named(letter)}) — звук, формы и озвучка | Acrab`;
 
-export const letterDescription = (letter: Letter): string =>
-  `Арабская буква ${letter.char} («${letter.name}»${letter.qualifier ? `, ${letter.qualifier}` : ""}): ${letter.soundShort}. Звук, четыре формы, слова с переводом, похожие буквы.`;
+export const letterDescription = (letter: Letter): string => {
+  const forms = isConnecting(letter) ? "4 формы" : "2 формы";
+  const prefix = `Арабская буква ${letter.char} («${letter.name}»${letter.qualifier ? `, ${letter.qualifier}` : ""}): ${letter.soundShort}.`;
+  const suffix = ` Озвучка, ${forms}, слова и похожие буквы.`;
+  const full = `${prefix}${suffix}`;
+  return full.length <= 165 ? full : `${prefix} Озвучка, ${forms} и примеры слов.`.slice(0, 165);
+};
 
 export const letterRoutes = (): string[] => LETTERS.map((letter) => `/arabic-alphabet/${letter.slug}`);

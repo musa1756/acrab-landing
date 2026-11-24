@@ -178,7 +178,8 @@
 }
 
 @media (max-width: 480px) {
-  .promo-row { flex-direction: column; }
+  .promo-row { flex-direction: column; align-items: stretch; }
+  .promo-input,
   .promo-btn { width: 100%; }
 }
 
@@ -189,6 +190,12 @@
 /* RaisedTileSurface с padding 18 (.card — рамка 2 золото, радиус 20). */
 .compare-card { padding: 18px; }
 .compare-card-title { margin: 0 0 12px; }
+.compare-table { display: block; width: 100%; border-collapse: collapse; }
+.compare-table thead,
+.compare-body { display: block; }
+.compare-head th,
+.compare-row th,
+.compare-row td { text-align: left; font-weight: inherit; }
 
 /* Ряд мини-плиток тарифов над строками. */
 .compare-head {
@@ -279,6 +286,14 @@
 /* Подсказка шага — subtitle (15/21, secondary). */
 .auth-hint { margin: 0; color: var(--c-text-secondary); font-size: var(--t-callout); line-height: 21px; text-align: center; }
 .auth-hint strong { color: var(--c-text); font-weight: 600; }
+.auth-account-note {
+  margin: -4px 0 0;
+  color: var(--c-text-secondary);
+  font-size: var(--t-footnote);
+  line-height: var(--lh-footnote);
+  text-align: center;
+}
+.auth-account-note a { color: var(--c-brand-text); font-weight: 600; text-decoration: underline; }
 
 /* Подпись поля — «группа» шкалы (13/18, 600), ближе к своему полю. */
 .auth-label {

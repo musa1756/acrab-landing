@@ -12,6 +12,7 @@ import ReviewCards from "../components/home/ReviewCards.astro";
 import PairDemo from "../components/home/PairDemo.astro";
 import FreeVsFull from "../components/home/FreeVsFull.astro";
 import HomeFaq from "../components/home/HomeFaq.astro";
+import AlphabetMiniQuiz from "../components/AlphabetMiniQuiz.astro";
 import { HOME_FAQ } from "../data/app-faq";
 import { appSchema, organizationSchema, websiteSchema } from "../seo/schema";
 import "../styles/page-home.css";
@@ -27,9 +28,26 @@ const HERO_WORDS = [
   { ar: "صَبَاحُ الْخَيْرِ", reading: "сабаху-ль-хайр", ru: "доброе утро", audio: "/assets/audio/sabah-al-khayr.mp3" },
   { ar: "السَّلَامُ عَلَيْكُمْ", reading: "ас-саляму алайкум", ru: "мир вам", audio: "/assets/audio/as-salamu-alaykum.mp3" },
 ];
+
+const HOME_GUIDES = [
+  { href: "/arabic-alphabet/", kicker: "Основа чтения", title: "Арабский алфавит", summary: "Все 28 букв в таблице с озвучкой, звуками, формами в слове и разбором каждой буквы." },
+  { href: "/arabic-vowels/", kicker: "Чтение", title: "Огласовки (харакаты)", summary: "Фатха, касра, дамма, сукун, шадда и танвин с примерами и озвучкой." },
+  { href: "/sun-moon-letters/", kicker: "Первое правило", title: "Солнечные и лунные буквы", summary: "Как читается артикль الـ и как запомнить обе группы без зубрёжки." },
+  { href: "/arabic-hello/", kicker: "Первые фразы", title: "Привет на арабском", summary: "Мархабан, ахлян, ас-саляму алайкум, «как дела» и ответы с озвучкой." },
+  { href: "/arabic-thank-you/", kicker: "Вежливость", title: "Спасибо на арабском", summary: "Шукран, «большое спасибо», формы обращения и ответ «не за что» с озвучкой." },
+  { href: "/arabic-keyboard/", kicker: "Инструмент", title: "Арабская клавиатура онлайн", summary: "Печатайте буквы и огласовки прямо в браузере, копируйте текст и смотрите чтение." },
+  { href: "/arabic-test/", kicker: "Проверка", title: "Тест уровня арабского", summary: "Проверьте знание алфавита, чтения и базовой грамматики за пару минут." },
+  { href: "/arabic-verbs/", kicker: "Грамматика", title: "Спряжение арабских глаголов", summary: "Прошедшее и настоящее время, местоимения и таблицы частых глаголов фусхи." },
+  { href: "/learn-arabic/", kicker: "Маршрут", title: "Как выучить арабский с нуля", summary: "Пять этапов от первых букв до текстов, режим занятий и частые ошибки." },
+  { href: "/fusha/", kicker: "Выбор", title: "Что такое фусха", summary: "Литературный арабский и диалекты на примерах: с чего лучше начать." },
+];
 ---
 
 <PageLayout section="home" title="Арабский язык с нуля — приложение для изучения | Acrab" description="Литературный арабский с нуля в приложении Acrab: 86 модулей от алфавита до грамматики, правила по-русски, огласовки, аудирование, повторение и 9 инструментов." canonical="https://acrab.ru/" robots="index, follow, max-image-preview:large" ogTitle="Арабский язык с нуля — Acrab" ogDescription="Программа фусхи из 86 модулей, правила по-русски, огласовки, повторение и инструменты в одном приложении." ogType="website" ogImage="https://acrab.ru/assets/acrab-icon-512.jpg" ogImageAlt="Иконка приложения Acrab для изучения арабского языка" twitterCard="summary" jsonLd={[organizationSchema, websiteSchema, appSchema]} floatingHeader>
+  <Fragment slot="head">
+    <link rel="preload" href="/assets/fonts/rubik-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/rubik-700.woff2" as="font" type="font/woff2" crossorigin />
+  </Fragment>
 <!-- ═══ Первый экран: фраза и три магазина ═════════════════════════════ -->
 <section class="home-hero" aria-labelledby="home-title">
   <div class="home-hero-copy">
@@ -45,7 +63,7 @@ const HERO_WORDS = [
     </div>
     <h1 class="home-hero-title" id="home-title">Арабский язык<br><span>ближе, чем кажется</span></h1>
     <p class="home-hero-lead">От 28 букв до разговора и чтения книг. Самые нужные инструменты — в одном месте.</p>
-    <StoreLinks class="home-hero-stores" centered />
+    <StoreLinks class="home-hero-stores" placement="home-hero" centered />
     <p class="home-hero-note">Для iPhone, iPad и Android</p>
   </div>
 </section>
@@ -111,8 +129,26 @@ const HERO_WORDS = [
   <ReviewCards />
 </Sheet>
 
-<!-- ═══ Лист 5: бесплатно и вопросы ═══════════════════════════════════ -->
-<Sheet id="free" labelledby="fv-title">
+<!-- ═══ Лист 5: учебные материалы, бесплатно и вопросы ════════════════ -->
+<Sheet id="free" labelledby="hg-title">
+  <section class="hg" aria-labelledby="hg-title">
+    <div class="hg-head" data-appear>
+      <p class="sc-kicker">Справочники и инструменты</p>
+      <h2 class="sc-title" id="hg-title">Учебные материалы по арабскому</h2>
+      <p class="sc-lead">Бесплатные разборы алфавита, огласовок, базовых фраз, глаголов и онлайн-инструменты прямо на сайте.</p>
+    </div>
+    <nav class="home-guides" aria-label="Учебные материалы и инструменты" data-appear-group>
+      {HOME_GUIDES.map((item) => (
+        <a href={item.href}>
+          <span>{item.kicker}</span>
+          <strong>{item.title}</strong>
+          <p>{item.summary}</p>
+        </a>
+      ))}
+    </nav>
+    <p class="hg-all" data-appear><a class="btn btn-outline btn-compact" href="/articles/">Все статьи и справочники →</a></p>
+  </section>
+  <AlphabetMiniQuiz />
   <FreeVsFull />
   <HomeFaq items={HOME_FAQ} />
 </Sheet>
@@ -120,7 +156,7 @@ const HERO_WORDS = [
 <section class="fin" aria-labelledby="fin-title">
   <h2 class="fin-title" id="fin-title">Начните с первого урока</h2>
   <p class="fin-text">Скачайте Acrab бесплатно и позовите друга.</p>
-  <StoreLinks class="fin-stores" centered />
+  <StoreLinks class="fin-stores" placement="home-final" centered />
 </section>
 <script src="../scripts/statement.ts"></script>
 </PageLayout>

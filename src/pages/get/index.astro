@@ -1,13 +1,36 @@
 ---
 import LegalLayout from "../../layouts/LegalLayout.astro";
+import Icon from "../../components/Icon.astro";
 import StoreLinks from "../../components/StoreLinks.astro";
 ---
 
 <LegalLayout variant="get" title="Скачать Acrab — App Store, RuStore и Google Play" description="Короткая ссылка на приложение Acrab: открывает App Store на iPhone и Google Play на Android." robots="noindex" themeColor={null} includeIcons={false}>
 <div class="page-head page-head-centered"><div class="page-head-inner"><p class="eyebrow">Acrab</p><h1 class="page-title">Скачать приложение</h1><p class="page-lead">Литературный арабский с нуля: от 28 букв до чтения текстов с огласовками. Выберите магазин для своего телефона.</p></div></div>
 
-    <article class="panel">
-      <StoreLinks centered />
+    <article class="panel get-panel">
+      <div class="get-qr" data-get-qr hidden>
+        <div class="get-qr-box card" data-get-qr-slot></div>
+        <div class="get-qr-copy">
+          <h2 class="get-qr-title">Наведите камеру телефона, чтобы скачать Acrab</h2>
+          <p class="get-qr-lead">QR-код откроет нужный магазин сразу на телефоне и сохранит ваш промокод или ссылку.</p>
+          <div class="get-qr-actions">
+            <button type="button" class="btn btn-outline btn-compact" data-get-copy>
+              <Icon name="copy" />
+              <span>Скопировать ссылку</span>
+            </button>
+            <a class="btn btn-outline btn-compact" data-get-tg href="https://t.me/share/url?url=https%3A%2F%2Facrab.ru%2Fget%2F" target="_blank" rel="noopener">
+              <Icon name="telegram-logo" />
+              <span>Открыть в Telegram</span>
+            </a>
+          </div>
+          <p class="get-qr-status" role="status" aria-live="polite" data-get-status></p>
+        </div>
+      </div>
+
+      <div class="get-stores">
+        <StoreLinks placement="get-page" centered />
+        <p class="get-store-note">На iPhone откроется App Store, на Android — Google Play или RuStore (если нет Google Play).</p>
+      </div>
     </article>
 </LegalLayout>
 <script src="../../scripts/store-redirect.ts"></script>

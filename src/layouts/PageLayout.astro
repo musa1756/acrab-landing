@@ -24,6 +24,7 @@ const { section, nav, mainClass, floatingHeader = false, ...seo } = Astro.props;
 ---
 
 <BaseLayout {...seo} bodyClass={floatingHeader ? "page-plain" : undefined}>
+  <slot name="head" slot="head" />
   <a class="skip-link" href="#main">К содержанию</a>
   <Header active={section} variant={nav} floating={floatingHeader} />
   <main id="main" class={mainClass}><slot /></main>

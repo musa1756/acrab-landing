@@ -1,19 +1,32 @@
 ---
 import StoreLinks from "./StoreLinks.astro";
 import SocialLinks from "./SocialLinks.astro";
+
+const hubs = [
+  { href: "/arabic-app/", label: "О приложении" },
+  { href: "/articles/", label: "Статьи" },
+  { href: "/arabic-alphabet/", label: "Алфавит" },
+  { href: "/arabic-keyboard/", label: "Клавиатура" },
+  { href: "/arabic-test/", label: "Тест уровня" },
+  { href: "/arabic-verbs/", label: "Спряжение" },
+  { href: "/about/", label: "Обновления" },
+];
 ---
 
 <footer class="site-footer">
   <div class="site-footer-inner">
-    <StoreLinks />
+    <StoreLinks placement="footer" />
     <div class="footer-social">
       <SocialLinks />
     </div>
+    <nav class="footer-nav" aria-label="Разделы и справочники">
+      {hubs.map((hub) => <a href={hub.href}>{hub.label}</a>)}
+    </nav>
     <div class="footer-links">
-      <a href="/offer/" rel="noopener">Публичная оферта</a>
-      <a href="/privacy/" rel="noopener">Конфиденциальность</a>
-      <a href="/consent/" rel="noopener">Согласие на данные</a>
-      <a href="/support/" rel="noopener">Помощь и контакты</a>
+      <a href="/offer/">Публичная оферта</a>
+      <a href="/privacy/">Конфиденциальность</a>
+      <a href="/consent/">Согласие на данные</a>
+      <a href="/support/">Помощь и контакты</a>
     </div>
   </div>
 </footer>

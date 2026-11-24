@@ -4,6 +4,8 @@
  * повторное нажатие останавливает её, нажатие на другую кнопку переключает.
  * Без скрипта кнопки остаются скрытыми (атрибут hidden), страница читается как есть.
  */
+import { trackGoal } from "./analytics-goals";
+
 const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button[data-audio]"));
 
 let active: { button: HTMLButtonElement; audio: HTMLAudioElement } | null = null;
@@ -35,6 +37,7 @@ function play(button: HTMLButtonElement): void {
   };
   audio.addEventListener("ended", finish);
   audio.addEventListener("error", finish);
+  trackGoal("audio_play", { audio: src });
   audio.play().catch(finish);
 }
 

@@ -1,0 +1,224 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { richArabic } from "../../lib/rich-arabic";
+import { formatRuDate, type GuideMeta } from "../../seo/schema";
+
+const seo = {
+  "title": "Как научиться читать по-арабски с нуля: правила чтения | Acrab",
+  "description": "Практический переход от алфавита к чтению по-арабски: 6 несоединяемых букв, лям-алиф لَا, та марбута ة, алиф максура ى, хамза ء и чтение по слогам.",
+  "ogTitle": "Как научиться читать по-арабски с нуля",
+  "ogDescription": "Шесть букв без соединения, лям-алиф, та марбута, алиф максура, хамза и чтение слов по слогам с примерами.",
+  "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
+  "ogImageAlt": "Экран теории по чтению арабских слов в приложении Acrab"
+} as const;
+
+const guide: GuideMeta = {
+  headline: "Как научиться читать по-арабски с нуля: соединение букв, хамза и та марбута",
+  description: seo.description,
+  path: "/how-to-read-arabic/",
+  image: seo.ogImage,
+  datePublished: "2026-11-24",
+  dateModified: "2026-11-24",
+  crumbs: [
+    { name: "Acrab", path: "/" },
+    { name: "Статьи", path: "/articles/" },
+    { name: "Как научиться читать по-арабски", path: "/how-to-read-arabic/" },
+  ],
+};
+
+const nonConnecting = [
+  ["ا", "алиф", "بَابٌ", "бабун — дверь", "После ا слово разрывается, ب стоит отдельно."],
+  ["د", "даль", "دَرْسٌ", "дарсун — урок", "Ни د, ни ر не тянут линию влево."],
+  ["ذ", "заль", "ذَهَبَ", "заhаба — он пошёл", "Буква ه после ذ начинается с начальной формы."],
+  ["ر", "ра", "وَرْدٌ", "вардун — розы", "Все три буквы не соединяются со следующей."],
+  ["ز", "зай", "زَارَ", "зара — он навестил", "После ز стоит отдельный ا."],
+  ["و", "вав", "وَلَدٌ", "валядун — мальчик", "После و буква ل пишется в начальной форме."],
+] as const;
+
+const specialSigns = [
+  ["لَا", "Лям-алиф", "Обязательная лигатура ل + ا", "سَلَامٌ (салямун — мир), بِلَادٌ (билядун — страна)"],
+  ["ة / ـة", "Та марбута", "«т» в слитной речи, лёгкое «h» на паузе; признак женского рода", "مَدْرَسَةٌ (мадрасатун — школа), مَدِينَةٌ (мадинатун — город)"],
+  ["ى / ـى", "Алиф максура", "Долгий «а» в конце слова; пишется как ي, но без точек", "عَلَى (аля — на), إِلَى (иля — в, к), مُسْتَشْفَى (мусташфа — больница)"],
+  ["ء أ إ ؤ ئ", "Хамза", "Короткая гортанная смычка; пишется на подставке или на строке", "أَسَدٌ (асадун — лев), سُؤَالٌ (суалюн — вопрос), سَمَاءٌ (самаун — небо)"],
+] as const;
+
+const syllableWords = [
+  ["كَتَبَ", "كَـ / تَـ / بَ", "ка-та-ба", "он написал (три открытых слога)"],
+  ["مَكْتَبٌ", "مَكْـ / تَـ / بٌ", "мак-та-бун", "письменный стол (сукун закрывает первый слог)"],
+  ["كِتَابٌ", "كِـ / تَا / بٌ", "ки-та-бун", "книга (долгий «а» через фатху и алиф)"],
+  ["مُعَلِّمٌ", "مُـ / عَلْـ / لِـ / مُنْ", "му-аль-ли-мун", "учитель (шадда удваивает букву ل)"],
+] as const;
+
+const faq = [
+  {
+    question: "Сколько времени занимает переход от алфавита к чтению слов?",
+    answer: "Если заниматься по 15–20 минут в день и сразу читать короткие слова с огласовками, базовое чтение по слогам складывается за несколько недель. Скорость приходит с практикой: важно не просто повторять таблицу букв, а ежедневно разбирать реальные слова и короткие фразы.",
+  },
+  {
+    question: "Как отличить та марбуту (ة) от обычной буквы «ха» (ه)?",
+    answer: "У та марбуты (ة) сверху всегда две точки, и она встречается только в конце слова. У конечной буквы ه точек нет: сравните مَدِينَةٌ («город») и وَجْهٌ («лицо»).",
+  },
+  {
+    question: "Как не путать алиф максуру (ى) и букву «йа» (ي)?",
+    answer: "У алиф максуры внизу нет точек, и она стоит только в конце слова как долгий звук «а»: عَلَى («на»), إِلَى («к»). У буквы ي в стандартном печатном шрифте есть две точки снизу: فِي («в»).",
+  },
+  {
+    question: "Что такое соединительная хамза и почему меняется гласная перед артиклем الـ?",
+    answer: "Алиф артикля الـ и некоторых глаголов произносится только в начале фразы. В слитной речи он выпадает, а если предыдущее слово кончалось на сукун, появляется связочная гласная: مِنْ + الْبَيْتِ читается مِنَ الْبَيْتِ («мина-ль-байти»), عَنْ + الدَّرْسِ — عَنِ الدَّرْسِ («ани-д-дарси»).",
+  },
+  {
+    question: "Поможет ли умение читать с огласовками перейти к чтению Корана?",
+    answer: "Да, это необходимая первая ступень: вы научитесь уверенно различать все 28 букв в соединениях, огласовки, сукун, шадду и долгие гласные. После этого осваивать правила таджвида (особые правила чтения Корана) становится заметно проще.",
+  },
+];
+---
+
+<GuideLayout {...seo} guide={guide}>
+  <header class="guide-hero">
+    <p class="eyebrow">От букв к чтению</p>
+    <h1 class="page-title">Как научиться читать по-арабски с нуля</h1>
+    <p class="guide-lead">Выучить <a href="/arabic-alphabet/">28 букв алфавита</a> — только половина дела. Чтобы перестать спотыкаться на каждом слове, нужно освоить шесть букв без соединения, обязательную пару <span class="arabic-inline" lang="ar" dir="rtl">لَا</span>, та марбуту, алиф максуру, хамзу и чтение по слогам.</p>
+    <div class="arabic-example" lang="ar" dir="rtl" data-appear-group>
+      <span class="tile tile-gold">لَا</span>
+      <span class="tile tile-gold">ة</span>
+      <span class="tile tile-gold">ى</span>
+      <span class="tile tile-gold">ء</span>
+    </div>
+    <div class="guide-answer card"><strong>Коротко:</strong> арабские слова читаются справа налево по слогам. Буква с сукуном закрывает слог, шесть букв (<span class="arabic-inline" lang="ar" dir="rtl">ا د ذ ر ز و</span>) дают разрыв внутри слова, а знаки <span class="arabic-inline" lang="ar" dir="rtl">لَا</span>, <span class="arabic-inline" lang="ar" dir="rtl">ة</span>, <span class="arabic-inline" lang="ar" dir="rtl">ى</span> и <span class="arabic-inline" lang="ar" dir="rtl">ء</span> встречаются почти в каждой строке.</div>
+    <p class="guide-updated">Обновлено <time datetime={guide.dateModified}>{formatRuDate(guide.dateModified)}</time></p>
+  </header>
+
+  <div class="guide-layout">
+    <aside class="guide-toc" aria-label="Содержание статьи">
+      <strong>В этой статье</strong>
+      <a href="#six">Шесть букв без соединения</a>
+      <a href="#special">Лям-алиф, ة, ى и хамза</a>
+      <a href="#hamza">Хамза и слитное чтение</a>
+      <a href="#syllables">Чтение слов по слогам</a>
+      <a href="#next">Переход к текстам и книгам</a>
+      <a href="#faq">Частые вопросы</a>
+    </aside>
+
+    <article class="guide-content">
+      <section id="six">
+        <h2>Шесть букв, которые не соединяются со следующей</h2>
+        <p>Большинство арабских букв соединяются и с предыдущей, и со следующей. Исключение — шесть букв: <span class="arabic-inline" lang="ar" dir="rtl">ا د ذ ر ز و</span>. Справа к ним присоединиться можно, а слева всегда остаётся разрыв. Начинающие часто принимают этот разрыв за пробел между словами.</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">Буква</th>
+                <th scope="col">Название</th>
+                <th scope="col">Пример</th>
+                <th scope="col">Что видно в слове</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nonConnecting.map(([letter, name, word, meaning, note]) => (
+                <tr>
+                  <th scope="row" class="ar" lang="ar" dir="rtl">{letter}</th>
+                  <td>{name}</td>
+                  <td><span class="arabic-inline" lang="ar" dir="rtl">{word}</span><br /><small>{meaning}</small></td>
+                  <td set:html={richArabic(note)} />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="guide-note card card-neutral card-warm"><strong>Подсказка:</strong> настоящий пробел между словами заметно шире разрыва после несоединяемой буквы. Через пару недель чтения с огласовками глаз начинает видеть границы слов автоматически.</div>
+      </section>
+
+      <section id="special">
+        <h2>Четыре важных знака вне списка 28 букв</h2>
+        <p>Почти в первом же простом предложении встречаются знаки, которых нет в базовой таблице алфавита. Запомните их сразу — и чтение станет намного увереннее:</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">Знак</th>
+                <th scope="col">Название</th>
+                <th scope="col">Как работает</th>
+                <th scope="col">Примеры</th>
+              </tr>
+            </thead>
+            <tbody>
+              {specialSigns.map(([sign, name, role, examples]) => (
+                <tr>
+                  <th scope="row" class="ar" lang="ar" dir="rtl">{sign}</th>
+                  <td><strong>{name}</strong></td>
+                  <td set:html={richArabic(role)} />
+                  <td set:html={richArabic(examples)} />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>Отдельно обратите внимание на <strong>лям-алиф</strong> (<span class="arabic-inline" lang="ar" dir="rtl">لَا</span>): когда после <span class="arabic-inline" lang="ar" dir="rtl">ل</span> идёт <span class="arabic-inline" lang="ar" dir="rtl">ا</span>, буквы не пишутся рядом обычным способом, а перекрещиваются в одну лигатуру. При этом <span class="arabic-inline" lang="ar" dir="rtl">ل</span> стоит справа, а <span class="arabic-inline" lang="ar" dir="rtl">ا</span> — слева, поэтому слово <span class="arabic-inline" lang="ar" dir="rtl">لَا</span> читается именно «ля».</p>
+        <div class="guide-note card card-neutral card-warm">
+          <strong>Отработайте чтение букв и соединений на практике:</strong> стартовый курс в Acrab ведёт по шагам от отдельных букв и огласовок к целым словам и фразам бесплатно и без срока.
+          <div class="hero-downloads"><a class="btn btn-compact" href="/get/">Начать читать в Acrab</a></div>
+        </div>
+      </section>
+
+      <section id="hamza">
+        <h2>Основы хамзы и связочная гласная</h2>
+        <p><strong>Хамза</strong> (<span class="arabic-inline" lang="ar" dir="rtl">ء</span>) — полноценный согласный звук, короткая остановка голоса в горле. В начале слова она всегда сидит на алифе: с фатхой или даммой сверху (<span class="arabic-inline" lang="ar" dir="rtl">أَ</span>, <span class="arabic-inline" lang="ar" dir="rtl">أُ</span>), с касрой снизу (<span class="arabic-inline" lang="ar" dir="rtl">إِ</span>). В середине и в конце слова подставкой служат <span class="arabic-inline" lang="ar" dir="rtl">أ</span>, <span class="arabic-inline" lang="ar" dir="rtl">و</span> (<span class="arabic-inline" lang="ar" dir="rtl">ؤ</span>), <span class="arabic-inline" lang="ar" dir="rtl">ي</span> без точек (<span class="arabic-inline" lang="ar" dir="rtl">ئ</span>) или строка (<span class="arabic-inline" lang="ar" dir="rtl">ء</span>).</p>
+        <p>Кроме разделительной хамзы есть <strong>соединительная</strong> (в артикле <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> и части глаголов). Она читается в начале фразы, а в середине выпадает. Если слово перед ней заканчивалось на сукун, вместо сукуна появляется связочная гласная, чтобы не сталкивались два согласных:</p>
+        <ul class="guide-checklist">
+          <li>предлог <span class="arabic-inline" lang="ar" dir="rtl">مِنْ</span> получает фатху: <span class="arabic-inline" lang="ar" dir="rtl">مِنَ الْبَيْتِ</span> («мина-ль-байти» — из дома);</li>
+          <li>частицы <span class="arabic-inline" lang="ar" dir="rtl">عَنْ</span>, <span class="arabic-inline" lang="ar" dir="rtl">هَلْ</span>, <span class="arabic-inline" lang="ar" dir="rtl">مَنْ</span> и глагольное окончание <span class="arabic-inline" lang="ar" dir="rtl">ـَتْ</span> получают касру: <span class="arabic-inline" lang="ar" dir="rtl">عَنِ الدَّرْسِ</span> («об уроке»), <span class="arabic-inline" lang="ar" dir="rtl">قَالَتِ الْأُمُّ</span> («мать сказала»);</li>
+          <li>местоимения <span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمْ</span>, <span class="arabic-inline" lang="ar" dir="rtl">هُمْ</span>, <span class="arabic-inline" lang="ar" dir="rtl">كُمْ</span> получают дамму: <span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمُ الطُّلَّابُ</span> («вы — студенты»).</li>
+        </ul>
+      </section>
+
+      <section id="syllables">
+        <h2>Как складывать буквы в слоги</h2>
+        <p>Не пытайтесь прочесть длинное арабское слово целиком одним взглядом. Делите его на короткие слоги справа налево, опираясь на <a href="/arabic-vowels/">огласовки</a>:</p>
+        <div class="guide-table-scroll card card-plain" data-appear>
+          <table class="guide-table">
+            <thead>
+              <tr>
+                <th scope="col">Слово</th>
+                <th scope="col">Разбивка</th>
+                <th scope="col">Чтение</th>
+                <th scope="col">Перевод и пояснение</th>
+              </tr>
+            </thead>
+            <tbody>
+              {syllableWords.map(([word, split, reading, note]) => (
+                <tr>
+                  <th scope="row" class="ar" lang="ar" dir="rtl">{word}</th>
+                  <td class="ar ar-small" lang="ar" dir="rtl">{split}</td>
+                  <td><strong>{reading}</strong></td>
+                  <td set:html={richArabic(note)} />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>Как только слово начинается с артикля <span class="arabic-inline" lang="ar" dir="rtl">الـ</span>, сразу проверяйте следующую букву: перед 14 солнечными звук «л» сливается с ней, а перед 14 лунными звучит чётко. Подробные списки — в статье <a href="/sun-moon-letters/">«Солнечные и лунные буквы»</a>.</p>
+      </section>
+
+      <section id="next">
+        <h2>Что делать после первых прочитанных слов</h2>
+        <p>Когда вы без спешки читаете незнакомые слова с полными огласовками, открываются сразу три пути: современная учебная программа на фусхе, первые короткие рассказы вроде <a href="/qiraa-rashida/">«аль-Кироату ар-Рашида»</a> и дальнейший переход к классическим текстам, включая чтение Корана (где поверх этой базы добавляются правила таджвида).</p>
+        <ol class="learning-steps compact-steps">
+          <li><div><strong>Закрепите 28 букв и все соединения</strong><p>Возвращайтесь к трудным парам букв, пока не перестанете путать точки сверху и снизу.</p></div></li>
+          <li><div><strong>Слушайте озвучку и повторяйте вслух</strong><p>Связывайте написание со звуком, особенно для гортанных и эмфатических согласных.</p></div></li>
+          <li><div><strong>Переходите к коротким текстам с огласовками</strong><p>Начинайте с простых рассказов, где незнакомые слова можно проверить сразу в тексте.</p></div></li>
+        </ol>
+        <GuideCta title="Пройдите путь от алфавита к чтению в Acrab" text="Бесплатный стартовый курс без срока: буквы, соединения, огласовки, озвучка и упражнения, а дальше — книги для чтения в Библиотеке." />
+      </section>
+
+      <GuideFaq items={faq} />
+    </article>
+  </div>
+
+  <nav class="related-guides" data-appear-group aria-label="Другие статьи">
+    <a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a>
+    <a href="/arabic-vowels/"><span>Знаки гласных</span><strong>Огласовки в арабском →</strong></a>
+    <a href="/sun-moon-letters/"><span>Артикль الـ</span><strong>Солнечные и лунные буквы →</strong></a>
+  </nav>
+</GuideLayout>

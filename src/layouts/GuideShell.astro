@@ -1,0 +1,53 @@
+---
+import PageLayout from "./PageLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import MobileStickyCta from "../components/MobileStickyCta.astro";
+import { pageUrl } from "../lib/routes";
+import { articleSchema, breadcrumbSchema, webPageSchema, type GuideMeta } from "../seo/schema";
+import type { SeoProps } from "../seo/page-meta";
+
+/**
+ * Общая разметка статей и онлайн-инструментов без собственного CSS-импорта:
+ * `GuideLayout` подключает `page-guide.css`, а `/arabic-keyboard/` — единый
+ * `page-keyboard.css`, чтобы страница не отдавала два блокирующих CSS-файла.
+ */
+type Props = Omit<SeoProps, "canonical"> & {
+  guide: GuideMeta;
+  section?: "articles" | "keyboard";
+  schemaType?: "Article" | "WebPage";
+  extraJsonLd?: Record<string, unknown>[];
+  stickyCtaText?: string;
+};
+
+const {
+  guide,
+  section = "articles",
+  schemaType = "Article",
+  extraJsonLd = [],
+  stickyCtaText,
+  robots = "index, follow, max-image-preview:large",
+  ogType = "article",
+  twitterCard = "summary_large_image",
+  ...seo
+} = Astro.props;
+
+const primarySchema = schemaType === "WebPage" ? webPageSchema(guide) : articleSchema(guide);
+---
+
+<PageLayout
+  {...seo}
+  canonical={pageUrl(guide.path)}
+  robots={robots}
+  ogType={ogType}
+  twitterCard={twitterCard}
+  section={section}
+  jsonLd={[primarySchema, breadcrumbSchema(guide.crumbs), ...extraJsonLd]}
+>
+  <!-- Первый экран во всю ширину окна, над крошками: так у клавиатуры. -->
+  <slot name="stage" />
+  <div class="guide-page">
+    <Breadcrumbs crumbs={guide.crumbs} />
+    <slot />
+  </div>
+  <MobileStickyCta text={stickyCtaText} />
+</PageLayout>

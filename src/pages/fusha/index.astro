@@ -1,6 +1,8 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
+import AudioButton from "../../components/AudioButton.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import { formatRuDate, type GuideMeta } from "../../seo/schema";
 
@@ -99,7 +101,11 @@ const faq = [
                 {dialects.map(([russian, fusha, fushaReading, egypt, egyptReading, levant, levantReading]) => (
                   <tr>
                     <th scope="row">{russian}</th>
-                    <td><span class="arabic-inline" lang="ar" dir="rtl">{fusha}</span><br /><small>{fushaReading}</small></td>
+                    <td>
+                      <span class="arabic-inline" lang="ar" dir="rtl">{fusha}</span>
+                      {fushaReading === "кайфа халюка" && <AudioButton src="/assets/audio/kayfa-haluka.mp3" label="кайфа халюка" />}
+                      <br /><small>{fushaReading}</small>
+                    </td>
                     <td><span class="arabic-inline" lang="ar" dir="rtl">{egypt}</span><br /><small>{egyptReading}</small></td>
                     <td><span class="arabic-inline" lang="ar" dir="rtl">{levant}</span><br /><small>{levantReading}</small></td>
                   </tr>
@@ -108,6 +114,7 @@ const faq = [
             </table>
           </div>
           <p>Левантийские варианты — разговорная речь Сирии, Ливана, Иордании и Палестины. Фусху в каждой из этих стран тоже понимают: на ней идут новости и написаны книги.</p>
+          <GuideMidCta title="Учите фусху по шагам в Acrab" text="Полная огласовка, объяснения по-русски и озвучка с первого урока — первые 6 модулей бесплатны." />
         </section>
 
         <section id="choice">

@@ -1,5 +1,5 @@
-/* Общие заголовки и блоки «Бесплатно» и «Вопросы» главной (FreeVsFull, HomeFaq).
-   Листы и ряды — sheets.css. */
+/* Общие заголовки и блоки «Статьи», «Бесплатно» и «Вопросы» главной
+   (HomeGuides, FreeVsFull, HomeFaq). Листы и ряды — sheets.css. */
 
 .sc-kicker {
   margin: 0 0 8px;
@@ -17,16 +17,26 @@
 }
 .sc-lead { margin: 0 0 28px; color: var(--c-text-secondary); font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; }
 
+/* ── Учебные материалы (.home-guides) ────────────────────────────────── */
+.hg { width: var(--page); max-width: 1060px; margin: 0 auto clamp(72px, 10vw, 130px); }
+.hg-head { max-width: 860px; margin: 0 0 clamp(20px, 3vw, 32px); }
+.hg-all { margin: 22px 0 0; }
+
 /* ── Бесплатно и в полной версии ─────────────────────────────────────── */
 .fv, .hf { width: var(--page); max-width: 860px; margin: 0 auto clamp(72px, 10vw, 130px); }
 .fv-head, .hf-head { margin: 0 0 clamp(20px, 3vw, 32px); }
 .fv-table {
+  display: block;
+  width: 100%;
+  border-collapse: collapse;
   border: var(--b-emphasis, 2px) solid var(--c-line-strong);
   border-radius: var(--r-surface, 20px);
   background: var(--c-surface);
   box-shadow: 0 3px 0 var(--c-line-strong);
   overflow: hidden;
 }
+.fv-table thead,
+.fv-table tbody { display: block; }
 .fv-row {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
@@ -36,10 +46,16 @@
   font-size: 16px;
   line-height: 1.35;
 }
-.fv-row + .fv-row { border-top: 1px solid var(--c-hairline); }
+.fv-row th,
+.fv-row td {
+  padding: 0;
+  text-align: left;
+  font-weight: inherit;
+}
+.fv-table tbody .fv-row { border-top: 1px solid var(--c-hairline); }
 .fv-row-head { color: var(--c-text-secondary); font-size: 14px; font-weight: 700; background: var(--c-surface-warm); }
-.fv-row-head span:last-child { color: var(--c-brand-text, var(--c-brand-strong)); }
-.fv-name { font-weight: 700; }
+.fv-row-head th:last-child { color: var(--c-brand-text, var(--c-brand-strong)); }
+.fv-row .fv-name { font-weight: 700; }
 .fv-free { color: var(--c-text-secondary); }
 .fv-full { font-weight: 600; }
 .fv-note { margin: 16px 4px 0; color: var(--c-text-secondary); font-size: 14px; line-height: 1.5; }
@@ -67,9 +83,8 @@
 
 @media (max-width: 760px) {
   .fv-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 12px 16px; }
-  .fv-row-head span:first-child { display: none; }
-  .fv-name { grid-column: 1 / -1; }
+  .fv-row-head th:first-child { display: none; }
+  .fv-row .fv-name { grid-column: 1 / -1; }
   .fv-row-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .hf-item { padding-inline: 18px; }
 }
-

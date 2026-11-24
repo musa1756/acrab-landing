@@ -1,0 +1,82 @@
+---
+import Icon from "./Icon.astro";
+import { MINI_QUIZ_STEPS } from "../data/mini-quiz-web";
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  title = "Попробуйте мини-тренажёр за 30 секунд",
+  subtitle = "Четыре коротких задания из стартового курса Acrab: буква на слух, форма в слове, огласовка и первое приветствие.",
+} = Astro.props;
+
+const firstStep = MINI_QUIZ_STEPS[0]!;
+---
+
+<section class="mqz-widget card" aria-label={title} data-mqz>
+  <div class="mqz-head">
+    <div>
+      <span class="chip" data-mqz-badge>{firstStep.badge}</span>
+      <h3 class="mqz-title">{title}</h3>
+      <p class="mqz-subtitle">{subtitle}</p>
+    </div>
+  </div>
+
+  <div class="mqz-steps-bar" aria-hidden="true">
+    {MINI_QUIZ_STEPS.map((_, idx) => (
+      <span class:list={["mqz-step-seg", { "is-current": idx === 0 }]} data-mqz-seg></span>
+    ))}
+  </div>
+
+  <div class="mqz-body" data-mqz-body>
+    <div class="mqz-prompt-row">
+      <p class="mqz-prompt" data-mqz-prompt>{firstStep.prompt}</p>
+      <button
+        type="button"
+        class="btn btn-soft btn-small mqz-audio"
+        data-mqz-audio
+        aria-label={`Слушать: ${firstStep.audioLabel ?? "озвучку"}`}
+        aria-pressed="false"
+      >
+        <Icon name="speaker-high" />
+        <span>Слушать</span>
+      </button>
+    </div>
+
+    <div class="mqz-grid" data-mqz-grid role="group" aria-label="Варианты ответа">
+      {firstStep.options.map((option) => (
+        <button
+          type="button"
+          class="mqz-tile tile tile-gold"
+          lang={option.isArabic ? "ar" : undefined}
+          dir={option.isArabic ? "rtl" : undefined}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="mqz-feedback" role="status" aria-live="polite" data-mqz-feedback hidden>
+      <p class="mqz-feedback-text" data-mqz-feedback-text></p>
+      <button type="button" class="btn btn-small" data-mqz-next>Дальше</button>
+    </div>
+  </div>
+
+  <div class="mqz-done" data-mqz-done hidden>
+    <div class="mqz-done-top">
+      <h4 class="mqz-done-title">Мини-разминка пройдена</h4>
+      <span class="badge" data-mqz-score>4 из 4</span>
+    </div>
+    <p class="mqz-done-text" data-mqz-done-text></p>
+    <div class="mqz-done-actions">
+      <a href="/get/" class="btn btn-compact">Продолжить бесплатно в Acrab</a>
+      <button type="button" class="btn btn-outline btn-compact" data-mqz-retry>Пройти ещё раз</button>
+    </div>
+  </div>
+
+  <p class="mqz-caption">Озвучка синтезированная, та же, что в приложении Acrab.</p>
+</section>
+
+<script src="../scripts/mini-quiz.ts"></script>

@@ -22,6 +22,7 @@ const {
   includeIcons = true,
   jsonLd = [],
 } = Astro.props;
+const resolvedTwitterCard = twitterCard ?? (ogTitle ? (ogType === "article" ? "summary_large_image" : "summary") : undefined);
 ---
 
 <meta charset="utf-8" />
@@ -31,13 +32,15 @@ const {
 {robots && <meta name="robots" content={robots} />}
 {themeColor && <meta name="theme-color" content={themeColor} />}
 {canonical && <link rel="canonical" href={canonical} />}
+{ogTitle && <meta property="og:locale" content="ru_RU" />}
+{ogTitle && <meta property="og:site_name" content="Acrab" />}
 {ogTitle && <meta property="og:title" content={ogTitle} />}
 {ogDescription && <meta property="og:description" content={ogDescription} />}
 {ogType && <meta property="og:type" content={ogType} />}
 {canonical && ogTitle && <meta property="og:url" content={canonical} />}
 {ogImage && <meta property="og:image" content={ogImage} />}
 {ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
-{twitterCard && <meta name="twitter:card" content={twitterCard} />}
+{resolvedTwitterCard && <meta name="twitter:card" content={resolvedTwitterCard} />}
 {includeIcons && <link rel="icon" href="/favicon.ico" sizes="48x48" />}
 {includeIcons && <link rel="icon" href="/assets/acrab-icon-120.png" sizes="120x120" type="image/png" />}
 {includeIcons && <link rel="apple-touch-icon" href="/assets/acrab-icon-180.png" />}

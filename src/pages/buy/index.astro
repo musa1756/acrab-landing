@@ -48,42 +48,44 @@ const rows: { icon: PhosphorName; title: string; free: string; premium: string; 
         <p class="compare-lead">Бесплатная версия не ограничена по времени. Premium открывает всю программу и поднимает дневные лимиты инструментов.</p>
 
         <!-- ComparisonTable приложения: карточка с золотой рамкой, две мини-плитки тарифов и
-             строки «значок · название · выигрыш» с парой плиток Free / Premium. Смысл таблицы
-             для чтения с экрана держат роли table / row / cell. -->
+             строки «значок · название · выигрыш» с парой плиток Free / Premium. Семантическая
+             таблица (`table`/`thead`/`tbody`/`th`/`td`) с сохранением раскладки сетки. -->
         <div class="card compare-card">
           <h3 class="t-title-small compare-card-title" id="compare-card-title">Преимущества Premium</h3>
-          <div class="compare-table" role="table" aria-labelledby="compare-card-title">
-            <div class="compare-head" role="row">
-              <span class="visually-hidden" role="columnheader">Возможность</span>
-              <div class="tile compare-mini" role="columnheader">
-                <span class="compare-mini-title">Бесплатно</span>
-                <span class="compare-mini-sub">старт</span>
-              </div>
-              <div class="tile tile-gold compare-mini is-premium" role="columnheader">
-                <span class="compare-mini-title">Premium</span>
-                <span class="compare-mini-sub">учиться без пауз</span>
-              </div>
-            </div>
-            <div class="compare-body" role="rowgroup" data-appear-group>
+          <table class="compare-table" aria-labelledby="compare-card-title">
+            <thead>
+              <tr class="compare-head">
+                <th class="visually-hidden" scope="col">Возможность</th>
+                <th class="tile compare-mini" scope="col">
+                  <span class="compare-mini-title">Бесплатно</span>
+                  <span class="compare-mini-sub">старт</span>
+                </th>
+                <th class="tile tile-gold compare-mini is-premium" scope="col">
+                  <span class="compare-mini-title">Premium</span>
+                  <span class="compare-mini-sub">учиться без пауз</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="compare-body" data-appear-group>
               {rows.map((row) => (
-                <div class="compare-row" role="row">
-                  <div class="compare-row-head" role="rowheader">
+                <tr class="compare-row">
+                  <th class="compare-row-head" scope="row">
                     <span class="icon-badge"><Icon name={row.icon} /></span>
                     <span class="compare-row-title">{row.title}</span>
                     <span class="gain">{row.gain}</span>
-                  </div>
-                  <div class="tile compare-value" role="cell">
+                  </th>
+                  <td class="tile compare-value">
                     <span class="compare-label">Free</span>
                     <span class="compare-free">{row.free}</span>
-                  </div>
-                  <div class="tile tile-gold compare-value is-premium" role="cell">
+                  </td>
+                  <td class="tile tile-gold compare-value is-premium">
                     <span class="compare-label"><Icon name={row.unlimited ? "infinity-bold" : "arrow-up-right-bold"} />Premium</span>
                     <span class="compare-premium">{row.premium}</span>
-                  </div>
-                </div>
+                  </td>
+                </tr>
               ))}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
 
         <p class="compare-note">Таблица та же, что на экране «Преимущества Premium» в приложении. «Словари» — это инструмент «Слова по теме», «Готовые карточки» — инструмент «Картинка». Бесплатно открыт весь первый курс «Старт» — 6 модулей (17 уроков). Лимиты обновляются каждый день в 03:00 по Москве; когда лимит исчерпан, уроки работают как обычно. Огласовки по фото на iPhone и iPad, Анки, Спряжение и Семья слов работают без лимитов в обеих версиях.</p>

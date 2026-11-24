@@ -1,9 +1,10 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import AudioButton from "../../components/AudioButton.astro";
-import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import { audioObjectSchema, formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
   "title": "Привет на арабском: как поздороваться и ответить | Acrab",
@@ -67,9 +68,14 @@ const faq = [
     answer: "كَيْفَ حَالُكَ؟ («кайфа халюка?») — мужчине, كَيْفَ حَالُكِ؟ («кайфа халюки?») — женщине. Ответ: أَنَا بِخَيْرٍ («ана би-хайр») — «у меня всё хорошо».",
   },
 ];
+const helloAudioSchema = audioObjectSchema({
+  name: "Произношение приветствия «мархабан» (مَرْحَبًا)",
+  description: "Озвучка слова مَرْحَبًا («привет» на арабском) из приложения Acrab.",
+  contentPath: "/assets/audio/marhaban.mp3",
+});
 ---
 
-<GuideLayout {...seo} guide={guide}>
+<GuideLayout {...seo} guide={guide} extraJsonLd={[helloAudioSchema]}>
     <header class="guide-hero">
       <p class="eyebrow">Первые слова разговора</p>
       <h1 class="page-title">Привет на арабском</h1>
@@ -109,6 +115,7 @@ const faq = [
           <p>Правильный ответ — <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> («ва алайкуму-с-салям»), «и вам мир». Слова в ответе идут в обратном порядке, а в начале добавляется <span class="arabic-inline" lang="ar" dir="rtl">وَ</span> — «и».</p>
           <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">س</span> в слове <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ</span> солнечная, поэтому «л» артикля сливается с ней: «ас-салям», а не «аль-салям». Это правило разобрано в статье про <a href="/sun-moon-letters/">солнечные и лунные буквы</a>.</p>
           <div class="guide-note card card-neutral card-warm"><strong>Подсказка:</strong> если не знаете, мусульманин ли собеседник, начните с <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span>: оно подходит всем.</div>
+          <GuideMidCta title="Потренируйте диалоги и приветствия на слух" text="Все приветствия с озвучкой и заданиями на сборку фраз бесплатны в стартовых модулях Acrab." />
         </section>
 
         <section id="time">

@@ -2,7 +2,9 @@
    и блок доверия. */
 
 @import "./global.css";
+@import "./guide-tiles.css";
 @import "./home-hero.css";
 @import "./trust.css";
 @import "./scene.css";
 @import "./sheets.css";
+@import "./mini-quiz.css";

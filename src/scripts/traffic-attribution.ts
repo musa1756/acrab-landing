@@ -6,6 +6,15 @@
 export const TRAFFIC_STORAGE_KEY = "acrab.traffic.v1";
 export const TRAFFIC_VISITED_KEY = "acrab.traffic.visited.v1";
 export const SITE_TRACK_URL = "https://api.acrab.ru/functions/v1/site-track";
+/**
+ * Опциональный Apple App Analytics Provider Token (`pt`).
+ * Не хардкодится в публичном репозитории как секрет; задаётся через
+ * `PUBLIC_APPLE_PROVIDER_TOKEN` на этапе сборки или передаётся явно в options.
+ */
+export const APP_STORE_PROVIDER_TOKEN: string | undefined =
+  typeof import.meta !== "undefined" && typeof (import.meta as { env?: Record<string, string | undefined> }).env?.PUBLIC_APPLE_PROVIDER_TOKEN === "string"
+    ? (import.meta as { env?: Record<string, string | undefined> }).env?.PUBLIC_APPLE_PROVIDER_TOKEN?.trim() || undefined
+    : undefined;
 
 export type StoreKind = "appstore" | "googleplay" | "rustore";
 export type SiteTrackEventKind = "site_visit" | "store_click";
@@ -20,6 +29,7 @@ export interface TrafficAttribution {
   slug?: string;
   promo?: string;
   refererHost?: string;
+  firstLandingPath?: string;
 }
 
 export interface SiteTrackPayload {
@@ -28,6 +38,7 @@ export interface SiteTrackPayload {
   store_target?: SiteTrackStoreTarget;
   slug?: string;
   page_path?: string;
+  first_landing_path?: string;
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
@@ -44,7 +55,8 @@ export interface PaymentAttributionPayload {
   slug?: string;
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Строгий UUID v1–v8 (совпадает с валидацией `site-track`). */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SLUG_RE = /^[a-z0-9][a-z0-9_-]{1,63}$/i;
 const CONTROL_CHARS_RE = /[\u0000-\u001f\u007f]/g;
 const OWN_DOMAIN = "acrab.ru";
@@ -67,6 +79,12 @@ function cleanText(value: unknown, maxLength: number): string | undefined {
   return cleaned.length > 0 ? cleaned : undefined;
 }
 
+function cleanPath(value: unknown): string | undefined {
+  const cleaned = cleanText(value, 160);
+  if (!cleaned || !cleaned.startsWith("/")) return undefined;
+  return cleaned;
+}
+
 function cleanSlug(value: unknown): string | undefined {
   const cleaned = cleanText(value, 64)?.toLowerCase();
   return cleaned && SLUG_RE.test(cleaned) ? cleaned : undefined;
@@ -76,6 +94,19 @@ function cleanPromo(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
   const normalized = value.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
   return normalized.length > 0 ? normalized : undefined;
+}
+
+/** `/arabic-alphabet/ayn/` → `seo_arabic_alphabet_ayn` (до 40 символов). */
+export function buildOrganicCampaignTag(landingPath: string | undefined): string | undefined {
+  const path = cleanPath(landingPath);
+  if (!path) return undefined;
+  const normalized = path
+    .replace(/^\/+|\/+$/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  const slug = normalized || "home";
+  return `seo_${slug}`.slice(0, 40);
 }
 
 export function generateClickId(): string {
@@ -153,6 +184,7 @@ export function decodeTrafficAttribution(raw: unknown): TrafficAttribution | nul
   const slug = cleanSlug(row.slug);
   const promo = cleanPromo(row.promo);
   const refererHost = cleanText(row.refererHost, 128)?.toLowerCase();
+  const firstLandingPath = cleanPath(row.firstLandingPath);
 
   if (utmSource) result.utmSource = utmSource;
   if (utmMedium) result.utmMedium = utmMedium;
@@ -161,6 +193,7 @@ export function decodeTrafficAttribution(raw: unknown): TrafficAttribution | nul
   if (slug) result.slug = slug;
   if (promo) result.promo = promo;
   if (refererHost && !isSameDomain(refererHost, OWN_DOMAIN)) result.refererHost = refererHost;
+  if (firstLandingPath) result.firstLandingPath = firstLandingPath;
   return result;
 }
 
@@ -169,6 +202,7 @@ export function mergeTrafficAttribution(
   incoming: Partial<TrafficAttribution>,
   refererHost?: string,
   nextClickId: () => string = generateClickId,
+  landingPath?: string,
 ): { attribution: TrafficAttribution; isFreshLanding: boolean } {
   const hasIncomingCampaign = Boolean(
     incoming.utmSource ||
@@ -214,6 +248,9 @@ export function mergeTrafficAttribution(
     : existing?.refererHost ?? refererHost;
   if (nextReferer) merged.refererHost = nextReferer;
 
+  const firstLandingPath = existing?.firstLandingPath ?? cleanPath(landingPath);
+  if (firstLandingPath) merged.firstLandingPath = firstLandingPath;
+
   return {
     attribution: merged,
     isFreshLanding: !existing || hasIncomingCampaign,
@@ -239,7 +276,7 @@ export function buildGooglePlayReferrer(attribution: Partial<TrafficAttribution>
   const params = new URLSearchParams();
   if (attribution.utmSource) params.set("utm_source", attribution.utmSource);
   if (attribution.utmMedium) params.set("utm_medium", attribution.utmMedium);
-  const campaign = attribution.utmCampaign || attribution.slug;
+  const campaign = attribution.utmCampaign || attribution.slug || buildOrganicCampaignTag(attribution.firstLandingPath);
   if (campaign) params.set("utm_campaign", campaign);
   if (attribution.utmContent) params.set("utm_content", attribution.utmContent);
   if (attribution.clickId && isUuid(attribution.clickId)) params.set("click_id", attribution.clickId.toLowerCase());
@@ -247,7 +284,16 @@ export function buildGooglePlayReferrer(attribution: Partial<TrafficAttribution>
   return encoded.length > 0 ? encoded : null;
 }
 
-export function decorateStoreUrl(href: string, attribution: Partial<TrafficAttribution> | null | undefined): string {
+export interface DecorateStoreUrlOptions {
+  /** Apple App Analytics Provider Token (`pt`); если не задан, берётся из `APP_STORE_PROVIDER_TOKEN`. */
+  providerToken?: string;
+}
+
+export function decorateStoreUrl(
+  href: string,
+  attribution: Partial<TrafficAttribution> | null | undefined,
+  options: DecorateStoreUrlOptions = {},
+): string {
   if (!href || !attribution) return href;
   let url: URL;
   try {
@@ -263,8 +309,13 @@ export function decorateStoreUrl(href: string, attribution: Partial<TrafficAttri
     return url.toString();
   }
   if (kind === "appstore") {
-    const ct = cleanText(attribution.utmCampaign || attribution.slug, 40);
+    const ct = cleanText(
+      attribution.utmCampaign || attribution.slug || buildOrganicCampaignTag(attribution.firstLandingPath),
+      40,
+    );
     if (!ct) return href;
+    const pt = cleanText(options.providerToken ?? APP_STORE_PROVIDER_TOKEN, 32);
+    if (pt) url.searchParams.set("pt", pt);
     url.searchParams.set("ct", ct);
     url.searchParams.set("mt", "8");
     return url.toString();
@@ -285,6 +336,8 @@ export function buildSiteTrackPayload(
   if (attribution.slug) payload.slug = attribution.slug;
   const pagePath = cleanText(options.pagePath, 160);
   if (pagePath) payload.page_path = pagePath;
+  const firstLandingPath = cleanPath(attribution.firstLandingPath);
+  if (firstLandingPath) payload.first_landing_path = firstLandingPath;
   if (attribution.utmSource) payload.utm_source = attribution.utmSource;
   if (attribution.utmMedium) payload.utm_medium = attribution.utmMedium;
   if (attribution.utmCampaign) payload.utm_campaign = attribution.utmCampaign;
@@ -339,10 +392,11 @@ export function captureTrafficAttribution(): { attribution: TrafficAttribution; 
   const existing = readTrafficAttribution();
   const search = typeof window !== "undefined" ? window.location.search : "";
   const ownHost = typeof window !== "undefined" ? window.location.hostname : undefined;
+  const landingPath = typeof window !== "undefined" ? window.location.pathname : undefined;
   const referrer = typeof document !== "undefined" ? document.referrer : "";
   const incoming = parseTrafficSearch(search);
   const refererHost = extractExternalRefererHost(referrer, ownHost);
-  const result = mergeTrafficAttribution(existing, incoming, refererHost);
+  const result = mergeTrafficAttribution(existing, incoming, refererHost, generateClickId, landingPath);
   writeTrafficAttribution(result.attribution);
   return result;
 }

@@ -1,0 +1,5 @@
+/* Стили страницы онлайн-теста уровня арабского языка (/arabic-test/). */
+
+@import "./global.css";
+@import "./guides.css";
+@import "./test.css";

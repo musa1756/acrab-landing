@@ -1,15 +1,17 @@
 ---
-import GuideLayout from "../../layouts/GuideLayout.astro";
+import GuideShell from "../../layouts/GuideShell.astro";
 import ArabicKeyboard from "../../components/ArabicKeyboard.astro";
+import Icon from "../../components/Icon.astro";
 import GuideCta from "../../components/GuideCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import { ARABIC_KEYS_BY_CODE, charForCode } from "../../scripts/arabic-keyboard-model";
-import { formatRuDate, webApplicationSchema, type GuideMeta } from "../../seo/schema";
+import { formatRuDate, howToSchema, webApplicationSchema, type GuideMeta } from "../../seo/schema";
+import "../../styles/page-keyboard.css";
 
 const seo = {
-  "title": "Арабская клавиатура онлайн: печать букв и огласовок | Acrab",
-  "description": "Бесплатная арабская клавиатура онлайн: буквы, огласовки и хамза, ввод с обычной клавиатуры, копирование и русская транслитерация. Без установки.",
-  "ogTitle": "Арабская клавиатура онлайн",
+  "title": "Арабская клавиатура онлайн: печать с огласовками бесплатно | Acrab",
+  "description": "Бесплатная арабская клавиатура онлайн без установки: все 28 букв, огласовки (Shift), хамза, ввод с обычной клавиатуры, копирование и русская транслитерация.",
+  "ogTitle": "Арабская клавиатура онлайн — буквы и огласовки",
   "ogDescription": "Печатайте арабские буквы и огласовки с экрана или обычной клавиатуры и копируйте готовый текст.",
   "ogType": "website",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
@@ -22,7 +24,7 @@ const guide: GuideMeta = {
   path: "/arabic-keyboard/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-24",
   // Клавиатура — отдельный раздел шапки, а не статья: в крошках нет «Статей».
   crumbs: [
     { name: "Acrab", path: "/" },
@@ -92,15 +94,51 @@ const toolSchema = webApplicationSchema({
   description: seo.description,
   path: "/arabic-keyboard/",
 });
+
+const installHowTo = howToSchema({
+  name: "Как добавить арабскую раскладку клавиатуры в систему",
+  description: "Пошаговая инструкция по добавлению арабского языка ввода в Windows 10/11, macOS, iPhone, iPad и Android.",
+  path: "/arabic-keyboard/#install",
+  steps: [
+    {
+      name: "Windows 10 и 11",
+      text: "Откройте «Параметры» → «Время и язык» → «Язык», нажмите «Добавить язык», выберите «Арабский» и проверьте наличие раскладки «Арабская (101)». Переключайте языки сочетанием Win + Пробел.",
+    },
+    {
+      name: "macOS",
+      text: "Откройте «Системные настройки» → «Клавиатура» → «Источники ввода» → «Изменить…», нажмите «+» и добавьте раскладку «Арабская». Переключайте раскладки сочетанием Control + Пробел.",
+    },
+    {
+      name: "iPhone и iPad",
+      text: "Откройте «Настройки» → «Основные» → «Клавиатура» → «Клавиатуры» → «Новые клавиатуры…» и выберите «Арабский».",
+    },
+    {
+      name: "Android",
+      text: "Откройте «Настройки» → «Система» → «Язык и ввод» → «Экранная клавиатура» → Gboard → «Языки» → «Добавить клавиатуру» и выберите «Арабский».",
+    },
+  ],
+});
 ---
 
-<GuideLayout {...seo} guide={guide} section="keyboard">
-    <!-- Первый экран — только клавиатура; за ней стекают арабские буквы (arabic-rain.ts). -->
+<GuideShell
+  {...seo}
+  guide={guide}
+  section="keyboard"
+  schemaType="WebPage"
+  extraJsonLd={[toolSchema, installHowTo]}
+  stickyCtaText="Огласовки, перевод и озвучка текста — в приложении Acrab"
+>
+    <!-- Первый экран — клавиатура и компактный переход к инструментам Acrab; за ними стекают арабские буквы (arabic-rain.ts). -->
     <section class="kbd-stage" slot="stage" aria-labelledby="kbd-title">
       <canvas class="kbd-rain" data-arabic-rain aria-hidden="true"></canvas>
       <div class="kbd-stage-inner">
         <h1 class="kbd-title" id="kbd-title">Арабская клавиатура онлайн</h1>
         <ArabicKeyboard />
+        <aside class="kbd-cta card card-warm" aria-label="Инструменты для арабского текста в Acrab">
+          <span class="icon-badge"><Icon name="sparkle" /></span>
+          <p class="kbd-cta-text">Нужно расставить огласовки, перевести или озвучить набранный текст? Это есть в Acrab.</p>
+          <a class="btn btn-compact kbd-cta-btn" href="/get/" data-cta-placement="keyboard-inline">Открыть Acrab</a>
+        </aside>
       </div>
     </section>
 
@@ -207,6 +245,5 @@ const toolSchema = webApplicationSchema({
     </div>
 
     <nav class="related-guides" data-appear-group aria-label="Другие статьи"><a href="/arabic-alphabet/"><span>Основа</span><strong>Арабский алфавит →</strong></a><a href="/arabic-vowels/"><span>Знаки на слое Shift</span><strong>Огласовки →</strong></a><a href="/learn-arabic/"><span>Полный маршрут</span><strong>Как учить арабский с нуля →</strong></a></nav>
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(toolSchema)} />
     <script src="../../scripts/arabic-rain.ts"></script>
-</GuideLayout>
+</GuideShell>

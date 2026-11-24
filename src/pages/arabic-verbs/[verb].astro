@@ -1,0 +1,324 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import GuideCta from "../../components/GuideCta.astro";
+import GuideFaq from "../../components/GuideFaq.astro";
+import { pageUrl } from "../../lib/routes";
+import { richArabic } from "../../lib/rich-arabic";
+import { breadcrumbSchema, formatRuDate, type Crumb, type FaqItem } from "../../seo/schema";
+import {
+  VERB_MODIFIED,
+  VERB_SECTION_PATH,
+  WEB_VERBS,
+  relatedVerbsFor,
+  verbDescription,
+  verbPath,
+  verbTitle,
+} from "../../data/verbs-web";
+import "../../styles/page-verbs.css";
+
+export function getStaticPaths() {
+  return WEB_VERBS.map((verb) => ({ params: { verb: verb.slug }, props: { verb } }));
+}
+
+const { verb } = Astro.props;
+const path = verbPath(verb.slug);
+const canonical = pageUrl(path);
+const related = relatedVerbsFor(verb, 6);
+const currentIndex = WEB_VERBS.findIndex((item) => item.slug === verb.slug);
+const prevVerb = currentIndex > 0 ? WEB_VERBS[currentIndex - 1] : undefined;
+const nextVerb = currentIndex >= 0 && currentIndex < WEB_VERBS.length - 1 ? WEB_VERBS[currentIndex + 1] : undefined;
+
+const seo = {
+  title: verbTitle(verb),
+  description: verbDescription(verb),
+  ogTitle: `Спряжение глагола ${verb.arabic} — «${verb.russian}»`,
+  ogDescription: `${verb.formRoman} порода, корень ${verb.root}, масдар ${verb.masdar}. Полные таблицы прошедшего, настоящего и повелительного времени с огласовками.`,
+  ogType: "article",
+  ogImage: "https://acrab.ru/assets/about/lesson-theory.webp",
+  ogImageAlt: "Спряжение арабских глаголов в Acrab",
+} as const;
+
+const crumbs: Crumb[] = [
+  { name: "Acrab", path: "/" },
+  { name: "Статьи", path: "/articles/" },
+  { name: "Спряжение глаголов", path: VERB_SECTION_PATH },
+  { name: `${verb.arabic} (${verb.russian})`, path },
+];
+
+const definedTermSchema = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  name: `${verb.arabic} — ${verb.russian}`,
+  description: seo.description,
+  url: canonical,
+  termCode: verb.slug,
+  inDefinedTermSet: pageUrl(VERB_SECTION_PATH),
+};
+
+const faq: FaqItem[] = [
+  {
+    question: `Как будет «${verb.russian}» в настоящем времени 1-го лица («я»)?`,
+    answer: `Форма 1-го лица единственного числа настоящего времени — ${verb.present[0]!.form} (с местоимением: أَنَا ${verb.present[0]!.form}). В обычной речи местоимение أَنَا чаще опускают, потому что лицо уже выражено приставкой глагола.`,
+  },
+  {
+    question: `Какой корень и какая порода у глагола ${verb.arabic}?`,
+    answer: `Трёхсогласный корень глагола — ${verb.root}, порода — ${verb.formRoman}. Отглагольное существительное (масдар) — ${verb.masdar} (${verb.masdarRu}).`,
+  },
+  {
+    question: `Почему в таблице спряжения ${verb.arabic} 14 строк, но 13 различающихся форм?`,
+    answer: `Таблица включает все сочетания лица, числа и рода (14 строк), но во 2-м лице двойственного числа (أَنْتُمَا — «вы двое») мужской и женский род совпадают: ${verb.past[3]!.form} в прошедшем времени и ${verb.present[3]!.form} в настоящем.`,
+  },
+];
+
+const isSharedDual2nd = (index: number, total: number) =>
+  (total === 14 && (index === 3 || index === 6)) || (total === 6 && (index === 1 || index === 4));
+---
+
+<PageLayout
+  {...seo}
+  canonical={canonical}
+  section="articles"
+  jsonLd={[definedTermSchema, breadcrumbSchema(crumbs)]}
+>
+  <div class="guide-page">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <header class="guide-hero vb-hero">
+      <div class="vb-hero-main">
+        <p class="eyebrow">Глагол · {verb.formRoman} порода</p>
+        <h1 class="page-title">
+          Спряжение <span class="arabic-inline" lang="ar" dir="rtl">{verb.arabic}</span> — «{verb.russian}»
+        </h1>
+        <p class="guide-lead" set:html={richArabic(verb.note)} />
+        <div class="guide-answer card">
+          <strong>Коротко:</strong>{" "}
+          <span
+            set:html={richArabic(
+              `${verb.arabic} («${verb.russian}») — глагол ${verb.formRoman} породы от корня ${verb.root}. Настоящее время (он): ${verb.present3m}, повелительное (ты, муж.): ${verb.imperative2m}, масдар: ${verb.masdar}.`,
+            )}
+          />
+        </div>
+        <p class="guide-updated">Обновлено <time datetime={VERB_MODIFIED}>{formatRuDate(VERB_MODIFIED)}</time></p>
+      </div>
+
+      <div class="vb-hero-card tile tile-gold">
+        <span class="vb-hero-ar" lang="ar" dir="rtl">{verb.arabic}</span>
+        <span class="vb-hero-pair" lang="ar" dir="rtl">{verb.present3m}</span>
+        <span class="vb-hero-ru">{verb.russian}</span>
+        <div class="vb-hero-badges">
+          <span class="chip">{verb.formRoman} порода</span>
+          <span class="chip">Корень <span lang="ar" dir="rtl">{verb.root}</span></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="guide-layout">
+      <aside class="guide-toc" aria-label="Содержание страницы">
+        <strong>На странице</strong>
+        <a href="#summary">Основные формы</a>
+        <a href="#past">Прошедшее время</a>
+        <a href="#present">Настоящее время</a>
+        <a href="#imperative">Повелительное</a>
+        <a href="#memory">Как запомнить</a>
+        <a href="#related">Похожие глаголы</a>
+        <a href="#faq">Частые вопросы</a>
+      </aside>
+
+      <article class="guide-content">
+        <section id="summary">
+          <h2>Основные формы глагола <span class="arabic-inline" lang="ar" dir="rtl">{verb.arabic}</span></h2>
+          <div class="vb-summary-grid" data-appear-group>
+            <div class="vb-summary-item tile tile-gold">
+              <span class="vb-summary-label">Прошедшее (он)</span>
+              <span class="vb-summary-ar" lang="ar" dir="rtl">{verb.arabic}</span>
+              <span class="vb-summary-sub">Начальная форма словаря</span>
+            </div>
+            <div class="vb-summary-item tile tile-gold">
+              <span class="vb-summary-label">Настоящее (он)</span>
+              <span class="vb-summary-ar" lang="ar" dir="rtl">{verb.present3m}</span>
+              <span class="vb-summary-sub">Изъявительное наклонение</span>
+            </div>
+            <div class="vb-summary-item tile tile-gold">
+              <span class="vb-summary-label">Повелительное (ты, м.)</span>
+              <span class="vb-summary-ar" lang="ar" dir="rtl">{verb.imperative2m}</span>
+              <span class="vb-summary-sub">Просьба или указание</span>
+            </div>
+            <div class="vb-summary-item tile tile-neutral">
+              <span class="vb-summary-label">Масдар</span>
+              <span class="vb-summary-ar" lang="ar" dir="rtl">{verb.masdar}</span>
+              <span class="vb-summary-sub">{verb.masdarRu}</span>
+            </div>
+            <div class="vb-summary-item tile tile-neutral">
+              <span class="vb-summary-label">Корень</span>
+              <span class="vb-summary-ar" lang="ar" dir="rtl">{verb.root}</span>
+              <span class="vb-summary-sub">Три корневые буквы</span>
+            </div>
+            <div class="vb-summary-item tile tile-neutral">
+              <span class="vb-summary-label">Порода</span>
+              <span class="vb-summary-ar">{verb.formRoman}</span>
+              <span class="vb-summary-sub">{verb.form === 1 ? "Базовая порода" : "Производная порода"}</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="past">
+          <h2>Прошедшее время (<span class="arabic-inline" lang="ar" dir="rtl">الْمَاضِي</span>)</h2>
+          <p>
+            Полная таблица на 14 строк (13 различающихся арабских форм: строки для <span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمَا</span> в мужском и женском роде совпадают).
+          </p>
+          <div class="guide-table-scroll card card-plain" data-appear>
+            <table class="guide-table vb-table">
+              <caption>Спряжение {verb.arabic} в прошедшем времени</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Лицо и число</th>
+                  <th scope="col">Местоимение</th>
+                  <th scope="col">Форма глагола</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verb.past.map((row, index) => (
+                  <tr class:list={{ "vb-row-shared": isSharedDual2nd(index, verb.past.length) }}>
+                    <td>
+                      <strong>{row.person}</strong>
+                      {isSharedDual2nd(index, verb.past.length) && <span class="vb-shared-tag">общая форма</span>}
+                    </td>
+                    <td class="vb-pronoun" lang="ar" dir="rtl">{row.pronoun}</td>
+                    <th scope="row" class="vb-form" lang="ar" dir="rtl">{row.form}</th>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="present">
+          <h2>Настоящее время (<span class="arabic-inline" lang="ar" dir="rtl">الْمُضَارِعُ</span>)</h2>
+          <p>
+            Те же 14 строк и 13 различающихся форм в настоящем времени (изъявительное наклонение <span class="arabic-inline" lang="ar" dir="rtl">مَرْفُوعٌ</span>). Чтобы получить будущее время, поставьте перед формой приставку <span class="arabic-inline" lang="ar" dir="rtl">سَـ</span> (например, <span class="arabic-inline" lang="ar" dir="rtl">سَ{verb.present[0]!.form}</span>).
+          </p>
+          <div class="guide-table-scroll card card-plain" data-appear>
+            <table class="guide-table vb-table">
+              <caption>Спряжение {verb.arabic} в настоящем времени</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Лицо и число</th>
+                  <th scope="col">Местоимение</th>
+                  <th scope="col">Форма глагола</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verb.present.map((row, index) => (
+                  <tr class:list={{ "vb-row-shared": isSharedDual2nd(index, verb.present.length) }}>
+                    <td>
+                      <strong>{row.person}</strong>
+                      {isSharedDual2nd(index, verb.present.length) && <span class="vb-shared-tag">общая форма</span>}
+                    </td>
+                    <td class="vb-pronoun" lang="ar" dir="rtl">{row.pronoun}</td>
+                    <th scope="row" class="vb-form" lang="ar" dir="rtl">{row.form}</th>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="imperative">
+          <h2>Повелительное наклонение (<span class="arabic-inline" lang="ar" dir="rtl">الْأَمْرُ</span>)</h2>
+          <p>
+            Повелительное наклонение существует только для 2-го лица: 6 строк и 5 различающихся форм (<span class="arabic-inline" lang="ar" dir="rtl">أَنْتُمَا</span> совпадает для мужского и женского рода).
+          </p>
+          <div class="guide-table-scroll card card-plain" data-appear>
+            <table class="guide-table vb-table">
+              <caption>Повелительное наклонение глагола {verb.arabic}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Лицо и число</th>
+                  <th scope="col">Местоимение</th>
+                  <th scope="col">Форма глагола</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verb.imperative.map((row, index) => (
+                  <tr class:list={{ "vb-row-shared": isSharedDual2nd(index, verb.imperative.length) }}>
+                    <td>
+                      <strong>{row.person}</strong>
+                      {isSharedDual2nd(index, verb.imperative.length) && <span class="vb-shared-tag">общая форма</span>}
+                    </td>
+                    <td class="vb-pronoun" lang="ar" dir="rtl">{row.pronoun}</td>
+                    <th scope="row" class="vb-form" lang="ar" dir="rtl">{row.form}</th>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="memory">
+          <h2>Как запомнить глагол <span class="arabic-inline" lang="ar" dir="rtl">{verb.arabic}</span></h2>
+          <div class="guide-note card card-neutral card-warm">
+            <strong>Подсказка:</strong> <span set:html={richArabic(verb.tip)} />
+          </div>
+          <p>
+            Для прочного запоминания проговаривайте подряд тройку форм: прошедшее <span class="arabic-inline" lang="ar" dir="rtl">{verb.arabic}</span> → настоящее <span class="arabic-inline" lang="ar" dir="rtl">{verb.present3m}</span> → масдар <span class="arabic-inline" lang="ar" dir="rtl">{verb.masdar}</span>. Именно так формы закрепляются в упражнениях приложения.
+          </p>
+          <GuideCta
+            title={`Тренируйте спряжение ${verb.arabic} в Acrab`}
+            text="В приложении — более 1 200 арабских глаголов, озвучка, семьи однокоренных слов и тренировка форм без интернета."
+          />
+        </section>
+
+        <section id="related">
+          <h2>Однокоренные и похожие глаголы</h2>
+          <div class="vb-related-grid" data-appear-group>
+            {related.map((item) => (
+              <a href={verbPath(item.slug)} class="vb-card tile tile-gold">
+                <span class="vb-card-top">
+                  <span class="vb-card-ar" lang="ar" dir="rtl">{item.arabic}</span>
+                  <span class="vb-card-form">{item.formRoman}</span>
+                </span>
+                <span class="vb-card-ru">{item.russian}</span>
+                <span class="vb-card-meta">
+                  <span class="vb-card-pres" lang="ar" dir="rtl">{item.present3m}</span>
+                  <span><span class="arabic-inline" lang="ar" dir="rtl">{item.root}</span></span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <GuideFaq items={faq} />
+      </article>
+    </div>
+
+    <nav class="related-guides" data-appear-group aria-label="Навигация по глаголам">
+      {prevVerb ? (
+        <a href={verbPath(prevVerb.slug)} rel="prev">
+          <span>Предыдущий глагол</span>
+          <strong>← <span lang="ar" dir="rtl">{prevVerb.arabic}</span> ({prevVerb.russian})</strong>
+        </a>
+      ) : (
+        <a href="/arabic-test/">
+          <span>Проверка знаний</span>
+          <strong>← Тест уровня арабского</strong>
+        </a>
+      )}
+      <a href={VERB_SECTION_PATH}>
+        <span>Все {WEB_VERBS.length} глаголов</span>
+        <strong>Справочник спряжения</strong>
+      </a>
+      {nextVerb ? (
+        <a href={verbPath(nextVerb.slug)} rel="next">
+          <span>Следующий глагол</span>
+          <strong><span lang="ar" dir="rtl">{nextVerb.arabic}</span> ({nextVerb.russian}) →</strong>
+        </a>
+      ) : (
+        <a href="/arabic-keyboard/">
+          <span>Практика письма</span>
+          <strong>Арабская клавиатура →</strong>
+        </a>
+      )}
+    </nav>
+  </div>
+</PageLayout>

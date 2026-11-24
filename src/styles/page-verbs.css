@@ -1,0 +1,5 @@
+/* Стили раздела спряжения арабских глаголов (/arabic-verbs/ и /arabic-verbs/<slug>/). */
+
+@import "./global.css";
+@import "./guides.css";
+@import "./verbs.css";

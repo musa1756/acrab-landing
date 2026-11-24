@@ -1,14 +1,15 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import AudioButton from "../../components/AudioButton.astro";
-import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import { audioObjectSchema, formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
-  "title": "Спасибо на арабском: шукран, ответ и другие фразы | Acrab",
-  "description": "Как сказать «спасибо» на арабском: شُكْرًا (шукран), «большое спасибо», формы для мужчины, женщины и нескольких людей, ответ «не за что». С огласовками и озвучкой.",
-  "ogTitle": "Спасибо на арабском",
+  "title": "Спасибо на арабском: шукран, перевод, озвучка и ответы | Acrab",
+  "description": "Как сказать «спасибо» по-арабски: شُكْرًا (шукран), «большое спасибо», формы мужчине и женщине, «джазака Ллаhу хайран» и ответ «афван» — с озвучкой.",
+  "ogTitle": "Спасибо на арабском: шукран и ответы с озвучкой",
   "ogDescription": "Шукран, «большое спасибо» и ответ «не за что» — с огласовками, транскрипцией и озвучкой.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
@@ -20,7 +21,7 @@ const guide: GuideMeta = {
   path: "/arabic-thank-you/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-24",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -66,9 +67,14 @@ const faq = [
     answer: "شُكْرًا — нейтральное «спасибо» на любой случай. جَزَاكَ اللَّهُ خَيْرًا — религиозная формула, буквально «да воздаст тебе Аллаh добром»: так благодарят друг друга верующие. В магазине или такси достаточно شُكْرًا.",
   },
 ];
+const thanksAudioSchema = audioObjectSchema({
+  name: "Произношение слова «шукран» (شُكْرًا)",
+  description: "Озвучка слова شُكْرًا («спасибо» на арабском) из приложения Acrab.",
+  contentPath: "/assets/audio/shukran.mp3",
+});
 ---
 
-<GuideLayout {...seo} guide={guide}>
+<GuideLayout {...seo} guide={guide} extraJsonLd={[thanksAudioSchema]}>
     <header class="guide-hero">
       <p class="eyebrow">Первая вежливая фраза</p>
       <h1 class="page-title">Спасибо на арабском</h1>
@@ -111,6 +117,7 @@ const faq = [
             <div class="tile tile-gold"><span lang="ar" dir="rtl">شُكْرًا لَكُمْ</span><strong>шукран лакум</strong><small>нескольким людям</small></div>
           </div>
           <p>Двоим говорят <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُمَا</span> («шукран лакума»), группе женщин — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُنَّ</span> («шукран лакунна»).</p>
+          <GuideMidCta title="Закрепите вежливые фразы в уроках" text="Озвучка, разбор окончаний и упражнения на слух — бесплатно в первых 6 модулях Acrab." />
         </section>
 
         <section id="religious">

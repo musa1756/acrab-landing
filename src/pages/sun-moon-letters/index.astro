@@ -1,14 +1,15 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import { formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
-  "title": "Солнечные и лунные буквы в арабском: как читать артикль | Acrab",
-  "description": "Солнечные и лунные буквы арабского алфавита: как читается артикль الـ, по 14 букв в каждой группе, примеры «аш-шамсу» и «аль-камару», частые ошибки.",
-  "ogTitle": "Солнечные и лунные буквы",
-  "ogDescription": "Когда артикль звучит «аль», а когда «л» сливается со следующей буквой.",
+  "title": "Солнечные и лунные буквы арабского: правило الـ и таблица | Acrab",
+  "description": "Как читать артикль الـ в арабском: списки 14 солнечных и 14 лунных букв, понятные примеры («аш-шамсу» и «аль-камару»), подсказка для запоминания и ошибки.",
+  "ogTitle": "Солнечные и лунные буквы арабского алфавита",
+  "ogDescription": "Когда артикль الـ звучит «аль», а когда «л» сливается со следующей буквой: списки, таблица и примеры.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
 } as const;
@@ -19,7 +20,7 @@ const guide: GuideMeta = {
   path: "/sun-moon-letters/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-24",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -113,6 +114,7 @@ const faq = [
             </table>
           </div>
           <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">ل</span> тоже солнечная. Когда слово само начинается с <span class="arabic-inline" lang="ar" dir="rtl">ل</span>, две «л» сливаются в одну удвоенную: <span class="arabic-inline" lang="ar" dir="rtl">اللَّيْلُ</span> — «аль-лайлу», «ночь».</p>
+          <GuideMidCta title="Закрепите правило артикля на слух" text="В Acrab это правило входит в бесплатные первые 6 модулей: теория, озвучка и упражнения." />
         </section>
 
         <section id="writing">

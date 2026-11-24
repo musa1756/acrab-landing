@@ -54,7 +54,7 @@ jobs:
             sleep 0.5
           done
 
-          for path in / /about /learn-arabic /arabic-alphabet /fusha /arabic-app /buy /support /privacy /offer /consent /get /robots.txt /sitemap.xml /404.html /assets/acrab-app-icon.png; do
+          for path in / /about /learn-arabic /arabic-alphabet /fusha /arabic-app /duolingo-arabic /ai-arabic-tutor /bayna-yadayk /qiraa-rashida /islamic-phrases /how-to-read-arabic /arabic-numbers /arabic-travel-phrases /arabic-test /arabic-verbs /arabic-verbs/kataba /arabic-keyboard /buy /support /privacy /offer /consent /get /robots.txt /sitemap.xml /404.html /assets/acrab-app-icon.png; do
             code=$(curl -s -o /dev/null -w '%{http_code}' -L "http://127.0.0.1:8899$path")
             test "$code" = "200" || { echo "$path вернул $code вместо 200"; exit 1; }
           done
@@ -66,7 +66,7 @@ jobs:
 
           missing_code=$(curl -s -o /tmp/acrab-missing.html -w '%{http_code}' http://127.0.0.1:8899/definitely-missing)
           test "$missing_code" = "404"
-          if grep -q '<h1 class="page-title">Учите литературный арабский' /tmp/acrab-missing.html; then
+          if grep -q '<h1 class="home-hero-title"' /tmp/acrab-missing.html; then
             echo "Обнаружен SPA fallback на главную"
             exit 1
           fi

@@ -1,0 +1,22 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** Короткий контекстный текст; по умолчанию — универсальный для статей и букв. */
+  text?: string | undefined;
+}
+
+const { text = "Учите арабский с озвучкой в Acrab — старт бесплатный" } = Astro.props;
+---
+
+<aside class="mobile-sticky-cta" data-mobile-sticky-cta aria-label="Скачать приложение Acrab" hidden>
+  <div class="mobile-sticky-cta-inner">
+    <img class="mobile-sticky-cta-icon" src="/assets/acrab-icon-64.png" alt="" width="36" height="36" loading="lazy" decoding="async" />
+    <p class="mobile-sticky-cta-text">{text}</p>
+    <a class="btn btn-dense mobile-sticky-cta-btn" href="/get/" data-cta-placement="sticky-mobile">Скачать</a>
+    <button type="button" class="mobile-sticky-cta-close" data-sticky-cta-close aria-label="Скрыть панель">
+      <Icon name="x" />
+    </button>
+  </div>
+</aside>
+<script src="../scripts/sticky-cta.ts"></script>

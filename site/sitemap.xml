@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://acrab.ru/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/articles/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/learn-arabic/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-alphabet/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://acrab.ru/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/articles/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/learn-arabic/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-alphabet/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://acrab.ru/arabic-alphabet/alif/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://acrab.ru/arabic-alphabet/ba/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://acrab.ru/arabic-alphabet/ta/</loc><lastmod>2026-10-01</lastmod></url>
@@ -32,14 +32,82 @@
   <url><loc>https://acrab.ru/arabic-alphabet/ha/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://acrab.ru/arabic-alphabet/waw/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://acrab.ru/arabic-alphabet/ya/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-vowels/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/sun-moon-letters/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-hello/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-thank-you/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/fusha/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-app/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/arabic-keyboard/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/about/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/support/</loc><lastmod>2026-10-01</lastmod></url>
-  <url><loc>https://acrab.ru/privacy/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://acrab.ru/how-to-read-arabic/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-vowels/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/sun-moon-letters/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-hello/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-thank-you/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/islamic-phrases/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-numbers/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-travel-phrases/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/fusha/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-app/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/duolingo-arabic/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/ai-arabic-tutor/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/bayna-yadayk/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/qiraa-rashida/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-test/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/kataba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/qaraa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/dhahaba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/faala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/alima/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/akala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/shariba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/jalasa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/samia/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/fataha/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/darasa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/amila/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/saala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/qala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/kana/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/fahima/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/kharaja/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/dakhala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/rajaa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/nazara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/akhadha/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/wajada/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/wasala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/badaa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/talaba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/sakana/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/arafa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/hafiza/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/nama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/raa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/laiba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/shakara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/hamala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/ghasala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/sabara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/allama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/darrasa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/fakkara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/kallama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/safara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/saada/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/shahada/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/arada/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/ahabba/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/arsala/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/ata/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/taallama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/takallama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/tadhakkara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/taawana/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/intalaqa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/intazara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/ishtara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/ijtamaa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/istamaa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/istataa/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/istakhdama/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-verbs/istaghfara/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/arabic-keyboard/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/about/</loc><lastmod>2026-11-06</lastmod></url>
+  <url><loc>https://acrab.ru/support/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://acrab.ru/privacy/</loc><lastmod>2026-11-03</lastmod></url>
 </urlset>

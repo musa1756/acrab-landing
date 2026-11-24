@@ -24,6 +24,7 @@ import {
 } from "./payment-model";
 import { PHOSPHOR, type PhosphorName } from "../../lib/phosphor";
 import { clearCheckoutSession, clearPendingCheckout, readCheckoutSession, readPendingCheckout, writeCheckoutSession, writePendingCheckout } from "./payment-storage";
+import { trackGoal } from "../../scripts/analytics-goals";
 import { captureTrafficAttribution, readTrafficAttribution, toPaymentAttribution } from "../../scripts/traffic-attribution";
 
 // A meta CSP cannot express frame-ancestors. This guard runs as soon as the
@@ -63,7 +64,7 @@ export default function PaymentFlow(): ReactElement {
   const [step, setStep] = useState<PaymentStep>("email");
   const [email, setEmail] = useState("");
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [plan, setPlan] = useState<Plan | null>(null);
+  const [plan, setPlan] = useState<Plan | null>("annual");
   const [pricing, setPricing] = useState<Pricing>(DEFAULT_PRICING);
   const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
   const [pending, setPending] = useState<PendingCheckout | null>(null);
@@ -185,9 +186,11 @@ export default function PaymentFlow(): ReactElement {
         setPromoInput(result.code);
         clearPendingCheckout();
         setPending(null);
+        trackGoal("buy_promo_apply", { status: "ok", kind: result.kind ?? "blogger" });
       } else {
         setAppliedPromo(null);
         setPromoError(promoCodeErrorMessage(result.status));
+        trackGoal("buy_promo_apply", { status: result.status });
       }
     } catch (error) {
       setPromoError(checkPromoErrorMessage(error));
@@ -237,6 +240,7 @@ export default function PaymentFlow(): ReactElement {
     setPendingAction("send-code");
     try {
       await requestOtp(normalizedEmail);
+      trackGoal("buy_otp_send");
       setStep("code");
     } catch (error) {
       setEmailError(sendCodeErrorMessage(error));
@@ -249,7 +253,7 @@ export default function PaymentFlow(): ReactElement {
     clearCheckoutSession();
     clearPendingCheckout();
     setAccessToken(null);
-    setPlan(null);
+    setPlan("annual");
     setPlanError("");
     setCodeError("");
     setAppliedPromo(null);
@@ -282,6 +286,7 @@ export default function PaymentFlow(): ReactElement {
       writeCheckoutSession({ email, accessToken: token, expiresAt: sessionExpiry(result) });
       setAccessToken(token);
       setStep("plan");
+      trackGoal("buy_otp_verify");
       await loadAccount(token, appliedPromo?.code ?? null);
     } catch (error) {
       setCodeError(verifyCodeErrorMessage(error));
@@ -290,8 +295,9 @@ export default function PaymentFlow(): ReactElement {
     }
   }
 
-  function openCheckout(link: string): void {
+  function openCheckout(link: string, selectedPlan?: Plan | null): void {
     setPendingAction("open-checkout");
+    trackGoal("buy_pay_redirect", selectedPlan ? { plan: selectedPlan } : undefined);
     window.location.assign(link);
   }
 
@@ -307,7 +313,7 @@ export default function PaymentFlow(): ReactElement {
       const nextPending: PendingCheckout = { plan, paymentLink: created.paymentLink, createdAt: Date.now(), expiresAt: created.expiresAt };
       writePendingCheckout(nextPending);
       setPending(nextPending);
-      openCheckout(created.paymentLink);
+      openCheckout(created.paymentLink, plan);
     } catch (error) {
       const message = createPaymentErrorMessage(error);
       setPendingAction(null);
@@ -333,7 +339,7 @@ export default function PaymentFlow(): ReactElement {
       return;
     }
     setPlanError("");
-    openCheckout(pending.paymentLink);
+    openCheckout(pending.paymentLink, pending.plan);
   }
 
   const busy = pendingAction !== null;
@@ -348,7 +354,17 @@ export default function PaymentFlow(): ReactElement {
         const displayAmount = effectivePlanAmount(option, pricing, subscription, appliedPromo);
         const hasDiscount = displayAmount < baseAmount;
         return (
-          <button key={option} className={`tile plan-option${plan === option ? " is-selected" : ""}`} type="button" data-plan={option} aria-pressed={plan === option} onClick={() => setPlan(option)}>
+          <button
+            key={option}
+            className={`tile plan-option${plan === option ? " is-selected" : ""}`}
+            type="button"
+            data-plan={option}
+            aria-pressed={plan === option}
+            onClick={() => {
+              setPlan(option);
+              trackGoal("buy_plan_select", { plan: option });
+            }}
+          >
             <span className="plan-crown"><Icon name="crown" /></span>
             <span className="plan-copy">
               <span className="plan-title">{PLAN_TITLE[option]}</span>
@@ -421,6 +437,7 @@ export default function PaymentFlow(): ReactElement {
           <span>Даю <a href="/consent/" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для входа и оформления Premium.</span>
         </label>
         <button id="send-code-btn" className="btn btn-block" type="button" disabled={busy} onClick={handleSendCode}>Получить код</button>
+        <p className="auth-account-note">Ещё нет аккаунта Acrab? Сначала <a href="/get/">установите приложение</a> и привяжите почту в Профиле — старт бесплатный.</p>
         <ErrorMessage message={emailError} />
       </div>
 

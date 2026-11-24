@@ -1,10 +1,11 @@
 ---
 import GuideLayout from "../../layouts/GuideLayout.astro";
 import GuideCta from "../../components/GuideCta.astro";
+import GuideMidCta from "../../components/GuideMidCta.astro";
 import GuideFaq from "../../components/GuideFaq.astro";
 import AudioButton from "../../components/AudioButton.astro";
-import { richArabic } from "../../lib/rich-arabic";
-import { formatRuDate, type GuideMeta } from "../../seo/schema";
+import { highlightArabicLetter, richArabic } from "../../lib/rich-arabic";
+import { audioObjectSchema, definedTermSchema, formatRuDate, type GuideMeta } from "../../seo/schema";
 import {
   FORM_KEYS,
   FORM_LABELS,
@@ -79,9 +80,28 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
   const other = letterBySlug(item.slug);
   return other ? [{ other, note: item.note }] : [];
 });
+
+const letterTermSchema = definedTermSchema({
+  name: heading,
+  description: seo.description,
+  path,
+  termCode: letter.char,
+  inDefinedTermSetPath: LETTER_SECTION_PATH,
+});
+
+const letterAudioSchema = audioObjectSchema({
+  name: `Произношение арабской буквы ${shortName} (${letter.char})`,
+  description: `Озвучка буквы ${letter.name} (${letter.char}) из приложения Acrab.`,
+  contentPath: letterAudioPath(letter),
+});
 ---
 
-<GuideLayout {...seo} guide={guide}>
+<GuideLayout
+  {...seo}
+  guide={guide}
+  extraJsonLd={[letterTermSchema, letterAudioSchema]}
+  stickyCtaText={`Отработайте букву ${letter.name} (${letter.char}) с озвучкой в Acrab`}
+>
     <header class="guide-hero letter-hero">
       <div class="letter-hero-main">
         <p class="eyebrow">{letterOrdinal(letter)[0]?.toUpperCase()}{letterOrdinal(letter).slice(1)} буква алфавита</p>
@@ -151,7 +171,7 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
                   const note: string | undefined = letter.wordNotes?.[id];
                   return (
                     <tr>
-                      <th scope="row" class="ar" lang="ar" dir="rtl">{word.ar}</th>
+                      <th scope="row" class="ar" lang="ar" dir="rtl" set:html={highlightArabicLetter(word.ar, letter.char)} />
                       <td class="letter-reading"><strong>{word.tr}</strong><AudioButton src={wordAudioPath(id)} label={word.tr} /></td>
                       <td>{word.ru}</td>
                       <td>{where.join(" и ")}{note && <small class="letter-word-note" set:html={richArabic(note)} />}</td>
@@ -162,6 +182,7 @@ const lookalikes = letter.lookalikes.flatMap((item) => {
             </table>
           </div>
           {letter.trNote && <p class="letter-caption" set:html={richArabic(letter.trNote)} />}
+          <GuideMidCta title={`Потренируйте букву ${letter.name} на слух`} text="Упражнения на узнавание буквы в слове, огласовки и озвучка — бесплатно в первых 6 модулях Acrab." />
         </section>
 
         <section id="lookalikes">
