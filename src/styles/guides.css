@@ -174,16 +174,23 @@
 .mistake-list strong { font-family: var(--font-rounded); font-size: var(--t-headline); line-height: var(--lh-headline); }
 .mistake-list p { margin: 0; }
 
-/* Призыв скачать — светлая карточка приложения (`.card` в разметке) с кнопками магазинов. */
+/* Призыв скачать — тёплая карточка приложения (`.card.card-warm`) с золотой рамкой и кнопками магазинов. */
 .guide-cta {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   margin-top: 32px;
-  padding: clamp(18px, 3vw, 26px);
+  padding: clamp(20px, 3vw, 28px);
+  box-shadow: var(--shadow-high);
+}
+.guide-cta-badge {
+  justify-self: start;
+  padding: 5px 11px;
+  font-size: 12px;
+  line-height: 16px;
 }
 .guide-cta-head { display: flex; align-items: flex-start; gap: 14px; }
-.guide-cta h3 { margin: 0 0 4px; color: var(--c-text); font-size: var(--t-title-small); line-height: var(--lh-title-small); }
-.guide-cta p { max-width: 58ch; margin: 0; color: var(--c-text-secondary); }
+.guide-cta h3 { margin: 0 0 6px; color: var(--c-text); font-size: var(--t-title-small); line-height: var(--lh-title-small); }
+.guide-cta p { max-width: 60ch; margin: 0; color: var(--c-text-secondary); }
 
 /* Промежуточный контекстный призыв внутри длинной статьи. */
 .guide-mid-cta {

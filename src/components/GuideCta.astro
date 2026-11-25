@@ -5,12 +5,14 @@ import StoreLinks from "./StoreLinks.astro";
 interface Props {
   title: string;
   text: string;
+  badge?: string;
 }
 
-const { title, text } = Astro.props;
+const { title, text, badge = "Бесплатно без срока · 2 курса алфавита и чтения (28 уроков)" } = Astro.props;
 ---
 
-<div class="guide-cta card" data-appear>
+<div class="guide-cta card card-warm" data-appear>
+  {badge && <span class="chip guide-cta-badge">{badge}</span>}
   <div class="guide-cta-head">
     <span class="icon-badge icon-badge-large"><Icon name="device-mobile" /></span>
     <div><h3>{title}</h3><p>{text}</p></div>

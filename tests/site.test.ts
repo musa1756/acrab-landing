@@ -207,10 +207,10 @@ describe("letter pages", () => {
     }
   });
 
-  test("uses no program numbers other than the starter course (6 modules, 17 lessons)", () => {
+  test("uses no program numbers other than the free courses (11 modules, 28 lessons)", () => {
     const text = `${readSource("src/seo/letters.ts")}${readSource("src/pages/arabic-alphabet/[letter].astro")}`;
     for (const match of text.matchAll(/(\d+)\s+(глав|модул|урок)[а-я]*/g)) {
-      expect(["6", "17"], match[0]).toContain(match[1] ?? "");
+      expect(["11", "28"], match[0]).toContain(match[1] ?? "");
     }
   });
 });

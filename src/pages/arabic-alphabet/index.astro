@@ -9,9 +9,9 @@ import { definedTermSetSchema, formatRuDate, type GuideMeta } from "../../seo/sc
 import { LETTERS, letterAudioPath, letterByChar, letterPath } from "../../seo/letters";
 
 const seo = {
-  "title": "Арабский алфавит: 28 букв с озвучкой, формами и звуками | Acrab",
-  "description": "Все 28 букв арабского алфавита в таблице: названия, звуки, озвучка каждой буквы, четыре формы в слове, 6 букв без соединения, похожие знаки и порядок изучения.",
-  "ogTitle": "Арабский алфавит: все 28 букв с озвучкой",
+  "title": "Арабский алфавит для начинающих: таблица 28 букв с озвучкой | Acrab",
+  "description": "Арабский алфавит на русском: таблица всех 28 букв с произношением, озвучкой и четырьмя формами в слове. Похожие буквы, огласовки и 28 бесплатных уроков.",
+  "ogTitle": "Арабский алфавит для начинающих: все 28 букв с озвучкой",
   "ogDescription": "Таблица 28 букв с озвучкой, названиями и звуками, формы в слове, похожие буквы и огласовки.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
@@ -23,7 +23,7 @@ const guide: GuideMeta = {
   path: "/arabic-alphabet/",
   image: seo.ogImage,
   datePublished: "2026-08-08",
-  dateModified: "2026-11-24",
+  dateModified: "2026-11-25",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -121,7 +121,7 @@ const faq = [
 ];
 ---
 
-<GuideLayout {...seo} guide={guide} extraJsonLd={[alphabetTermSet]} stickyCtaText="Учите 28 букв с озвучкой и упражнениями в Acrab — старт бесплатный">
+<GuideLayout {...seo} guide={guide} extraJsonLd={[alphabetTermSet]} stickyCtaText="28 уроков алфавита и чтения бесплатно в Acrab">
     <header class="guide-hero">
       <p class="eyebrow">Основа чтения</p>
       <h1 class="page-title">Арабский алфавит для начинающих</h1>
@@ -195,7 +195,7 @@ const faq = [
               </tbody>
             </table>
           </div>
-          <GuideMidCta title="Закрепите похожие буквы на слух и в словах" text="В Acrab стартовый курс с алфавитом и упражнениями бесплатен и без срока." />
+          <GuideMidCta title="Продолжить в Acrab бесплатно" text="Первые 2 курса алфавита и чтения — 11 модулей и 28 уроков с озвучкой и упражнениями без срока." />
         </section>
 
         <section id="extra">
@@ -231,13 +231,13 @@ const faq = [
             <li><div><strong>Добавьте огласовки</strong><p>Прочитайте слоги с «а», «и», «у» и без короткой гласной.</p></div></li>
             <li><div><strong>Смешайте с уже знакомыми буквами</strong><p>Читайте новые слова, а не повторяйте одну строку по памяти.</p></div></li>
           </ol>
-          <p>В Acrab алфавит устроен так же: в стартовом курсе 17 уроков. Сначала <span class="arabic-inline" lang="ar" dir="rtl">ب م ا</span>, затем <span class="arabic-inline" lang="ar" dir="rtl">ت ن ل</span>. Следом идут первые слова с сукуном и танвином и долгие гласные с <span class="arabic-inline" lang="ar" dir="rtl">و</span> и <span class="arabic-inline" lang="ar" dir="rtl">ي</span>. Дальше буквы идут парами: <span class="arabic-inline" lang="ar" dir="rtl">د ر</span>, <span class="arabic-inline" lang="ar" dir="rtl">ك س</span>, <span class="arabic-inline" lang="ar" dir="rtl">ه ح</span>, <span class="arabic-inline" lang="ar" dir="rtl">ج خ</span>, <span class="arabic-inline" lang="ar" dir="rtl">ع غ</span>, <span class="arabic-inline" lang="ar" dir="rtl">ف ق</span>, <span class="arabic-inline" lang="ar" dir="rtl">ش ث</span>, <span class="arabic-inline" lang="ar" dir="rtl">ذ ز</span>. В конце — эмфатические <span class="arabic-inline" lang="ar" dir="rtl">ص ض ط ظ</span> и чтение с шаддой.</p>
+          <p>В Acrab бесплатные курсы «Алфавит» и «Чтение» устроены так же — всего 11 модулей и 28 уроков без срока. Сначала вы осваиваете все 28 букв и их формы группами по сходству («лодочки и точки», «упрямые шесть», «волны и петли», гортанные и твёрдые пары), а затем переходите к слогам, сукуну, долгим гласным, шадде, танвину, артиклю <span class="arabic-inline" lang="ar" dir="rtl">الـ</span> и беглому чтению слов.</p>
         </section>
 
         <section id="practice">
           <h2>Как тренироваться без перегрузки</h2>
           <ul class="guide-checklist"><li>Берите небольшую группу похожих букв и сравнивайте их точки.</li><li>Читайте вслух, затем сверяйтесь с озвучкой.</li><li>Пишите рукой хотя бы одну строку или потренируйтесь набирать буквы на <a href="/arabic-keyboard/">арабской клавиатуре онлайн</a>.</li><li>Возвращайтесь к трудным буквам внутри новых слов, а не отдельными карточками.</li></ul>
-          <GuideCta title="Пройдите алфавит по шагам" text="Стартовый курс с алфавитом в Acrab бесплатен целиком: 6 модулей и 17 уроков, где к каждой букве сразу даны звук, чтение и упражнения." />
+          <GuideCta title="Продолжить в Acrab бесплатно" text="Первые 2 курса алфавита и чтения открыты целиком без срока: 11 модулей и 28 уроков, где к каждой букве и огласовке сразу даны звук, чтение и упражнения." />
         </section>
 
         <GuideFaq items={faq} />

@@ -50,7 +50,7 @@ const APP_SCREENSHOTS = [
 ];
 
 const APP_OFFERS = [
-  { "@type": "Offer", name: "Бесплатный старт (курс «Старт»)", price: "0", priceCurrency: "RUB" },
+  { "@type": "Offer", name: "Бесплатный старт (курсы «Алфавит» и «Чтение»)", price: "0", priceCurrency: "RUB" },
   { "@type": "Offer", name: "Acrab Premium — Месяц", price: String(DEFAULT_PRICES.monthly), priceCurrency: "RUB", url: `${SITE_URL}/buy/` },
   { "@type": "Offer", name: "Acrab Premium — Год", price: String(DEFAULT_PRICES.annual), priceCurrency: "RUB", url: `${SITE_URL}/buy/` },
   { "@type": "Offer", name: "Acrab Premium — Навсегда", price: String(DEFAULT_PRICES.lifetime), priceCurrency: "RUB", url: `${SITE_URL}/buy/` },

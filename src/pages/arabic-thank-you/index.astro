@@ -7,9 +7,9 @@ import AudioButton from "../../components/AudioButton.astro";
 import { audioObjectSchema, formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
-  "title": "Спасибо на арабском: шукран, перевод, озвучка и ответы | Acrab",
-  "description": "Как сказать «спасибо» по-арабски: شُكْرًا (шукран), «большое спасибо», формы мужчине и женщине, «джазака Ллаhу хайран» и ответ «афван» — с озвучкой.",
-  "ogTitle": "Спасибо на арабском: шукран и ответы с озвучкой",
+  "title": "Спасибо на арабском: что значит «шукран», озвучка и ответы | Acrab",
+  "description": "Как сказать «спасибо» по-арабски и что значит شُكْرًا (шукран): озвучка, «большое спасибо», формы мужчине и женщине, «джазака-Ллаhу хайран» и ответ «афван».",
+  "ogTitle": "Спасибо на арабском: шукран, перевод и ответы с озвучкой",
   "ogDescription": "Шукран, «большое спасибо» и ответ «не за что» — с огласовками, транскрипцией и озвучкой.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
@@ -21,7 +21,7 @@ const guide: GuideMeta = {
   path: "/arabic-thank-you/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-11-24",
+  dateModified: "2026-11-25",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -74,7 +74,7 @@ const thanksAudioSchema = audioObjectSchema({
 });
 ---
 
-<GuideLayout {...seo} guide={guide} extraJsonLd={[thanksAudioSchema]}>
+<GuideLayout {...seo} guide={guide} extraJsonLd={[thanksAudioSchema]} stickyCtaText="Учите арабский с нуля: 2 курса (28 уроков) бесплатно">
     <header class="guide-hero">
       <p class="eyebrow">Первая вежливая фраза</p>
       <h1 class="page-title">Спасибо на арабском</h1>
@@ -117,7 +117,7 @@ const thanksAudioSchema = audioObjectSchema({
             <div class="tile tile-gold"><span lang="ar" dir="rtl">شُكْرًا لَكُمْ</span><strong>шукран лакум</strong><small>нескольким людям</small></div>
           </div>
           <p>Двоим говорят <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُمَا</span> («шукран лакума»), группе женщин — <span class="arabic-inline" lang="ar" dir="rtl">شُكْرًا لَكُنَّ</span> («шукран лакунна»).</p>
-          <GuideMidCta title="Закрепите вежливые фразы в уроках" text="Озвучка, разбор окончаний и упражнения на слух — бесплатно в первых 6 модулях Acrab." />
+          <GuideMidCta title="Продолжить в Acrab бесплатно" text="Освойте чтение арабских слов и фраз на слух: 2 курса алфавита и чтения (11 модулей, 28 уроков) без срока." />
         </section>
 
         <section id="religious">
@@ -158,7 +158,7 @@ const thanksAudioSchema = audioObjectSchema({
             </table>
           </div>
           <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
-          <GuideCta title="Потренируйте это в приложении" text="Приветствия и вежливые фразы — второй модуль программы Acrab, он входит в бесплатную часть. Фразы озвучены, а упражнения учат узнавать их на слух и собирать самому." />
+          <GuideCta title="Продолжить в Acrab бесплатно" text="В Acrab первые 2 курса алфавита и чтения (11 модулей, 28 уроков) бесплатны без срока, а дальше программа ведёт к приветствиям, вежливым фразам и грамматике фусхи." />
         </section>
 
         <GuideFaq items={faq} />

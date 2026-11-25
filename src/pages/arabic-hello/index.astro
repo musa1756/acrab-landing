@@ -7,9 +7,9 @@ import AudioButton from "../../components/AudioButton.astro";
 import { audioObjectSchema, formatRuDate, type GuideMeta } from "../../seo/schema";
 
 const seo = {
-  "title": "Привет на арабском: как поздороваться и ответить | Acrab",
-  "description": "Как сказать «привет» на арабском: مَرْحَبًا (мархабан), أَهْلًا, السَّلَامُ عَلَيْكُمْ, «доброе утро» и «как дела». Ответы, огласовки, транскрипция и озвучка.",
-  "ogTitle": "Привет на арабском",
+  "title": "Привет на арабском (мархабан): приветствия, озвучка и ответы | Acrab",
+  "description": "Как сказать «привет» по-арабски: مَرْحَبًا (мархабан), ахлян, ас-саляму алайкум, «доброе утро» и «как дела». Транскрипция, ответы и озвучка всех фраз.",
+  "ogTitle": "Привет на арабском: мархабан, приветствия и ответы с озвучкой",
   "ogDescription": "Мархабан, ахлян, ас-саляму алайкум и ответы на них — с огласовками, транскрипцией и озвучкой.",
   "ogImage": "https://acrab.ru/assets/about/lesson-theory.webp",
   "ogImageAlt": "Урок теории по арабскому языку в Acrab"
@@ -21,7 +21,7 @@ const guide: GuideMeta = {
   path: "/arabic-hello/",
   image: seo.ogImage,
   datePublished: "2026-10-01",
-  dateModified: "2026-10-01",
+  dateModified: "2026-11-25",
   crumbs: [
     { name: "Acrab", path: "/" },
     { name: "Статьи", path: "/articles/" },
@@ -75,7 +75,7 @@ const helloAudioSchema = audioObjectSchema({
 });
 ---
 
-<GuideLayout {...seo} guide={guide} extraJsonLd={[helloAudioSchema]}>
+<GuideLayout {...seo} guide={guide} extraJsonLd={[helloAudioSchema]} stickyCtaText="Учите арабский с озвучкой: 2 курса (28 уроков) бесплатно">
     <header class="guide-hero">
       <p class="eyebrow">Первые слова разговора</p>
       <h1 class="page-title">Привет на арабском</h1>
@@ -115,7 +115,7 @@ const helloAudioSchema = audioObjectSchema({
           <p>Правильный ответ — <span class="arabic-inline" lang="ar" dir="rtl">وَعَلَيْكُمُ السَّلَامُ</span> («ва алайкуму-с-салям»), «и вам мир». Слова в ответе идут в обратном порядке, а в начале добавляется <span class="arabic-inline" lang="ar" dir="rtl">وَ</span> — «и».</p>
           <p>Буква <span class="arabic-inline" lang="ar" dir="rtl">س</span> в слове <span class="arabic-inline" lang="ar" dir="rtl">السَّلَامُ</span> солнечная, поэтому «л» артикля сливается с ней: «ас-салям», а не «аль-салям». Это правило разобрано в статье про <a href="/sun-moon-letters/">солнечные и лунные буквы</a>.</p>
           <div class="guide-note card card-neutral card-warm"><strong>Подсказка:</strong> если не знаете, мусульманин ли собеседник, начните с <span class="arabic-inline" lang="ar" dir="rtl">مَرْحَبًا</span>: оно подходит всем.</div>
-          <GuideMidCta title="Потренируйте диалоги и приветствия на слух" text="Все приветствия с озвучкой и заданиями на сборку фраз бесплатны в стартовых модулях Acrab." />
+          <GuideMidCta title="Продолжить в Acrab бесплатно" text="Начните читать и понимать арабские фразы на слух: 2 курса алфавита и чтения (11 модулей, 28 уроков) без срока." />
         </section>
 
         <section id="time">
@@ -161,7 +161,7 @@ const helloAudioSchema = audioObjectSchema({
             </table>
           </div>
           <p class="audio-note">Кнопка с динамиком включает озвучку из приложения. Голос синтезированный, это не запись диктора. У фраз без кнопки записи на странице нет.</p>
-          <GuideCta title="Потренируйте это в приложении" text="Приветствия, «Как дела?» и вежливые фразы — второй модуль программы Acrab, он входит в бесплатную часть. Фразы озвучены, а упражнения учат узнавать их на слух и отвечать." />
+          <GuideCta title="Продолжить в Acrab бесплатно" text="В Acrab первые 2 курса алфавита и чтения (11 модулей, 28 уроков) бесплатны без срока, а дальше программа разбирает приветствия, «Как дела?» и живые фразы фусхи." />
         </section>
 
         <GuideFaq items={faq} />
